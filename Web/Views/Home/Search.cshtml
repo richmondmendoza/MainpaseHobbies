@@ -1,0 +1,282 @@
+﻿@model Web.Models.SearchViewModel
+
+@{
+    ViewBag.Title = "Search";
+}
+
+<style>
+    .header-search {
+        display: none !important;
+    }
+
+    #data-loader {
+        height: 150px !important;
+        position: relative !important;
+        background-color: transparent !important;
+    }
+
+        #data-loader .spinner {
+            color: black;
+        }
+
+    .card-containers {
+    }
+</style>
+
+
+
+<div class="page-title" data-aos="fade">
+    <nav class="breadcrumbs">
+        <div class="container">
+            <ol>
+                <li><a href="@Url.Action("Index", "Home", new { area ="" })">Home</a></li>
+                @if (!string.IsNullOrEmpty(Model.SearchTerm))
+                {
+                    <li>Search results for</li>
+                    <li class="current">@Model.SearchTerm</li>
+                }
+                else
+                {
+                    <li class="current">Search</li>
+                }
+            </ol>
+        </div>
+    </nav>
+</div>
+
+<section class="pt-3">
+
+    <div class="container mb-4 d-flex">
+        <input class="form-control input-sm" type="search" id="searchParam" name="param" placeholder="Search Card Name, Set Name, or Set Code." aria-label="Search">
+        <button class="btn btn-primary btn-sm ms-1" id="btn-search">Search</button>
+    </div>
+
+    <div class="container mb-5">
+        <div class="row">
+            <div class="col-sm-auto mr-3">
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-w" type="checkbox" class="chk-color" value="W" checked>
+                    <label for="chk-w">White</label>
+                </div>
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-u" type="checkbox" class="chk-color" value="U" checked>
+                    <label for="chk-u">Blue</label>
+                </div>
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-b" type="checkbox" class="chk-color" value="B" checked>
+                    <label for="chk-b">Black</label>
+                </div>
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-r" type="checkbox" class="chk-color" value="R" checked>
+                    <label for="chk-r">Red</label>
+                </div>
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-g" type="checkbox" class="chk-color" value="G" checked>
+                    <label for="chk-g">Green</label>
+                </div>
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-c" type="checkbox" class="chk-color" value="C" checked>
+                    <label for="chk-c">Colorless</label>
+                </div>
+
+            </div>
+
+            <div class="col-sm-auto mr-3">
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-etchedfoil" type="checkbox" class="chk-foil" value="etchedfoil">
+                    <label for="chk-etchedfoil">Etched Foil</label>
+                </div>
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-foil" type="checkbox" class="chk-foil" value="foil" checked>
+                    <label for="chk-foil">Foil</label>
+                </div>
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-nonfoil" type="checkbox" class="chk-foil" value="nonfoil|normal" checked>
+                    <label for="chk-nonfoil">Non-Foil</label>
+                </div>
+
+            </div>
+
+            <div class="col-sm-auto mr-3">
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-mythicrare" type="checkbox" class="chk-rarity" value="mythicrare" checked>
+                    <label for="chk-mythicrare">Mythic Rare</label>
+                </div>
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-rare" type="checkbox" class="chk-rarity" value="rare" checked>
+                    <label for="chk-rare">Rare</label>
+                </div>
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-uncommon" type="checkbox" class="chk-rarity" value="uncommon">
+                    <label for="chk-uncommon">Uncommon</label>
+                </div>
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-common" type="checkbox" class="chk-rarity" value="common">
+                    <label for="chk-common">Common</label>
+                </div>
+
+            </div>
+
+            <div class="col-sm-auto mr-3">
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-creatures" type="checkbox" class="chk-cardType" value="creatures">
+                    <label for="chk-creatures">Creatures</label>
+                </div>
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-artifacts" type="checkbox" class="chk-cardType" value="artifacts">
+                    <label for="chk-artifacts">Artifacts</label>
+                </div>
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-instant" type="checkbox" class="chk-cardType" value="instant">
+                    <label for="chk-instant">Instant</label>
+                </div>
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-sorcery" type="checkbox" class="chk-cardType" value="sorcery">
+                    <label for="chk-sorcery">Sorcery</label>
+                </div>
+
+                <div class="icheck-primary mr-4 d-inline-block">
+                    <input id="chk-planeswalker" type="checkbox" class="chk-cardType" value="planeswalker">
+                    <label for="chk-planeswalker">Planeswalker</label>
+                </div>
+
+            </div>
+
+
+
+
+
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div id="data-loader" class="preloader flex-column justify-content-center align-items-center w-100">
+            <span class="spinner"></span>
+        </div>
+
+        <div class="row" id="data-container"></div>
+    </div>
+
+</section>
+
+@section scripts{
+
+    <script>
+
+        function LoadColor() {
+            var text = "";
+
+            $.each($('.chk-color'), function (index, element) {
+                if (element.checked) {
+                    text = text + element.value + "|";
+                } else {
+                    text = text.replace(element.value + "|", "");
+                }
+            });
+
+            return text;
+        }
+
+        function LoadFoil() {
+            var text = "";
+
+            $.each($('.chk-foil'), function (index, element) {
+                if (element.checked) {
+                    text = text + element.value + "|";
+                } else {
+                    text = text.replace(element.value + "|", "");
+                }
+            });
+
+            return text;
+        }
+
+        function LoadRarity() {
+            var text = "";
+
+            $.each($('.chk-rarity'), function (index, element) {
+                if (element.checked) {
+                    text = text + element.value + "|";
+                } else {
+                    text = text.replace(element.value + "|", "");
+                }
+            });
+
+            return text;
+        }
+
+        function LoadCardType() {
+            var text = "";
+
+            $.each($('.chk-cardType'), function (index, element) {
+                if (element.checked) {
+                    text = text + element.value + "|";
+                } else {
+                    text = text.replace(element.value + "|", "");
+                }
+            });
+
+            return text;
+        }
+
+        function LoadData() {
+            $('#data-loader').show();
+            $('#data-container').html("");
+            var colors = LoadColor();
+            var foils = LoadFoil();
+            var rarities = LoadRarity();
+            var cardTypes = LoadCardType();
+            $.ajax({
+                url: '@Url.Action("GetResults")',
+                type: 'get',
+                data: {
+                    search: $('#searchParam').val(),
+                    colors: colors,
+                    foils: foils,
+                    rarities: rarities,
+                    cardTypes: cardTypes
+                },
+                success: function (results) {
+                    $('#data-container').html(results);
+                    $('#data-loader').hide();
+                }
+            });
+        }
+
+
+
+        $(document).ready(function () {
+
+            LoadData();
+
+            $('.chk-color, .chk-foil, .chk-rarity, .chk-cardType').on('change', function () {
+                LoadData();
+            });
+
+            $('#btn-search').on('click', function () {
+                LoadData();
+            });
+
+        });
+
+    </script>
+
+}

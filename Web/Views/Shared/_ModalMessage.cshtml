@@ -1,0 +1,64 @@
+﻿<script>
+    @{
+        var timeOut = (HttpContext.Current.Session["TimeOutMessage"] ?? "").ToString();
+		var message = Convert.ToString(TempData["ViewMessage"] ?? "");
+        var type = Convert.ToString(TempData["ViewMessageType"] ?? "Error");
+    }
+
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <text>
+            $(document).ready(function () {
+                var headertxt = '@(type == "Success" ? "Message" : "Error Message")';
+                headertxt = headertxt.replace('&lt;b&gt;', '<b>').replace('&lt;/b&gt;', '</b>')
+                $('#message-modal').modalMessage({
+                    header: headertxt,
+                    message: '@message'
+                });
+            });
+        </text>
+    }
+
+    @if (!string.IsNullOrEmpty(timeOut))
+    {
+        <text>
+            $(document).ready(function () {
+                $('#message-modal').modalMessage({
+                    header: 'Session Timeout',
+                    message: '@timeOut'
+                });
+            });
+        </text>
+
+        if (HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString().ToLower() == "login")
+        {
+            timeOut = "";
+            HttpContext.Current.Session.Remove("TimeOutMessage");
+        }
+    }
+
+</script>
+
+<style>
+    #message-modal {
+        z-index: 1062 !important;
+    }
+
+    .modal-backdrop.show:not(.fade) {
+        z-index: 1060 !important;
+    }
+</style>
+
+<div class="modal" id="message-modal">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Message</h4>
+            </div>
+            <div class="modal-body">Content Here</div>
+            <div class="modal-footer">
+                <a href="javascript:;" type="button" class="btn btn-default btn-flat  btn-sm pull-right" data-bs-dismiss="modal"><i class="fa fa-times"></i>   Close</a>
+            </div>
+        </div>
+    </div>
+</div>

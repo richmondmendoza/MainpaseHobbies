@@ -1,0 +1,67 @@
+﻿@using Repository.Extensions;
+@using Infrastructure;
+
+@model IEnumerable<Dto.Dto.CardDetailsDto>
+
+<style>
+    .card-containers {
+        padding: 15px;
+    }
+</style>
+
+
+
+@if (Model != null && Model.Any())
+{
+    foreach (var item in Model)
+    {
+        var url = Url.Action("CardDetails", "Home", new { area = "", cardId = item.EncId });
+
+        <div class="col-lg-4 col-md-6">
+            <div class="card" style="border-radius: 10px;">
+                <div class="card-body card-containers">
+                    <div class="row">
+                        <div class="col-7">
+                            <a href="@url">
+                                <div class="tcg-image-container">
+                                    <img id="tcg-image-preview" src="data:image/png;base64,@item.ImageBase64" class="img-fluid" alt="">
+                                    @if (item.FoilType.ToLower().Replace(" ", "") == "foil" ||
+item.FoilType.ToLower().Replace(" ", "") == "etchedfoil")
+                                    {
+                                        <div class="tcg-foil"></div>
+                                    }
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-5 d-flex flex-column">
+
+                            <div class="flex-grow-1">
+                                <a href="@url" style="text-decoration: none; cursor: pointer; color: var(--heading-color);">
+                                    <p class="small text-bold" style="margin-bottom: 5px;">@item.Name</p>
+                                    <p class="text-xs" style="margin-bottom: 5px; height: 75px;">
+                                        @item.CardType <br />
+                                        @item.Rarity.ToUpper()
+                                    </p>
+                                </a>
+                            </div>
+                            <div class="">
+                                <p class="text-xs" style="margin-bottom: 5px;">@item.Count.ToString("n0") listing from</p>
+                                <strong style="margin-bottom: 5px;">@item.PurchaseCurrency.ToUpper() @item.Price.ToString("n2")</strong>
+
+                                <div class="input-group mb-3">
+                                    <input min="@(item.Count > 0 ? 1 : 0)" max="@item.Count" limit="@item.Count" value="1" type="number" class="form-control" id="quantity-@item.Id" name="quantity">
+                                    <button type="button" class="input-group-text btn-add-to-cart" link-id="quantity-@item.Id"><i class="bi bi-cart-plus"></i></button>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+}
+else
+{
+    <h4>No products were found matching your selection.</h4>
+}

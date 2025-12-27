@@ -1,0 +1,127 @@
+﻿
+@using Repository.Extensions;
+
+@model IEnumerable<Dto.Dto.CartDetailsDto>
+
+@{
+    ViewBag.Title = "Cart";
+    var user = Web.Controllers.BaseController.Identity ?? new Dto.User.AuthenticatedUserDto();
+
+    var currency = Model.FirstOrDefault()?.Currency ?? "USD";
+}
+
+<style>
+    .badge {
+        width: 80px;
+    }
+</style>
+
+<section id="service-details" class="service-details section">
+
+    <div class="container section-title aos-init aos-animate mb-0 pb-0" data-aos="fade-up">
+        <h2 class="text-left mb-2">Shopping Cart</h2>
+    </div>
+
+    <div class="container">
+
+        <div class="row">
+            @if (Model.Any())
+            {
+                <div class="col-lg-8">
+                    <div class="services-list" style="border-radius: 10px;">
+                        <table class="w-100" style="border-collapse: separate; border-spacing: 0 10px;">
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr style="background-color: rgba(1, 1, 1, 0.05);">
+                                        <td class="p-3 td-img" style="width: 350px; max-width: 10rem; vertical-align: top; border-top-left-radius: 10px; border-bottom-left-radius: 10px;">
+                                            <div class="tcg-image-container">
+                                                <img id="tcg-image-preview" src="data:image/png;base64,@item.ImageBase64" class="img-fluid" alt="">
+                                                @if (item.FoilType.ToLower().Replace(" ", "") == "foil" ||
+                                                     item.FoilType.ToLower().Replace(" ", "") == "etchedfoil")
+                                                {
+                                                    <div class="tcg-foil"></div>
+                                                }
+                                            </div>
+                                        </td>
+                                        <td class="p-3" style="vertical-align: top; border-top-right-radius: 10px; border-bottom-right-radius: 10px;">
+                                            <h5>@item.ProductName</h5>
+                                            <p class="text-xs">
+                                                @item.FoilType.ToUpper() <br />
+                                                @item.Condition.ToUpper()
+                                            </p>
+
+                                            <div class="input-group mb-4" style="width: 350px; max-width: 10rem;">
+                                                <button type="button" class="input-group-text btn-primary btn-minus" link-id="quantity-@item.Id"><i class="fa fa-minus"></i></button>
+                                                <input value="@item.Quantity" class="form-control bg-white text-center" id="quantity-@item.Id" disabled>
+                                                <button type="button" class="input-group-text btn-primary btn-plus" link-id="quantity-@item.Id"><i class="fa fa-plus"></i></button>
+                                            </div>
+                                            <div class="text-left">
+                                                <strong>@item.Currency @item.Price.ToString("n2")</strong>
+                                                <a href="#" class="text-red m-0 p-0 border-0 d-inline float-right"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+
+                    <div class="services-list" style="border-radius: 10px;">
+                        <div class="row">
+                            <h4 class="col-12 text-center mb-3">Cart Summary</h4>
+                            <p class="col-12">Items <span class="float-right">@Model.Sum(a => a.Quantity).ToString("n0")</span></p>
+                            <p class="col-12">Items Total <span class="float-right">@currency @Model.Sum(a => a.Price).ToString("n2")</span></p>
+
+                            <p class="col-12">Estimated Shipping <span class="float-right">@currency 1.32</span></p>
+                            <h4 class="col-12 mb-0">Subtotal <span class="float-right">@currency @((Model.Sum(a => a.Price) + 1.32M).ToString("n2"))</span></h4>
+                            <p class="small mb-4 text-muted pl-2" style="font-style: italic;">Taxes calculated at checkout</p>
+
+                            <div>
+                                <button class="btn btn-primary mb-3 btn-block">Check Out</button>
+                                <button class="btn btn-warning mb-3 btn-block">Card Payment</button>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            }
+            else
+            {
+                <div class="col-12 text-center pt-0">
+                    <img src="~/Content/website_img/empty-cart.png" class="img-fluid" style=" max-width: 200px; vertical-align: middle;" />
+                    <h3>Your shopping cart is empty.</h3>
+                </div>
+
+                if (user.Id <= 0)
+                {
+                    <div class="col-12 text-center mt-3 mb-3">Sign in your account to view items from previous visit.</div>
+                    <div class="col-12 text-center">
+                        <button class="btn btn-outline-primary mr-3 pr-3 pl-3">Sign Up</button>
+                        <button class="btn btn-primary pr-4 pl-4">Sign In</button>
+                    </div>
+                }
+            }
+        </div>
+
+    </div>
+
+</section>
+
+@section scripts{
+    <script>
+
+        $(document).ready(function () {
+
+
+
+
+
+        });
+
+    </script>
+
+}

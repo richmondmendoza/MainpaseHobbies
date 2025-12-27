@@ -1,0 +1,79 @@
+﻿@using Web.Utils;
+
+@{
+    var info = Web.Controllers.BaseController.SystemInfo;
+}
+
+
+<style>
+    .header-search input {
+        max-width: 200px;
+    }
+
+    .header-search button {
+        white-space: nowrap;
+    }
+
+    .navbar-badge {
+        width: auto !important;
+        top: -7px !important;
+        position: relative !important;
+    }
+</style>
+
+<header id="header" class="header sticky-top">
+
+    <div class="topbar d-flex align-items-center">
+        <div class="container d-flex justify-content-center justify-content-md-between">
+            <div class="contact-info d-flex align-items-center">
+                <i class="bi bi-envelope d-flex align-items-center"><a href="mailto:@info.ContactEmail1">@info.ContactEmail1</a></i>
+                <i class="bi bi-phone d-flex align-items-center ms-4"><a href="tel:@info.ContactNumber1.Replace(" ", "")">@info.ContactNumber1</a></i>
+            </div>
+            <div class="social-links d-none d-md-flex align-items-center">
+                <a href="@info.Twitter" class="twitter" target="_blank"><i class="bi bi-twitter-x"></i></a>
+                <a href="@info.FB" class="facebook" target="_blank"><i class="bi bi-facebook"></i></a>
+                <a href="@info.Insta" class="instagram" target="_blank"><i class="bi bi-instagram"></i></a>
+                <a href="@info.LinkeIn" class="linkedin" target="_blank"><i class="bi bi-linkedin"></i></a>
+                <a href="@Url.Action("Login", "Account", new { area = "portal" })"><i class="bi bi-person-fill"></i></a>
+                <a href="@Url.Action("Cart", "Home", new { area = "" })">
+                    <i class="bi bi-cart">
+                        <span class="navbar-badge badge text-bg-danger" id="cart-count">0</span>
+                    </i>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="branding d-flex align-items-cente">
+
+        <div class="container position-relative d-flex align-items-center justify-content-between">
+            <a href="@Url.Action("Index", "Home", new {area = ""})" class="logo d-flex align-items-center">
+                <!-- Uncomment the line below if you also wish to use an image logo -->
+                <!-- <img src="assets/img/logo.png" alt=""> -->
+                <h1 class="sitename">Mainphase Hobbies</h1>
+            </a>
+            <nav id="navmenu" class="navmenu">
+                <ul>
+                    <li><a href="@Url.Action("Index", "Home", new { area = "" })" class="@Html.RouteIf("", "home", "index", "active")">Home</a></li>
+                    <li><a href="@Url.Action("Events", "Home", new { area = "" })" class="@Html.RouteIf("", "home", "events", "active")">Events</a></li>
+                    <li><a href="@Url.Action("Shop", "Home", new { area = "" })" class="@Html.RouteIf("", "home", "shop|search", "active")">Shop</a></li>
+                    <li><a href="@Url.Action("ContactUs", "Home", new { area = "" })" class="@Html.RouteIf("", "home", "contactus", "active")">Contact Us</a></li>
+                    <li class="d-md-none"><a href="@Url.Action("Index", "Login", new { area = "customer" })">Login</a></li>
+                    <li class="d-md-none"><a href="@Url.Action("Cart", "Home", new { area = "" })" class="@Html.RouteIf("", "home", "cart", "active")">Cart</a></li>
+                    <li>
+                        @using (Html.BeginForm("Search", "Home", FormMethod.Post, new { @class = "d-flex ms-3 header-search", role = "search" }))
+                        {
+                            <input class="form-control input-sm" type="search" name="param" placeholder="Search..." aria-label="Search">
+                            <button class="btn btn-primary btn-sm ms-1" type="submit">Search</button>
+                        }
+                    </li>
+                </ul>
+                <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+            </nav>
+
+        </div>
+
+    </div>
+
+
+</header>

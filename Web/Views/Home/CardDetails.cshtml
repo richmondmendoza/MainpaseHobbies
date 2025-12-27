@@ -1,0 +1,227 @@
+﻿
+@using Repository.Extensions;
+
+@model Web.Models.CardDetailsViewModel
+
+@{
+    ViewBag.Title = "Card Details";
+}
+
+<style>
+    .badge {
+        width: 80px;
+    }
+</style>
+
+<section id="service-details" class="service-details section">
+
+    <div class="container">
+
+        <div class="row gy-4">
+
+            <div class="col-lg-5" data-aos="fade-up" data-aos-delay="100">
+                <div class="services-list">
+                    <div class="tcg-image-container">
+                        <img id="tcg-image-preview" src="data:image/@Model.Details.Image.GetImageExtension().Replace(".", "");base64,@Model.Details.ImageBase64" class="img-fluid" alt="">
+                        @if (Model.Details.FoilType.ToLower().Replace(" ", "") == "foil" ||
+                             Model.Details.FoilType.ToLower().Replace(" ", "") == "etchedfoil")
+                        {
+                            <div class="tcg-foil"></div>
+                        }
+                    </div>
+                </div>
+
+                @*<h4>@Model.Details.PurchaseCurrency @Model.Details.Price.ToString("n2")</h4>*@
+                @*<p>Nam voluptatem quasi numquam quas fugiat ex temporibus quo est. Quia aut quam quod facere ut non occaecati ut aut. Nesciunt mollitia illum tempore corrupti sed eum reiciendis. Maxime modi rerum.</p>*@
+            </div>
+
+            <div class="col-lg-7" data-aos="fade-up" data-aos-delay="200">
+                <img src="assets/img/services.jpg" alt="" class="img-fluid services-img">
+                <h3>@Model.Details.Name</h3>
+                <p>@Model.Details.CardType</p>
+                <p>
+                    Mana Cost: @Html.Raw(Model.Details.ManaCost.TransformToCardSymbols()) <br />
+                    Rarity: @Model.Details.Rarity.ToUpper() <br />
+                    Set Name: @Model.Details.SetName <br />
+                    Artist: @Model.Details.IllustratedBy <br />
+                    Color: @(!string.IsNullOrEmpty(Model.Details.Color)? Model.Details.Color.Replace("|", ", ") : "Colorless")
+                </p>
+                <p>@Html.Raw(Model.Details.Description.TransformToCardSymbols())</p>
+
+                @if (!string.IsNullOrEmpty(Model.ScryfallCard.FlavorText))
+                {
+                    <p style="font-style: italic;">@Model.ScryfallCard.FlavorText</p>
+                }
+
+
+                <p>
+                    <div class="row">
+                        <label class="col-md-12">Legalities</label>
+                        <div class="col-md-6">
+                            <div class="mb-1">
+                                @switch (Model.ScryfallCard.Legalities.Standard.ToLower().Replace(" ", "").Replace("-", "").Replace("_", ""))
+                                {
+                                    case "legal":<span class="badge bg-success mr-2">LEGAL</span>break;
+                                    case "notlegal":<span class="badge bg-secondary mr-2">NOT LEGAL</span>break;
+                                    case "banned":<span class="badge bg-danger mr-2">BANNED</span>break;
+                                }
+                                <span>Standard</span>
+                            </div>
+                            <div class="mb-1">
+                                @switch (Model.ScryfallCard.Legalities.Pioneer.ToLower().Replace(" ", "").Replace("-", "").Replace("_", ""))
+                                {
+                                    case "legal":<span class="badge bg-success mr-2">LEGAL</span>break;
+                                    case "notlegal":<span class="badge bg-secondary mr-2">NOT LEGAL</span>break;
+                                    case "banned":<span class="badge bg-danger mr-2">BANNED</span>break;
+                                }
+                                <span>Pioneer</span>
+                            </div>
+                            <div class="mb-1">
+                                @switch (Model.ScryfallCard.Legalities.Modern.ToLower().Replace(" ", "").Replace("-", "").Replace("_", ""))
+                                {
+                                    case "legal":<span class="badge bg-success mr-2">LEGAL</span>break;
+                                    case "notlegal":<span class="badge bg-secondary mr-2">NOT LEGAL</span>break;
+                                    case "banned":<span class="badge bg-danger mr-2">BANNED</span>break;
+                                }
+                                <span>Modern</span>
+                            </div>
+                            <div class="mb-1">
+                                @switch (Model.ScryfallCard.Legalities.Legacy.ToLower().Replace(" ", "").Replace("-", "").Replace("_", ""))
+                                {
+                                    case "legal":<span class="badge bg-success mr-2">LEGAL</span>break;
+                                    case "notlegal":<span class="badge bg-secondary mr-2">NOT LEGAL</span>break;
+                                    case "banned":<span class="badge bg-danger mr-2">BANNED</span>break;
+                                }
+                                <span>Legacy</span>
+                            </div>
+                            <div class="mb-1">
+                                @switch (Model.ScryfallCard.Legalities.Vintage.ToLower().Replace(" ", "").Replace("-", "").Replace("_", ""))
+                                {
+                                    case "legal":<span class="badge bg-success mr-2">LEGAL</span>break;
+                                    case "notlegal":<span class="badge bg-secondary mr-2">NOT LEGAL</span>break;
+                                    case "banned":<span class="badge bg-danger mr-2">BANNED</span>break;
+                                }
+                                <span>Modern</span>
+                            </div>
+                            <div class="mb-1">
+                                @switch (Model.ScryfallCard.Legalities.Commander.ToLower().Replace(" ", "").Replace("-", "").Replace("_", ""))
+                                {
+                                    case "legal":<span class="badge bg-success mr-2">LEGAL</span>break;
+                                    case "notlegal":<span class="badge bg-secondary mr-2">NOT LEGAL</span>break;
+                                    case "banned":<span class="badge bg-danger mr-2">BANNED</span>break;
+                                }
+                                <span>Modern</span>
+                            </div>
+                            <div class="mb-1">
+                                @switch (Model.ScryfallCard.Legalities.Oathbreaker.ToLower().Replace(" ", "").Replace("-", "").Replace("_", ""))
+                                {
+                                    case "legal":<span class="badge bg-success mr-2">LEGAL</span>break;
+                                    case "notlegal":<span class="badge bg-secondary mr-2">NOT LEGAL</span>break;
+                                    case "banned":<span class="badge bg-danger mr-2">BANNED</span>break;
+                                }
+                                <span>Modern</span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="mb-1">
+                                @switch (Model.ScryfallCard.Legalities.Alchemy.ToLower().Replace(" ", "").Replace("-", "").Replace("_", ""))
+                                {
+                                    case "legal":<span class="badge bg-success mr-2">LEGAL</span>break;
+                                    case "notlegal":<span class="badge bg-secondary mr-2">NOT LEGAL</span>break;
+                                    case "banned":<span class="badge bg-danger mr-2">BANNED</span>break;
+                                }
+                                <span>Alchemy</span>
+                            </div>
+                            <div class="mb-1">
+                                @switch (Model.ScryfallCard.Legalities.Historic.ToLower().Replace(" ", "").Replace("-", "").Replace("_", ""))
+                                {
+                                    case "legal":<span class="badge bg-success mr-2">LEGAL</span>break;
+                                    case "notlegal":<span class="badge bg-secondary mr-2">NOT LEGAL</span>break;
+                                    case "banned":<span class="badge bg-danger mr-2">BANNED</span>break;
+                                }
+                                <span>Historic</span>
+                            </div>
+                            <div class="mb-1">
+                                @switch (Model.ScryfallCard.Legalities.Brawl.ToLower().Replace(" ", "").Replace("-", "").Replace("_", ""))
+                                {
+                                    case "legal":<span class="badge bg-success mr-2">LEGAL</span>break;
+                                    case "notlegal":<span class="badge bg-secondary mr-2">NOT LEGAL</span>break;
+                                    case "banned":<span class="badge bg-danger mr-2">BANNED</span>break;
+                                }
+                                <span>Brawl</span>
+                            </div>
+                            <div class="mb-1">
+                                @switch (Model.ScryfallCard.Legalities.Timeless.ToLower().Replace(" ", "").Replace("-", "").Replace("_", ""))
+                                {
+                                    case "legal":<span class="badge bg-success mr-2">LEGAL</span>break;
+                                    case "notlegal":<span class="badge bg-secondary mr-2">NOT LEGAL</span>break;
+                                    case "banned":<span class="badge bg-danger mr-2">BANNED</span>break;
+                                }
+                                <span>Timeless</span>
+                            </div>
+                            <div class="mb-1">
+                                @switch (Model.ScryfallCard.Legalities.Pauper.ToLower().Replace(" ", "").Replace("-", "").Replace("_", ""))
+                                {
+                                    case "legal":<span class="badge bg-success mr-2">LEGAL</span>break;
+                                    case "notlegal":<span class="badge bg-secondary mr-2">NOT LEGAL</span>break;
+                                    case "banned":<span class="badge bg-danger mr-2">BANNED</span>break;
+                                }
+                                <span>Pauper</span>
+                            </div>
+                            <div class="mb-1">
+                                @switch (Model.ScryfallCard.Legalities.Penny.ToLower().Replace(" ", "").Replace("-", "").Replace("_", ""))
+                                {
+                                    case "legal":<span class="badge bg-success mr-2">LEGAL</span>break;
+                                    case "notlegal":<span class="badge bg-secondary mr-2">NOT LEGAL</span>break;
+                                    case "banned":<span class="badge bg-danger mr-2">BANNED</span>break;
+                                }
+                                <span>Penny</span>
+                            </div>
+                        </div>
+                    </div>
+                </p>
+
+                <p>
+                    Condition: @Model.Details.Condition.Replace("_", " ").ToUpper() <br />
+                    Type: @Model.Details.FoilType.ToUpper() <br />
+                </p>
+
+                <p class="h4">
+                    Stock: @Model.Details.InventoryCounts.Sum(a => a.Quantity).ToString("n0")
+                </p>
+                <p>
+                    <h3>@Model.Details.PurchaseCurrency.ToUpper() @Model.Details.Price.ToString("n2")</h3>
+                </p>
+                <div class="row">
+                    <div class="col-auto pr-0 ml-0">
+                        <input type="number" min="1" max="@Model.Details.Count" value="1" class="form-control text-sm" id="quantity" name="quantity" />
+                    </div>
+                    <div class="col-5 pl-0 ml-0">
+                        <btn id="btn-add-to-cart" class="btn btn-primary">Add to cart</btn>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+@section scripts{
+    <script>
+
+        $(document).ready(function () {
+            $('#btn-add-to-cart').on('click', function (e) {
+                AddToCart({
+                    limit: @((int)Model.Details.Count),
+                    value: $('#quantity').val(),
+                    cardId: "@Infrastructure.Fletcher.Encrypt(Model.Details.Id.ToString())",
+                });
+            });
+        });
+
+    </script>
+
+}

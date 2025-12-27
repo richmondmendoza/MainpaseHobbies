@@ -1,0 +1,210 @@
+﻿
+@model List<Dto.Dto.InventoryDetailsDto>
+
+@{
+    ViewBag.Title = "Upload";
+}
+
+<div class="row">
+    <div class="col-md-12">
+
+        @using (Html.BeginForm("Upload", "Inventory", FormMethod.Post, new { area = "portal", id = "frm-upload", enctype = "multipart/form-data" }))
+        {
+            <div class="card">
+                <div class="card-header pt-4 pb-4">
+                    <h3 class="card-title">Upload Inventory</h3>
+                    @*<div class="card-tools">
+                            <a href="@Url.Action("GoBack", "Base", new {area = "", ReturnUrl = Url.Action("List", "Inventory", new {area = "portal"}) })" class="mr-2"><i class="fa fa-times"></i></a>
+                        </div>*@
+                </div>
+
+                <div class="card-body mb-0">
+                    <div class="mb-3">
+                        <input type="file" class="form-control border-0" id="file" name="file" accept=".xls,.xlsx, .csv" required>
+                        <div class="form-text">
+                            Allowed formats: .xls, .xlsx, .csv
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card-footer text-right">
+                    <a href="@Url.Action("GoBack", "Base", new {area = "", ReturnUrl = Url.Action("List", "Item", new {area = "portal"})})" class="btn btn-default mr-2">Cancel</a>
+                    <a href="javascript" id="btn-upload" class="btn btn-primary">Upload</a>
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="col-md-12">
+            @using (Html.BeginForm("SaveUploaded", "Inventory", FormMethod.Post, new { area = "portal", id = "frm-save-data", enctype = "multipart/form-data" }))
+            {
+                <div class="card">
+                    <div class="card-header pt-4 pb-4">
+                        <h3 class="card-title">
+                            Data to be uploaded
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <table id="data-table" class="table table-sm table-bordered w-100 table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Set Code</th>
+                                    <th>Set Name</th>
+                                    <th>Collector Number</th>
+                                    <th>Foil Type</th>
+                                    <th>Rarity</th>
+                                    <th>Quantity</th>
+                                    <th>Manabox ID</th>
+                                    <th>Scryfall ID</th>
+                                    <th>Purchase Price</th>
+                                    <th>Misprint</th>
+                                    <th>Altered</th>
+                                    <th>Condition</th>
+                                    <th>Language</th>
+                                    <th>Purchase Currency</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @if (Model.Any())
+                                {
+                                    for (int index = 0; index < Model.Count(); index++)
+                                    {
+                                        <tr>
+                                            <td>@Model[index].Name</td>
+                                            <td>@Model[index].SetCode</td>
+                                            <td>@Model[index].SetName</td>
+                                            <td>@Model[index].Collector</td>
+                                            <td>@Model[index].FoilType</td>
+                                            <td>@Model[index].Rarity</td>
+                                            <td>@Model[index].Count.ToString("n0")</td>
+                                            <td>@Model[index].ManaboxId</td>
+                                            <td>@Model[index].ScryfallId</td>
+                                            <td>@Model[index].Price</td>
+                                            <td>@Model[index].Misprint</td>
+                                            <td>@Model[index].Tampered</td>
+                                            <td>@Model[index].Condition</td>
+                                            <td>@Model[index].Language</td>
+                                            <td>
+                                                @Model[index].PurchaseCurrency
+
+                                                @Html.HiddenFor(a => a[index].Name)
+                                                @Html.HiddenFor(a => a[index].SetCode)
+                                                @Html.HiddenFor(a => a[index].SetName)
+                                                @Html.HiddenFor(a => a[index].Image)
+                                                @Html.HiddenFor(a => a[index].Collector)
+                                                @Html.HiddenFor(a => a[index].Language)
+                                                @Html.HiddenFor(a => a[index].FoilType)
+                                                @Html.HiddenFor(a => a[index].Rarity)
+                                                @Html.HiddenFor(a => a[index].ManaboxId)
+                                                @Html.HiddenFor(a => a[index].ScryfallId)
+                                                @Html.HiddenFor(a => a[index].Price)
+                                                @Html.HiddenFor(a => a[index].Misprint)
+                                                @Html.HiddenFor(a => a[index].Tampered)
+                                                @Html.HiddenFor(a => a[index].Condition)
+                                                @Html.HiddenFor(a => a[index].PurchaseCurrency)
+                                                @Html.HiddenFor(a => a[index].DateCreated)
+                                                @Html.HiddenFor(a => a[index].CreatedBy)
+                                                @Html.HiddenFor(a => a[index].IsDeleted)
+                                                @Html.HiddenFor(a => a[index].Description)
+                                                @Html.HiddenFor(a => a[index].Color)
+
+                                                @for (int countIndex = 0; countIndex < Model[index].InventoryCounts.Count(); countIndex++)
+                                                {
+                                                    @Html.HiddenFor(a => a[index].InventoryCounts[countIndex].Quantity)
+                                                    @Html.HiddenFor(a => a[index].InventoryCounts[countIndex].UOM)
+                                                    @Html.HiddenFor(a => a[index].InventoryCounts[countIndex].DateCreated)
+                                                    @Html.HiddenFor(a => a[index].InventoryCounts[countIndex].Type)
+                                                    @Html.HiddenFor(a => a[index].InventoryCounts[countIndex].Remarks)
+                                                    @Html.HiddenFor(a => a[index].InventoryCounts[countIndex].CreatedBy)
+                                                    @Html.HiddenFor(a => a[index].InventoryCounts[countIndex].IsDeleted)
+                                                }
+
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                    @if (Model.Any())
+                    {
+                        <div class="card-footer text-right">
+                            <button type="submit" class="btn btn-primary">Save Data</button>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section scripts{
+    <script>
+
+        var accountTable = $('#data-table').DataTable({
+            "processing": true,
+            //"serverSide": true,
+            "stateSave": true,
+            "searching": false,
+            "bLengthChange": false,
+            "responsive": true,
+            "autoWidth": false,
+            "paging": false,
+            buttons: [],
+            "lengthMenu": [[-1], ['All']]
+        });
+
+        $('#frm-upload').find('#btn-upload').on('click', function (e) {
+            e.preventDefault();
+            $('.preloader').css({ 'height': '100vh' });
+            $('.preloader').find('#spinner').show();
+
+            const fileInput = document.getElementById('file');
+            const file = fileInput.files[0];
+
+            if (!file) {
+                $('#message-modal').modalMessage({ 'message': "Please select a file." });
+                //alert('Please select a file.');
+                $('.preloader').css({ 'height': '0px' });
+                $('.preloader').find('#spinner').hide();
+                return;
+            }
+
+            const allowedTypes = [
+                'application/vnd.ms-excel',
+                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                'text/csv',
+                'application/csv'
+            ];
+
+            if (!allowedTypes.includes(file.type)) {
+                $('#message-modal').modalMessage({ 'message': "Invalid file type. Please upload an Excel file." });
+                //alert('Invalid file type. Please upload an Excel file.');
+                fileInput.value = '';
+                $('.preloader').css({ 'height': '0px' });
+                $('.preloader').find('#spinner').hide();
+                return;
+            }
+
+            $('#frm-upload').submit();
+
+        });
+
+        $('#frm-save-data').on('submit', function (e) {
+            $('.preloader').css({ 'height': '100vh' });
+            $('.preloader').find('#spinner').show();
+        });
+
+        $(document).ready(function () {
+
+        });
+
+    </script>
+}

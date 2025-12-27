@@ -1,0 +1,155 @@
+﻿@model Web.Models.UserViewModel
+
+@{
+    ViewBag.Title = "Add User";
+    var user = Web.Controllers.BaseController.Identity;
+}
+
+
+<link href="~/Content/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
+<link href="~/Content/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css" rel="stylesheet" />
+<link href="~/Content/assets/plugins/monUpload/monUpload.css" rel="stylesheet" />
+
+<style>
+</style>
+
+<div class="row">
+    <div class="col-md-6">
+
+        @using (Html.BeginForm("Add", "Account", FormMethod.Post, new { area = "portal", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(a => a.Id)
+            @Html.HiddenFor(a => a.IsDeleted)
+            @Html.HiddenFor(a => a.DateCreated)
+            @Html.HiddenFor(a => a.Role)
+
+            <div class="card">
+                <div class="card-header pt-4 pb-4">
+                    <h3 class="card-title">New User</h3>
+                </div>
+
+                <div class="card-body mb-0 row" id="row-with-image">
+
+                    <div class="col-md-12" id="element1">
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">First Name</label>
+                            <div class="col-lg-9 col-md-7 col-sm-12">
+                                @Html.TextBoxFor(a => a.Firstname, new { @class = "form-control", autocomplete = "off" })
+                                @Html.ValidationMessageFor(a => a.Firstname)
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">Middle Name</label>
+                            <div class="col-lg-9 col-md-7 col-sm-12">
+                                @Html.TextBoxFor(a => a.Middlename, new { @class = "form-control", autocomplete = "off" })
+                                @Html.ValidationMessageFor(a => a.Middlename)
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">Last Name</label>
+                            <div class="col-lg-9 col-md-7 col-sm-12">
+                                @Html.TextBoxFor(a => a.LastName, new { @class = "form-control", autocomplete = "off" })
+                                @Html.ValidationMessageFor(a => a.LastName)
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">Username</label>
+                            <div class="col-lg-9 col-md-7 col-sm-12">
+                                @Html.TextBoxFor(a => a.Username, new { @class = "form-control", autocomplete = "off" })
+                                @Html.ValidationMessageFor(a => a.Username)
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">&nbsp;</label>
+                            <div class="col-lg-9 col-md-7 col-sm-12">
+                                <label>
+                                    <input type="checkbox" id="chk-customer" @(Model.Roles.Any(a => a.Contains(Dto.Enums.UserRoleEnum.Customer.ToString())) ? "checked" : "") /> Use this account to log into Customer Profile
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">&nbsp;</label>
+                            <div class="col-lg-9 col-md-7 col-sm-12 row">
+                                <div class="col-6">
+                                    <label><input type="checkbox" id="chk-portal-user" @(Model.Roles.Any(a => a.Contains(Dto.Enums.UserRoleEnum.PortalUser.ToString())) ? "checked" : "") /> Portal User</label>
+                                </div>
+
+                                @if (user.Roles.Any(a => a.Contains(Dto.Enums.UserRoleEnum.PortalAdmin.ToString())))
+                                {
+                                    <div class="col-6">
+                                        <label><input type="checkbox" id="chk-portal-admin" @(Model.Roles.Any(a => a.Contains(Dto.Enums.UserRoleEnum.PortalAdmin.ToString())) ? "checked" : "") /> Portal Admin</label>
+                                    </div>
+                                }
+
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="card-footer text-right">
+                    <a href="@Url.Action("GoBack", "Base", new {area = "", ReturnUrl = Url.Action("List", "Item", new {area = "portal"})})" class="btn btn-default mr-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+
+            </div>
+        }
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/Content/assets/plugins/select2/js/select2.min.js"></script>
+    <script src="~/Content/assets/plugins/monUpload/monUpload.js"></script>
+
+    <script>
+
+        function UpdateRole(role, add) {
+            var userRole = $('#Role').val();
+
+            if (add) {
+                userRole = userRole + role + "|";
+            } else {
+                userRole = userRole.replace(new RegExp(role + "\\|", "g"), "")
+            }
+
+            $('#Role').val(userRole);
+        }
+
+        $(document).ready(function () {
+
+            $('.select2').select2({ "theme": "bootstrap4" });
+
+            $('#chk-portal-admin').on('change', function () {
+                var value = '@Dto.Enums.UserRoleEnum.PortalAdmin';
+                var isAdd = $(this).is(':checked');
+
+                UpdateRole(value, this.checked);
+            });
+
+            $('#chk-portal-user').on('change', function () {
+                var value = '@Dto.Enums.UserRoleEnum.PortalUser';
+                var isAdd = $(this).is(':checked');
+
+                UpdateRole(value, this.checked);
+            });
+
+            $('#chk-customer').on('change', function () {
+                var value = '@Dto.Enums.UserRoleEnum.Customer';
+                var isAdd = $(this).is(':checked');
+
+                UpdateRole(value, this.checked);
+            });
+
+
+        })
+    </script>
+}

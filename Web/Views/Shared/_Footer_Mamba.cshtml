@@ -1,0 +1,80 @@
+﻿
+@{
+    var info = Web.Controllers.BaseController.SystemInfo;
+}
+
+<footer id="footer" class="footer light-background">
+
+    <div class="container footer-top">
+        <div class="row gy-4">
+            <div class="col-lg-4 col-md-6 footer-about">
+                <a href="index.html" class="logo d-flex align-items-center">
+                    <span class="sitename">@info.Name</span>
+                </a>
+                <div class="footer-contact pt-3">
+                    <p>@info.Address1</p>
+                    <p>@info.Address2</p>
+                    <p class="mt-3"><strong>Phone:</strong> <span>@info.ContactNumber1</span></p>
+                    <p><strong>Email:</strong> <span>@info.ContactEmail1</span></p>
+                </div>
+                <div class="social-links d-flex mt-4">
+                    <a target="_blank" href="@info.Twitter"><i class="bi bi-twitter-x"></i></a>
+                    <a target="_blank" href="@info.FB"><i class="bi bi-facebook"></i></a>
+                    <a target="_blank" href="@info.Insta"><i class="bi bi-instagram"></i></a>
+                    <a target="_blank" href="@info.LinkeIn"><i class="bi bi-linkedin"></i></a>
+                </div>
+            </div>
+
+            <div class="col-lg-2 col-md-3 footer-links">
+                <h4>Useful Links</h4>
+                <ul>
+                    <li><a href="@Url.Action("Index", "Home", new { area = "" })">Home</a></li>
+                    <li><a href="@Url.Action("AboutUs", "Home", new { area = "" })">About us</a></li>
+                    <li><a href="@Url.Action("ContactUs", "Home", new { area = "" })">Contact us</a></li>
+                    <li><a href="@Url.Action("Shop", "Home", new { area = "" })">Shop</a></li>
+                    <li><a href="@Url.Action("TermsOfService", "Home", new { area = "" })">Terms of service</a></li>
+                    <li><a href="@Url.Action("PrivacyPolicy", "Home", new { area = "" })">Privacy policy</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-3 footer-links">
+                <h4>Our Services</h4>
+                <ul>
+                    <li><a href="#">Web Design</a></li>
+                    <li><a href="#">Web Development</a></li>
+                    <li><a href="#">Product Management</a></li>
+                    <li><a href="#">Marketing</a></li>
+                    <li><a href="#">Graphic Design</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-3 footer-links">
+                <h4>Hic solutasetp</h4>
+                <ul>
+                    <li><a href="#">Molestiae accusamus iure</a></li>
+                    <li><a href="#">Excepturi dignissimos</a></li>
+                    <li><a href="#">Suscipit distinctio</a></li>
+                    <li><a href="#">Dilecta</a></li>
+                    <li><a href="#">Sit quas consectetur</a></li>
+                </ul>
+            </div>
+
+            <div class="col-lg-2 col-md-3 footer-links">
+                <h4>Nobis illum</h4>
+                <ul>
+                    <li><a href="#">Ipsam</a></li>
+                    <li><a href="#">Laudantium dolorum</a></li>
+                    <li><a href="#">Dinera</a></li>
+                    <li><a href="#">Trodelas</a></li>
+                    <li><a href="#">Flexo</a></li>
+                </ul>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="container copyright text-center mt-4">
+        <p>© <span>Copyright</span> <strong class="px-1 sitename">@info.Name</strong> <span>All Rights Reserved</span></p>
+    </div>
+
+</footer>

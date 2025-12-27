@@ -1,0 +1,101 @@
+﻿@* ====== Admin LTE version 4 ====== *@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IMS | @ViewBag.Title</title>
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+
+    <link rel="stylesheet" href="~/Content/assets/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
+    <link rel="stylesheet" href="~/Content/assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
+    <link rel="stylesheet" href="~/Content/assets/plugins/daterangepicker/daterangepicker.css">
+    <link rel="stylesheet" href="~/Content/assets/plugins/summernote/summernote-bs4.min.css">
+    <link rel="stylesheet" href="~/Content/assets/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
+
+    @Styles.Render("~/bundles/DataTables")
+
+    @Styles.Render("~/Content/css")
+    @*@Scripts.Render("~/bundles/modernizr")*@
+
+    <style>
+    </style>
+</head>
+<body class="hold-transition sidebar-mini">
+    <div class="wrapper">
+
+        <!-- Preloader -->
+        <div class="preloader flex-column justify-content-center align-items-center">
+            <img class="animation__shake" src="~/Content/assets/img/AdminLTELogo.png" alt="AdminLTELogo" height="60" width="60">
+        </div>
+        <!-- End Preloader-->
+
+        @Html.Partial("_Header")
+        @Html.Partial("_Sidebar")
+        <div class="content-wrapper">
+            @Html.Partial("_ContentHeader")
+            <section class="app-content">
+                <div class="container-fluid">
+                    @RenderBody()
+                </div>
+            </section>
+        </div>
+        @Html.Partial("_ControlSidebar")
+        @Html.Partial("_Footer")
+        <div class="sidebar-overlay"></div>
+    </div>
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/bundles/jqueryval")
+
+    @Scripts.Render("~/plugin/DataTables")
+
+    <script src="~/Content/assets/plugins/moment/moment.min.js"></script>
+    <script src="~/Content/assets/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="~/Content/assets/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
+    <script src="~/Content/assets/plugins/summernote/summernote-bs4.min.js"></script>
+    <script src="~/Content/assets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
+
+    <script src="~/Content/assets/plugins/popper/umd/popper.min.js"></script>
+    <script src="~/Content/assets/plugins/jszip/jszip.min.js"></script>
+    <script src="~/Content/assets/plugins/pdfmake/pdfmake.min.js"></script>
+    <script src="~/Content/assets/plugins/pdfmake/vfs_fonts.js"></script>
+    <script src="~/Scripts/jquery.PrintArea.js"></script>
+
+    @Scripts.Render("~/plugin/adminLte")
+    @RenderSection("scripts", required: false)
+
+    <script>
+
+        if ($('li a').hasClass('active')) {
+            $('li a.active').parent().addClass('menu-open').parent().addClass('menu-open').parent().addClass('menu-open').parent().addClass('menu-open');
+        };
+
+        if ($('li.has-treeview').hasClass('active')) {
+            $('li.has-treeview.active > a').addClass('active');
+            $('li.has-treeview.active').addClass('menu-open');
+        };
+
+        function Print(elementToPrint) {
+            $(elementToPrint).printArea({
+                mode: "popup",
+                popHt: 1080,
+                popWd: 1080,
+                popX: 500,
+                popY: 600,
+                strict: true
+            });
+        }
+
+        $(document).ready(function () {
+
+        });
+
+    </script>
+
+</body>
+</html>
