@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="b337a4c3172348208ce9b619a1137d2a" Name="Diagram1">
+        <EntityTypeShape EntityType="IMSModel.AuditLog" Width="1.5" PointX="5.75" PointY="6.75" />
+        <EntityTypeShape EntityType="IMSModel.CustomerDetail" Width="1.5" PointX="7.75" PointY="5.75" />
+        <EntityTypeShape EntityType="IMSModel.Inventory" Width="1.5" PointX="0.75" PointY="1.125" />
+        <EntityTypeShape EntityType="IMSModel.Inventory_Count" Width="1.5" PointX="3" PointY="1.25" />
+        <EntityTypeShape EntityType="IMSModel.Order" Width="1.5" PointX="5.75" PointY="1.125" />
+        <EntityTypeShape EntityType="IMSModel.Order_Item" Width="1.5" PointX="8" PointY="2" />
+        <EntityTypeShape EntityType="IMSModel.System_Banner" Width="1.5" PointX="0.75" PointY="8.75" />
+        <EntityTypeShape EntityType="IMSModel.System_WebsiteInfo" Width="1.5" PointX="2.75" PointY="8.75" />
+        <EntityTypeShape EntityType="IMSModel.User" Width="1.5" PointX="9.75" PointY="5.75" />
+        <EntityTypeShape EntityType="IMSModel.User_Session" Width="1.5" PointX="10.75" PointY="0.75" />
+        <EntityTypeShape EntityType="IMSModel.Event" Width="1.5" PointX="7.75" PointY="10.75" />
+        <AssociationConnector Association="IMSModel.FK_Inventory_Count_Inventory" />
+        <AssociationConnector Association="IMSModel.FK_Order_Item_Order" />
+        <EntityTypeShape EntityType="IMSModel.Cart" Width="1.5" PointX="3" PointY="5" />
+        <AssociationConnector Association="IMSModel.FK_Cart_Inventory" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

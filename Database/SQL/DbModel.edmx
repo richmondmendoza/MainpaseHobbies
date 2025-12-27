@@ -1,0 +1,795 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+    <Schema Namespace="IMSModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="AuditLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="TableName" Type="nvarchar(max)" />
+          <Property Name="Action" Type="nvarchar(max)" />
+          <Property Name="Data" Type="text" Nullable="false" />
+          <Property Name="CreatedBy" Type="int" Nullable="false" />
+          <Property Name="ReviewedBy" Type="int" />
+          <Property Name="DateReviewed" Type="datetime" />
+          <Property Name="ApprovedBy" Type="int" />
+          <Property Name="DateApproved" Type="datetime" />
+          <Property Name="CreatedByUsername" Type="nvarchar" MaxLength="150" />
+          <Property Name="ReviewedByUsername" Type="nvarchar" MaxLength="150" />
+          <Property Name="ApprovedByUsername" Type="nvarchar" MaxLength="150" />
+        </EntityType>
+        <EntityType Name="Cart">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="InventoryId" Type="int" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="Quantity" Type="int" Nullable="false" />
+          <Property Name="UserSessionId" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="CustomerDetails">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Email" Type="nvarchar" MaxLength="250" />
+          <Property Name="Firstname" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="Lastname" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="Mobile" Type="nvarchar" MaxLength="250" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="Address1" Type="nvarchar" MaxLength="250" />
+          <Property Name="Address2" Type="nvarchar" MaxLength="250" />
+          <Property Name="ShippingAddress1" Type="nvarchar" MaxLength="250" />
+          <Property Name="ShippingAddress2" Type="nvarchar" MaxLength="250" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="Events">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="DateCreated" />
+            <PropertyRef Name="Title" />
+            <PropertyRef Name="IsActive" />
+          </Key>
+          <Property Name="Id" Type="int" Nullable="false" />
+          <Property Name="DateOfEvent" Type="datetime" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="Body" Type="text" />
+          <Property Name="Title" Type="varchar(max)" Nullable="false" />
+          <Property Name="SubTitle" Type="varchar(max)" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Inventory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Image" Type="varbinary(max)" />
+          <Property Name="Name" Type="varchar(max)" Nullable="false" />
+          <Property Name="SetCode" Type="varchar" MaxLength="150" />
+          <Property Name="SetName" Type="varchar(max)" />
+          <Property Name="Collector" Type="varchar(max)" />
+          <Property Name="FoilType" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="Rarity" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="ManaboxId" Type="int" Nullable="false" />
+          <Property Name="ScryfallId" Type="varchar(max)" Nullable="false" />
+          <Property Name="Price" Type="decimal" Precision="18" Scale="3" Nullable="false" />
+          <Property Name="Misprint" Type="bit" Nullable="false" />
+          <Property Name="Tampered" Type="bit" Nullable="false" />
+          <Property Name="Condition" Type="text" Nullable="false" />
+          <Property Name="Language" Type="varchar" MaxLength="50" />
+          <Property Name="PurchaseCurrency" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="Description" Type="text" />
+          <Property Name="Color" Type="varchar" MaxLength="150" />
+          <Property Name="ManaCost" Type="varchar" MaxLength="250" />
+          <Property Name="CardType" Type="varchar(max)" />
+          <Property Name="IllustratedBy" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="Inventory_Count">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="InventoryId" Type="int" Nullable="false" />
+          <Property Name="Quantity" Type="decimal" Precision="18" Scale="3" Nullable="false" />
+          <Property Name="UOM" Type="varchar" MaxLength="50" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="Type" Type="int" Nullable="false" />
+          <Property Name="CreatedBy" Type="varchar" MaxLength="150" Nullable="false" />
+          <Property Name="Remarks" Type="text" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Order">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="DueDate" Type="datetime" />
+          <Property Name="OrderNumber" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="InvoiceNumber" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="CustomerName" Type="nvarchar" MaxLength="250" Nullable="false" />
+          <Property Name="Address1" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="Address2" Type="nvarchar(max)" />
+          <Property Name="ContactNumber" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="ContactEmail" Type="nvarchar" MaxLength="150" />
+          <Property Name="PaymentMethod" Type="int" Nullable="false" />
+          <Property Name="SubTotal" Type="decimal" Precision="18" Scale="3" Nullable="false" />
+          <Property Name="Tax" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="Shipping" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="Total" Type="decimal" Precision="18" Scale="3" />
+          <Property Name="BookAccountNumber" Type="nvarchar" MaxLength="150" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="DeliveryStatus" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Order_Item">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="OrderId" Type="int" Nullable="false" />
+          <Property Name="ProductName" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="SubName" Type="nvarchar(max)" />
+          <Property Name="SerialNumber" Type="nvarchar(max)" />
+          <Property Name="Description" Type="nvarchar(max)" />
+          <Property Name="Quantity" Type="int" Nullable="false" />
+          <Property Name="Price" Type="decimal" Precision="18" Scale="3" Nullable="false" />
+          <Property Name="Total" Type="decimal" Precision="18" Scale="3" Nullable="false" />
+        </EntityType>
+        <EntityType Name="System_Banner">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Image" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="System_WebsiteInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Name" Type="varchar" MaxLength="100" Nullable="false" />
+          <Property Name="LongName" Type="text" />
+          <Property Name="Website" Type="text" />
+          <Property Name="Email" Type="text" />
+          <Property Name="ContactNumber1" Type="text" />
+          <Property Name="ContactNumber2" Type="text" />
+          <Property Name="ContactEmail1" Type="text" />
+          <Property Name="ContactEmail2" Type="text" />
+          <Property Name="Address1" Type="text" />
+          <Property Name="Address2" Type="text" />
+          <Property Name="WorkingHour" Type="text" />
+          <Property Name="FB" Type="text" />
+          <Property Name="Insta" Type="text" />
+          <Property Name="Twitter" Type="text" />
+          <Property Name="LinkeIn" Type="text" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Firstname" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Middlename" Type="nvarchar" MaxLength="150" />
+          <Property Name="LastName" Type="nvarchar" MaxLength="150" Nullable="false" />
+          <Property Name="Username" Type="nvarchar" MaxLength="15" Nullable="false" />
+          <Property Name="Password" Type="nvarchar(max)" />
+          <Property Name="PasswordKey" Type="nvarchar(max)" />
+          <Property Name="DateCreated" Type="datetime" Nullable="false" />
+          <Property Name="LastLoginDate" Type="datetime" />
+          <Property Name="InvalidLoginDate" Type="datetime" />
+          <Property Name="InvalidLoginCounter" Type="int" Nullable="false" />
+          <Property Name="Role" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="IsDeleted" Type="bit" Nullable="false" />
+          <Property Name="IsLocked" Type="bit" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User_Session">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="Token" Type="nvarchar(max)" />
+          <Property Name="Date" Type="datetime" Nullable="false" />
+          <Property Name="LastDateOfActivity" Type="datetime" Nullable="false" />
+          <Property Name="IsTerminated" Type="bit" Nullable="false" />
+          <Property Name="IPAddress" Type="varchar" MaxLength="150" />
+          <Property Name="FullName" Type="varchar" MaxLength="150" />
+        </EntityType>
+        <Association Name="FK_Cart_Inventory">
+          <End Role="Inventory" Type="Self.Inventory" Multiplicity="1" />
+          <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Inventory">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="InventoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Inventory_Count_Inventory">
+          <End Role="Inventory" Type="Self.Inventory" Multiplicity="1" />
+          <End Role="Inventory_Count" Type="Self.Inventory_Count" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Inventory">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Inventory_Count">
+              <PropertyRef Name="InventoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Order_Item_Order">
+          <End Role="Order" Type="Self.Order" Multiplicity="1" />
+          <End Role="Order_Item" Type="Self.Order_Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Order">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order_Item">
+              <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="IMSModelStoreContainer">
+          <EntitySet Name="AuditLog" EntityType="Self.AuditLog" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Cart" EntityType="Self.Cart" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="CustomerDetails" EntityType="Self.CustomerDetails" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Inventory" EntityType="Self.Inventory" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Inventory_Count" EntityType="Self.Inventory_Count" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Order" EntityType="Self.Order" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Order_Item" EntityType="Self.Order_Item" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="System_Banner" EntityType="Self.System_Banner" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="System_WebsiteInfo" EntityType="Self.System_WebsiteInfo" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User_Session" EntityType="Self.User_Session" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Events" EntityType="Self.Events" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [Events].[Id] AS [Id], 
+    [Events].[DateOfEvent] AS [DateOfEvent], 
+    [Events].[DateCreated] AS [DateCreated], 
+    [Events].[Body] AS [Body], 
+    [Events].[Title] AS [Title], 
+    [Events].[SubTitle] AS [SubTitle], 
+    [Events].[IsActive] AS [IsActive]
+    FROM [dbo].[Events] AS [Events]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_Cart_Inventory" Association="Self.FK_Cart_Inventory">
+            <End Role="Inventory" EntitySet="Inventory" />
+            <End Role="Cart" EntitySet="Cart" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Inventory_Count_Inventory" Association="Self.FK_Inventory_Count_Inventory">
+            <End Role="Inventory" EntitySet="Inventory" />
+            <End Role="Inventory_Count" EntitySet="Inventory_Count" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Order_Item_Order" Association="Self.FK_Order_Item_Order">
+            <End Role="Order" EntitySet="Order" />
+            <End Role="Order_Item" EntitySet="Order_Item" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema></edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="IMSModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityContainer Name="IMSEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="AuditLogs" EntityType="IMSModel.AuditLog" />
+          <EntitySet Name="CustomerDetails" EntityType="IMSModel.CustomerDetail" />
+          <EntitySet Name="Inventories" EntityType="IMSModel.Inventory" />
+          <EntitySet Name="Inventory_Count" EntityType="IMSModel.Inventory_Count" />
+          <EntitySet Name="Orders" EntityType="IMSModel.Order" />
+          <EntitySet Name="Order_Item" EntityType="IMSModel.Order_Item" />
+          <EntitySet Name="System_Banner" EntityType="IMSModel.System_Banner" />
+          <EntitySet Name="System_WebsiteInfo" EntityType="IMSModel.System_WebsiteInfo" />
+          <EntitySet Name="Users" EntityType="IMSModel.User" />
+          <EntitySet Name="User_Session" EntityType="IMSModel.User_Session" />
+          <EntitySet Name="Events" EntityType="IMSModel.Event" />
+          <AssociationSet Name="FK_Inventory_Count_Inventory" Association="IMSModel.FK_Inventory_Count_Inventory">
+            <End Role="Inventory" EntitySet="Inventories" />
+            <End Role="Inventory_Count" EntitySet="Inventory_Count" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Order_Item_Order" Association="IMSModel.FK_Order_Item_Order">
+            <End Role="Order" EntitySet="Orders" />
+            <End Role="Order_Item" EntitySet="Order_Item" />
+          </AssociationSet>
+          <EntitySet Name="Carts" EntityType="IMSModel.Cart" />
+          <AssociationSet Name="FK_Cart_Inventory" Association="IMSModel.FK_Cart_Inventory">
+            <End Role="Inventory" EntitySet="Inventories" />
+            <End Role="Cart" EntitySet="Carts" />
+          </AssociationSet>
+        </EntityContainer>
+        <EntityType Name="AuditLog">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="TableName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Action" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Data" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CreatedBy" Type="Int32" Nullable="false" />
+          <Property Name="ReviewedBy" Type="Int32" />
+          <Property Name="DateReviewed" Type="DateTime" Precision="3" />
+          <Property Name="ApprovedBy" Type="Int32" />
+          <Property Name="DateApproved" Type="DateTime" Precision="3" />
+          <Property Name="CreatedByUsername" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="ReviewedByUsername" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="ApprovedByUsername" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="CustomerDetail">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Email" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Firstname" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Lastname" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Mobile" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Address1" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Address2" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ShippingAddress1" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="ShippingAddress2" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Inventory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Image" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="SetCode" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="SetName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Collector" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="FoilType" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Rarity" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="ManaboxId" Type="Int32" Nullable="false" />
+          <Property Name="ScryfallId" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Price" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
+          <Property Name="Misprint" Type="Boolean" Nullable="false" />
+          <Property Name="Tampered" Type="Boolean" Nullable="false" />
+          <Property Name="Condition" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Language" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PurchaseCurrency" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Color" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="ManaCost" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="CardType" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IllustratedBy" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Inventory_Count" Relationship="IMSModel.FK_Inventory_Count_Inventory" FromRole="Inventory" ToRole="Inventory_Count" />
+          <NavigationProperty Name="Carts" Relationship="IMSModel.FK_Cart_Inventory" FromRole="Inventory" ToRole="Cart" />
+        </EntityType>
+        <EntityType Name="Inventory_Count">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="InventoryId" Type="Int32" Nullable="false" />
+          <Property Name="Quantity" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
+          <Property Name="UOM" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Type" Type="Int32" Nullable="false" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Remarks" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Inventory" Relationship="IMSModel.FK_Inventory_Count_Inventory" FromRole="Inventory_Count" ToRole="Inventory" />
+        </EntityType>
+        <EntityType Name="Order">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DueDate" Type="DateTime" Precision="3" />
+          <Property Name="OrderNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="InvoiceNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerName" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Address1" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Address2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ContactNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="ContactEmail" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="PaymentMethod" Type="Int32" Nullable="false" />
+          <Property Name="SubTotal" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
+          <Property Name="Tax" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="Shipping" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="Total" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="BookAccountNumber" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="DeliveryStatus" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Order_Item" Relationship="IMSModel.FK_Order_Item_Order" FromRole="Order" ToRole="Order_Item" />
+        </EntityType>
+        <EntityType Name="Order_Item">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="OrderId" Type="Int32" Nullable="false" />
+          <Property Name="ProductName" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SubName" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="SerialNumber" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <Property Name="Price" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
+          <Property Name="Total" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
+          <NavigationProperty Name="Order" Relationship="IMSModel.FK_Order_Item_Order" FromRole="Order_Item" ToRole="Order" />
+        </EntityType>
+        <EntityType Name="System_Banner">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Image" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="System_WebsiteInfo">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="LongName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Website" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Email" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ContactNumber1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ContactNumber2" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ContactEmail1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="ContactEmail2" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Address1" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Address2" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="WorkingHour" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="FB" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Insta" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Twitter" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="LinkeIn" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Firstname" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Middlename" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="LastName" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Username" Type="String" Nullable="false" MaxLength="15" FixedLength="false" Unicode="true" />
+          <Property Name="Password" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PasswordKey" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="LastLoginDate" Type="DateTime" Precision="3" />
+          <Property Name="InvalidLoginDate" Type="DateTime" Precision="3" />
+          <Property Name="InvalidLoginCounter" Type="Int32" Nullable="false" />
+          <Property Name="Role" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="IsLocked" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <EntityType Name="User_Session">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="Token" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="LastDateOfActivity" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="IsTerminated" Type="Boolean" Nullable="false" />
+          <Property Name="IPAddress" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="FullName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="Event">
+          <Key>
+            <PropertyRef Name="Id" />
+            <PropertyRef Name="DateCreated" />
+            <PropertyRef Name="Title" />
+            <PropertyRef Name="IsActive" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" />
+          <Property Name="DateOfEvent" Type="DateTime" Precision="3" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Body" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Title" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="SubTitle" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_Inventory_Count_Inventory">
+          <End Type="IMSModel.Inventory" Role="Inventory" Multiplicity="1" />
+          <End Type="IMSModel.Inventory_Count" Role="Inventory_Count" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Inventory">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Inventory_Count">
+              <PropertyRef Name="InventoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Order_Item_Order">
+          <End Type="IMSModel.Order" Role="Order" Multiplicity="1" />
+          <End Type="IMSModel.Order_Item" Role="Order_Item" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Order">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Order_Item">
+              <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Cart">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="InventoryId" Type="Int32" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <Property Name="UserSessionId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Inventory" Relationship="IMSModel.FK_Cart_Inventory" FromRole="Cart" ToRole="Inventory" />
+        </EntityType>
+        <Association Name="FK_Cart_Inventory">
+          <End Type="IMSModel.Inventory" Role="Inventory" Multiplicity="1" />
+          <End Type="IMSModel.Cart" Role="Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Inventory">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="InventoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="IMSModelStoreContainer" CdmEntityContainer="IMSEntities">
+          <EntitySetMapping Name="AuditLogs">
+            <EntityTypeMapping TypeName="IMSModel.AuditLog">
+              <MappingFragment StoreEntitySet="AuditLog">
+                <ScalarProperty Name="ApprovedByUsername" ColumnName="ApprovedByUsername" />
+                <ScalarProperty Name="ReviewedByUsername" ColumnName="ReviewedByUsername" />
+                <ScalarProperty Name="CreatedByUsername" ColumnName="CreatedByUsername" />
+                <ScalarProperty Name="DateApproved" ColumnName="DateApproved" />
+                <ScalarProperty Name="ApprovedBy" ColumnName="ApprovedBy" />
+                <ScalarProperty Name="DateReviewed" ColumnName="DateReviewed" />
+                <ScalarProperty Name="ReviewedBy" ColumnName="ReviewedBy" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Data" ColumnName="Data" />
+                <ScalarProperty Name="Action" ColumnName="Action" />
+                <ScalarProperty Name="TableName" ColumnName="TableName" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="CustomerDetails">
+            <EntityTypeMapping TypeName="IMSModel.CustomerDetail">
+              <MappingFragment StoreEntitySet="CustomerDetails">
+                <ScalarProperty Name="ShippingAddress2" ColumnName="ShippingAddress2" />
+                <ScalarProperty Name="ShippingAddress1" ColumnName="ShippingAddress1" />
+                <ScalarProperty Name="Address2" ColumnName="Address2" />
+                <ScalarProperty Name="Address1" ColumnName="Address1" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="Mobile" ColumnName="Mobile" />
+                <ScalarProperty Name="Lastname" ColumnName="Lastname" />
+                <ScalarProperty Name="Firstname" ColumnName="Firstname" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Inventories">
+            <EntityTypeMapping TypeName="IMSModel.Inventory">
+              <MappingFragment StoreEntitySet="Inventory">
+                <ScalarProperty Name="IllustratedBy" ColumnName="IllustratedBy" />
+                <ScalarProperty Name="CardType" ColumnName="CardType" />
+                <ScalarProperty Name="ManaCost" ColumnName="ManaCost" />
+                <ScalarProperty Name="Color" ColumnName="Color" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="PurchaseCurrency" ColumnName="PurchaseCurrency" />
+                <ScalarProperty Name="Language" ColumnName="Language" />
+                <ScalarProperty Name="Condition" ColumnName="Condition" />
+                <ScalarProperty Name="Tampered" ColumnName="Tampered" />
+                <ScalarProperty Name="Misprint" ColumnName="Misprint" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="ScryfallId" ColumnName="ScryfallId" />
+                <ScalarProperty Name="ManaboxId" ColumnName="ManaboxId" />
+                <ScalarProperty Name="Rarity" ColumnName="Rarity" />
+                <ScalarProperty Name="FoilType" ColumnName="FoilType" />
+                <ScalarProperty Name="Collector" ColumnName="Collector" />
+                <ScalarProperty Name="SetName" ColumnName="SetName" />
+                <ScalarProperty Name="SetCode" ColumnName="SetCode" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Image" ColumnName="Image" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Inventory_Count">
+            <EntityTypeMapping TypeName="IMSModel.Inventory_Count">
+              <MappingFragment StoreEntitySet="Inventory_Count">
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="Remarks" ColumnName="Remarks" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="Type" ColumnName="Type" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="UOM" ColumnName="UOM" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="InventoryId" ColumnName="InventoryId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Orders">
+            <EntityTypeMapping TypeName="IMSModel.Order">
+              <MappingFragment StoreEntitySet="Order">
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="BookAccountNumber" ColumnName="BookAccountNumber" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="Shipping" ColumnName="Shipping" />
+                <ScalarProperty Name="Tax" ColumnName="Tax" />
+                <ScalarProperty Name="SubTotal" ColumnName="SubTotal" />
+                <ScalarProperty Name="PaymentMethod" ColumnName="PaymentMethod" />
+                <ScalarProperty Name="ContactEmail" ColumnName="ContactEmail" />
+                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
+                <ScalarProperty Name="Address2" ColumnName="Address2" />
+                <ScalarProperty Name="Address1" ColumnName="Address1" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="InvoiceNumber" ColumnName="InvoiceNumber" />
+                <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
+                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Order_Item">
+            <EntityTypeMapping TypeName="IMSModel.Order_Item">
+              <MappingFragment StoreEntitySet="Order_Item">
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="SerialNumber" ColumnName="SerialNumber" />
+                <ScalarProperty Name="SubName" ColumnName="SubName" />
+                <ScalarProperty Name="ProductName" ColumnName="ProductName" />
+                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="System_Banner">
+            <EntityTypeMapping TypeName="IMSModel.System_Banner">
+              <MappingFragment StoreEntitySet="System_Banner">
+                <ScalarProperty Name="Image" ColumnName="Image" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="System_WebsiteInfo">
+            <EntityTypeMapping TypeName="IMSModel.System_WebsiteInfo">
+              <MappingFragment StoreEntitySet="System_WebsiteInfo">
+                <ScalarProperty Name="LinkeIn" ColumnName="LinkeIn" />
+                <ScalarProperty Name="Twitter" ColumnName="Twitter" />
+                <ScalarProperty Name="Insta" ColumnName="Insta" />
+                <ScalarProperty Name="FB" ColumnName="FB" />
+                <ScalarProperty Name="WorkingHour" ColumnName="WorkingHour" />
+                <ScalarProperty Name="Address2" ColumnName="Address2" />
+                <ScalarProperty Name="Address1" ColumnName="Address1" />
+                <ScalarProperty Name="ContactEmail2" ColumnName="ContactEmail2" />
+                <ScalarProperty Name="ContactEmail1" ColumnName="ContactEmail1" />
+                <ScalarProperty Name="ContactNumber2" ColumnName="ContactNumber2" />
+                <ScalarProperty Name="ContactNumber1" ColumnName="ContactNumber1" />
+                <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Website" ColumnName="Website" />
+                <ScalarProperty Name="LongName" ColumnName="LongName" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="IMSModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="IsLocked" ColumnName="IsLocked" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="Role" ColumnName="Role" />
+                <ScalarProperty Name="InvalidLoginCounter" ColumnName="InvalidLoginCounter" />
+                <ScalarProperty Name="InvalidLoginDate" ColumnName="InvalidLoginDate" />
+                <ScalarProperty Name="LastLoginDate" ColumnName="LastLoginDate" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="PasswordKey" ColumnName="PasswordKey" />
+                <ScalarProperty Name="Password" ColumnName="Password" />
+                <ScalarProperty Name="Username" ColumnName="Username" />
+                <ScalarProperty Name="LastName" ColumnName="LastName" />
+                <ScalarProperty Name="Middlename" ColumnName="Middlename" />
+                <ScalarProperty Name="Firstname" ColumnName="Firstname" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="User_Session">
+            <EntityTypeMapping TypeName="IMSModel.User_Session">
+              <MappingFragment StoreEntitySet="User_Session">
+                <ScalarProperty Name="FullName" ColumnName="FullName" />
+                <ScalarProperty Name="IPAddress" ColumnName="IPAddress" />
+                <ScalarProperty Name="IsTerminated" ColumnName="IsTerminated" />
+                <ScalarProperty Name="LastDateOfActivity" ColumnName="LastDateOfActivity" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
+                <ScalarProperty Name="Token" ColumnName="Token" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Events">
+            <EntityTypeMapping TypeName="IMSModel.Event">
+              <MappingFragment StoreEntitySet="Events">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="SubTitle" ColumnName="SubTitle" />
+                <ScalarProperty Name="Title" ColumnName="Title" />
+                <ScalarProperty Name="Body" ColumnName="Body" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="DateOfEvent" ColumnName="DateOfEvent" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Carts">
+            <EntityTypeMapping TypeName="IMSModel.Cart">
+              <MappingFragment StoreEntitySet="Cart">
+                <ScalarProperty Name="UserSessionId" ColumnName="UserSessionId" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="InventoryId" ColumnName="InventoryId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>

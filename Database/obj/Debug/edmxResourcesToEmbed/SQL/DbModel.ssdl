@@ -1,0 +1,278 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Schema Namespace="IMSModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+  <EntityType Name="AuditLog">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="DateCreated" Type="datetime" Nullable="false" />
+    <Property Name="TableName" Type="nvarchar(max)" />
+    <Property Name="Action" Type="nvarchar(max)" />
+    <Property Name="Data" Type="text" Nullable="false" />
+    <Property Name="CreatedBy" Type="int" Nullable="false" />
+    <Property Name="ReviewedBy" Type="int" />
+    <Property Name="DateReviewed" Type="datetime" />
+    <Property Name="ApprovedBy" Type="int" />
+    <Property Name="DateApproved" Type="datetime" />
+    <Property Name="CreatedByUsername" Type="nvarchar" MaxLength="150" />
+    <Property Name="ReviewedByUsername" Type="nvarchar" MaxLength="150" />
+    <Property Name="ApprovedByUsername" Type="nvarchar" MaxLength="150" />
+  </EntityType>
+  <EntityType Name="Cart">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
+    <Property Name="InventoryId" Type="int" Nullable="false" />
+    <Property Name="DateCreated" Type="datetime" Nullable="false" />
+    <Property Name="Quantity" Type="int" Nullable="false" />
+    <Property Name="UserSessionId" Type="nvarchar(max)" />
+  </EntityType>
+  <EntityType Name="CustomerDetails">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Email" Type="nvarchar" MaxLength="250" />
+    <Property Name="Firstname" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="Lastname" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="Mobile" Type="nvarchar" MaxLength="250" />
+    <Property Name="IsDeleted" Type="bit" Nullable="false" />
+    <Property Name="DateCreated" Type="datetime" Nullable="false" />
+    <Property Name="Address1" Type="nvarchar" MaxLength="250" />
+    <Property Name="Address2" Type="nvarchar" MaxLength="250" />
+    <Property Name="ShippingAddress1" Type="nvarchar" MaxLength="250" />
+    <Property Name="ShippingAddress2" Type="nvarchar" MaxLength="250" />
+  </EntityType>
+  <!--Errors Found During Generation:
+warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="Events">
+    <Key>
+      <PropertyRef Name="Id" />
+      <PropertyRef Name="DateCreated" />
+      <PropertyRef Name="Title" />
+      <PropertyRef Name="IsActive" />
+    </Key>
+    <Property Name="Id" Type="int" Nullable="false" />
+    <Property Name="DateOfEvent" Type="datetime" />
+    <Property Name="DateCreated" Type="datetime" Nullable="false" />
+    <Property Name="Body" Type="text" />
+    <Property Name="Title" Type="varchar(max)" Nullable="false" />
+    <Property Name="SubTitle" Type="varchar(max)" />
+    <Property Name="IsActive" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Inventory">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Image" Type="varbinary(max)" />
+    <Property Name="Name" Type="varchar(max)" Nullable="false" />
+    <Property Name="SetCode" Type="varchar" MaxLength="150" />
+    <Property Name="SetName" Type="varchar(max)" />
+    <Property Name="Collector" Type="varchar(max)" />
+    <Property Name="FoilType" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="Rarity" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="ManaboxId" Type="int" Nullable="false" />
+    <Property Name="ScryfallId" Type="varchar(max)" Nullable="false" />
+    <Property Name="Price" Type="decimal" Precision="18" Scale="3" Nullable="false" />
+    <Property Name="Misprint" Type="bit" Nullable="false" />
+    <Property Name="Tampered" Type="bit" Nullable="false" />
+    <Property Name="Condition" Type="text" Nullable="false" />
+    <Property Name="Language" Type="varchar" MaxLength="50" />
+    <Property Name="PurchaseCurrency" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="DateCreated" Type="datetime" Nullable="false" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="IsDeleted" Type="bit" Nullable="false" />
+    <Property Name="Description" Type="text" />
+    <Property Name="Color" Type="varchar" MaxLength="150" />
+    <Property Name="ManaCost" Type="varchar" MaxLength="250" />
+    <Property Name="CardType" Type="varchar(max)" />
+    <Property Name="IllustratedBy" Type="varchar(max)" />
+  </EntityType>
+  <EntityType Name="Inventory_Count">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="InventoryId" Type="int" Nullable="false" />
+    <Property Name="Quantity" Type="decimal" Precision="18" Scale="3" Nullable="false" />
+    <Property Name="UOM" Type="varchar" MaxLength="50" Nullable="false" />
+    <Property Name="DateCreated" Type="datetime" Nullable="false" />
+    <Property Name="Type" Type="int" Nullable="false" />
+    <Property Name="CreatedBy" Type="varchar" MaxLength="150" Nullable="false" />
+    <Property Name="Remarks" Type="text" />
+    <Property Name="IsDeleted" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Order">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
+    <Property Name="DateCreated" Type="datetime" Nullable="false" />
+    <Property Name="DueDate" Type="datetime" />
+    <Property Name="OrderNumber" Type="nvarchar" MaxLength="150" Nullable="false" />
+    <Property Name="InvoiceNumber" Type="nvarchar" MaxLength="150" Nullable="false" />
+    <Property Name="CustomerName" Type="nvarchar" MaxLength="250" Nullable="false" />
+    <Property Name="Address1" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="Address2" Type="nvarchar(max)" />
+    <Property Name="ContactNumber" Type="nvarchar" MaxLength="150" Nullable="false" />
+    <Property Name="ContactEmail" Type="nvarchar" MaxLength="150" />
+    <Property Name="PaymentMethod" Type="int" Nullable="false" />
+    <Property Name="SubTotal" Type="decimal" Precision="18" Scale="3" Nullable="false" />
+    <Property Name="Tax" Type="decimal" Precision="18" Scale="3" />
+    <Property Name="Shipping" Type="decimal" Precision="18" Scale="3" />
+    <Property Name="Total" Type="decimal" Precision="18" Scale="3" />
+    <Property Name="BookAccountNumber" Type="nvarchar" MaxLength="150" />
+    <Property Name="Status" Type="int" Nullable="false" />
+    <Property Name="DeliveryStatus" Type="int" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Order_Item">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="OrderId" Type="int" Nullable="false" />
+    <Property Name="ProductName" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="SubName" Type="nvarchar(max)" />
+    <Property Name="SerialNumber" Type="nvarchar(max)" />
+    <Property Name="Description" Type="nvarchar(max)" />
+    <Property Name="Quantity" Type="int" Nullable="false" />
+    <Property Name="Price" Type="decimal" Precision="18" Scale="3" Nullable="false" />
+    <Property Name="Total" Type="decimal" Precision="18" Scale="3" Nullable="false" />
+  </EntityType>
+  <EntityType Name="System_Banner">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Image" Type="varbinary(max)" />
+  </EntityType>
+  <EntityType Name="System_WebsiteInfo">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="varchar" MaxLength="100" Nullable="false" />
+    <Property Name="LongName" Type="text" />
+    <Property Name="Website" Type="text" />
+    <Property Name="Email" Type="text" />
+    <Property Name="ContactNumber1" Type="text" />
+    <Property Name="ContactNumber2" Type="text" />
+    <Property Name="ContactEmail1" Type="text" />
+    <Property Name="ContactEmail2" Type="text" />
+    <Property Name="Address1" Type="text" />
+    <Property Name="Address2" Type="text" />
+    <Property Name="WorkingHour" Type="text" />
+    <Property Name="FB" Type="text" />
+    <Property Name="Insta" Type="text" />
+    <Property Name="Twitter" Type="text" />
+    <Property Name="LinkeIn" Type="text" />
+  </EntityType>
+  <EntityType Name="User">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Firstname" Type="nvarchar" MaxLength="150" Nullable="false" />
+    <Property Name="Middlename" Type="nvarchar" MaxLength="150" />
+    <Property Name="LastName" Type="nvarchar" MaxLength="150" Nullable="false" />
+    <Property Name="Username" Type="nvarchar" MaxLength="15" Nullable="false" />
+    <Property Name="Password" Type="nvarchar(max)" />
+    <Property Name="PasswordKey" Type="nvarchar(max)" />
+    <Property Name="DateCreated" Type="datetime" Nullable="false" />
+    <Property Name="LastLoginDate" Type="datetime" />
+    <Property Name="InvalidLoginDate" Type="datetime" />
+    <Property Name="InvalidLoginCounter" Type="int" Nullable="false" />
+    <Property Name="Role" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="IsDeleted" Type="bit" Nullable="false" />
+    <Property Name="IsLocked" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="User_Session">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="UserId" Type="int" Nullable="false" />
+    <Property Name="Token" Type="nvarchar(max)" />
+    <Property Name="Date" Type="datetime" Nullable="false" />
+    <Property Name="LastDateOfActivity" Type="datetime" Nullable="false" />
+    <Property Name="IsTerminated" Type="bit" Nullable="false" />
+    <Property Name="IPAddress" Type="varchar" MaxLength="150" />
+    <Property Name="FullName" Type="varchar" MaxLength="150" />
+  </EntityType>
+  <Association Name="FK_Cart_Inventory">
+    <End Role="Inventory" Type="Self.Inventory" Multiplicity="1" />
+    <End Role="Cart" Type="Self.Cart" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Inventory">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Cart">
+        <PropertyRef Name="InventoryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Inventory_Count_Inventory">
+    <End Role="Inventory" Type="Self.Inventory" Multiplicity="1" />
+    <End Role="Inventory_Count" Type="Self.Inventory_Count" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Inventory">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Inventory_Count">
+        <PropertyRef Name="InventoryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Order_Item_Order">
+    <End Role="Order" Type="Self.Order" Multiplicity="1" />
+    <End Role="Order_Item" Type="Self.Order_Item" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Order">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Order_Item">
+        <PropertyRef Name="OrderId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <EntityContainer Name="IMSModelStoreContainer">
+    <EntitySet Name="AuditLog" EntityType="Self.AuditLog" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Cart" EntityType="Self.Cart" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="CustomerDetails" EntityType="Self.CustomerDetails" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Inventory" EntityType="Self.Inventory" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Inventory_Count" EntityType="Self.Inventory_Count" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Order" EntityType="Self.Order" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Order_Item" EntityType="Self.Order_Item" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="System_Banner" EntityType="Self.System_Banner" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="System_WebsiteInfo" EntityType="Self.System_WebsiteInfo" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="User_Session" EntityType="Self.User_Session" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Events" EntityType="Self.Events" store:Type="Tables" store:Schema="dbo">
+      <DefiningQuery>SELECT 
+    [Events].[Id] AS [Id], 
+    [Events].[DateOfEvent] AS [DateOfEvent], 
+    [Events].[DateCreated] AS [DateCreated], 
+    [Events].[Body] AS [Body], 
+    [Events].[Title] AS [Title], 
+    [Events].[SubTitle] AS [SubTitle], 
+    [Events].[IsActive] AS [IsActive]
+    FROM [dbo].[Events] AS [Events]</DefiningQuery>
+    </EntitySet>
+    <AssociationSet Name="FK_Cart_Inventory" Association="Self.FK_Cart_Inventory">
+      <End Role="Inventory" EntitySet="Inventory" />
+      <End Role="Cart" EntitySet="Cart" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Inventory_Count_Inventory" Association="Self.FK_Inventory_Count_Inventory">
+      <End Role="Inventory" EntitySet="Inventory" />
+      <End Role="Inventory_Count" EntitySet="Inventory_Count" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Order_Item_Order" Association="Self.FK_Order_Item_Order">
+      <End Role="Order" EntitySet="Order" />
+      <End Role="Order_Item" EntitySet="Order_Item" />
+    </AssociationSet>
+  </EntityContainer>
+</Schema>
