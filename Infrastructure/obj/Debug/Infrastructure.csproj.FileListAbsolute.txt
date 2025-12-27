@@ -1,0 +1,14 @@
+C:\Projects\TLS\Source Code\FDLiquidation\Infrastructure\bin\Debug\Infrastructure.dll.config
+C:\Projects\TLS\Source Code\FDLiquidation\Infrastructure\bin\Debug\Infrastructure.dll
+C:\Projects\TLS\Source Code\FDLiquidation\Infrastructure\bin\Debug\Infrastructure.pdb
+C:\Projects\TLS\Source Code\FDLiquidation\Infrastructure\obj\Debug\Infrastructure.csproj.AssemblyReference.cache
+C:\Projects\TLS\Source Code\FDLiquidation\Infrastructure\obj\Debug\Infrastructure.csproj.CoreCompileInputs.cache
+C:\Projects\TLS\Source Code\FDLiquidation\Infrastructure\obj\Debug\Infrastructure.dll
+C:\Projects\TLS\Source Code\FDLiquidation\Infrastructure\obj\Debug\Infrastructure.pdb
+C:\Projects\_Test Projects\Mon2\IMS\Infrastructure\bin\Debug\Infrastructure.dll.config
+C:\Projects\_Test Projects\Mon2\IMS\Infrastructure\bin\Debug\Infrastructure.dll
+C:\Projects\_Test Projects\Mon2\IMS\Infrastructure\bin\Debug\Infrastructure.pdb
+C:\Projects\_Test Projects\Mon2\IMS\Infrastructure\obj\Debug\Infrastructure.csproj.AssemblyReference.cache
+C:\Projects\_Test Projects\Mon2\IMS\Infrastructure\obj\Debug\Infrastructure.csproj.CoreCompileInputs.cache
+C:\Projects\_Test Projects\Mon2\IMS\Infrastructure\obj\Debug\Infrastructure.dll
+C:\Projects\_Test Projects\Mon2\IMS\Infrastructure\obj\Debug\Infrastructure.pdb
