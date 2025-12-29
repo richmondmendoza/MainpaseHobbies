@@ -49,6 +49,11 @@
           <Property Name="Address2" Type="nvarchar" MaxLength="250" />
           <Property Name="ShippingAddress1" Type="nvarchar" MaxLength="250" />
           <Property Name="ShippingAddress2" Type="nvarchar" MaxLength="250" />
+          <Property Name="UserId" Type="int" Nullable="false" />
+          <Property Name="Country" Type="nvarchar(max)" />
+          <Property Name="ShippingCountry" Type="nvarchar(max)" />
+          <Property Name="Postal" Type="nvarchar" MaxLength="20" />
+          <Property Name="ShippingPostal" Type="nvarchar" MaxLength="20" />
         </EntityType>
         <!--Errors Found During Generation:
 warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -110,6 +115,13 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
           <Property Name="Remarks" Type="text" />
           <Property Name="IsDeleted" Type="bit" Nullable="false" />
         </EntityType>
+        <EntityType Name="NewsLetter">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Email" Type="nvarchar(max)" Nullable="false" />
+        </EntityType>
         <EntityType Name="Order">
           <Key>
             <PropertyRef Name="Id" />
@@ -133,6 +145,9 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
           <Property Name="BookAccountNumber" Type="nvarchar" MaxLength="150" />
           <Property Name="Status" Type="int" Nullable="false" />
           <Property Name="DeliveryStatus" Type="int" Nullable="false" />
+          <Property Name="DeliveryMethod" Type="int" Nullable="false" />
+          <Property Name="DeliveryNote" Type="nvarchar(max)" />
+          <Property Name="Currency" Type="nvarchar" MaxLength="50" />
         </EntityType>
         <EntityType Name="Order_Item">
           <Key>
@@ -147,6 +162,22 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
           <Property Name="Quantity" Type="int" Nullable="false" />
           <Property Name="Price" Type="decimal" Precision="18" Scale="3" Nullable="false" />
           <Property Name="Total" Type="decimal" Precision="18" Scale="3" Nullable="false" />
+        </EntityType>
+        <EntityType Name="Payments">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="PaymentId" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="PayoneerId" Type="nvarchar(max)" Nullable="false" />
+          <Property Name="OrderId" Type="int" Nullable="false" />
+          <Property Name="Amount" Type="decimal" Precision="18" Scale="3" Nullable="false" />
+          <Property Name="Currency" Type="nvarchar" MaxLength="150" />
+          <Property Name="Status" Type="int" Nullable="false" />
+          <Property Name="ErrorCode" Type="nvarchar(max)" />
+          <Property Name="ErrorMessage" Type="nvarchar(max)" />
+          <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+          <Property Name="UpdatedAt" Type="datetime" />
         </EntityType>
         <EntityType Name="System_Banner">
           <Key>
@@ -250,8 +281,10 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
           <EntitySet Name="CustomerDetails" EntityType="Self.CustomerDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Inventory" EntityType="Self.Inventory" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Inventory_Count" EntityType="Self.Inventory_Count" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="NewsLetter" EntityType="Self.NewsLetter" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Order" EntityType="Self.Order" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Order_Item" EntityType="Self.Order_Item" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Payments" EntityType="Self.Payments" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="System_Banner" EntityType="Self.System_Banner" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="System_WebsiteInfo" EntityType="Self.System_WebsiteInfo" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
@@ -286,28 +319,30 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
       <Schema Namespace="IMSModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
         <EntityContainer Name="IMSEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="AuditLogs" EntityType="IMSModel.AuditLog" />
+          <EntitySet Name="Carts" EntityType="IMSModel.Cart" />
           <EntitySet Name="CustomerDetails" EntityType="IMSModel.CustomerDetail" />
           <EntitySet Name="Inventories" EntityType="IMSModel.Inventory" />
           <EntitySet Name="Inventory_Count" EntityType="IMSModel.Inventory_Count" />
-          <EntitySet Name="Orders" EntityType="IMSModel.Order" />
+          <EntitySet Name="NewsLetters" EntityType="IMSModel.NewsLetter" />
           <EntitySet Name="Order_Item" EntityType="IMSModel.Order_Item" />
+          <EntitySet Name="Payments" EntityType="IMSModel.Payment" />
           <EntitySet Name="System_Banner" EntityType="IMSModel.System_Banner" />
           <EntitySet Name="System_WebsiteInfo" EntityType="IMSModel.System_WebsiteInfo" />
           <EntitySet Name="Users" EntityType="IMSModel.User" />
           <EntitySet Name="User_Session" EntityType="IMSModel.User_Session" />
           <EntitySet Name="Events" EntityType="IMSModel.Event" />
+          <AssociationSet Name="FK_Cart_Inventory" Association="IMSModel.FK_Cart_Inventory">
+            <End Role="Inventory" EntitySet="Inventories" />
+            <End Role="Cart" EntitySet="Carts" />
+          </AssociationSet>
           <AssociationSet Name="FK_Inventory_Count_Inventory" Association="IMSModel.FK_Inventory_Count_Inventory">
             <End Role="Inventory" EntitySet="Inventories" />
             <End Role="Inventory_Count" EntitySet="Inventory_Count" />
           </AssociationSet>
+          <EntitySet Name="Orders" EntityType="IMSModel.Order" />
           <AssociationSet Name="FK_Order_Item_Order" Association="IMSModel.FK_Order_Item_Order">
             <End Role="Order" EntitySet="Orders" />
             <End Role="Order_Item" EntitySet="Order_Item" />
-          </AssociationSet>
-          <EntitySet Name="Carts" EntityType="IMSModel.Cart" />
-          <AssociationSet Name="FK_Cart_Inventory" Association="IMSModel.FK_Cart_Inventory">
-            <End Role="Inventory" EntitySet="Inventories" />
-            <End Role="Cart" EntitySet="Carts" />
           </AssociationSet>
         </EntityContainer>
         <EntityType Name="AuditLog">
@@ -328,6 +363,18 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
           <Property Name="ReviewedByUsername" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
           <Property Name="ApprovedByUsername" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
         </EntityType>
+        <EntityType Name="Cart">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="InventoryId" Type="Int32" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Quantity" Type="Int32" Nullable="false" />
+          <Property Name="UserSessionId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Inventory" Relationship="IMSModel.FK_Cart_Inventory" FromRole="Cart" ToRole="Inventory" />
+        </EntityType>
         <EntityType Name="CustomerDetail">
           <Key>
             <PropertyRef Name="Id" />
@@ -343,6 +390,11 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
           <Property Name="Address2" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="ShippingAddress1" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <Property Name="ShippingAddress2" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="Country" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ShippingCountry" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Postal" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="ShippingPostal" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Inventory">
           <Key>
@@ -372,8 +424,8 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
           <Property Name="ManaCost" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
           <Property Name="CardType" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="IllustratedBy" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <NavigationProperty Name="Inventory_Count" Relationship="IMSModel.FK_Inventory_Count_Inventory" FromRole="Inventory" ToRole="Inventory_Count" />
           <NavigationProperty Name="Carts" Relationship="IMSModel.FK_Cart_Inventory" FromRole="Inventory" ToRole="Cart" />
+          <NavigationProperty Name="Inventory_Count" Relationship="IMSModel.FK_Inventory_Count_Inventory" FromRole="Inventory" ToRole="Inventory_Count" />
         </EntityType>
         <EntityType Name="Inventory_Count">
           <Key>
@@ -390,30 +442,12 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
           <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Inventory" Relationship="IMSModel.FK_Inventory_Count_Inventory" FromRole="Inventory_Count" ToRole="Inventory" />
         </EntityType>
-        <EntityType Name="Order">
+        <EntityType Name="NewsLetter">
           <Key>
             <PropertyRef Name="Id" />
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserId" Type="Int32" Nullable="false" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="DueDate" Type="DateTime" Precision="3" />
-          <Property Name="OrderNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="InvoiceNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="CustomerName" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="Address1" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Address2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ContactNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="ContactEmail" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="PaymentMethod" Type="Int32" Nullable="false" />
-          <Property Name="SubTotal" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
-          <Property Name="Tax" Type="Decimal" Precision="18" Scale="3" />
-          <Property Name="Shipping" Type="Decimal" Precision="18" Scale="3" />
-          <Property Name="Total" Type="Decimal" Precision="18" Scale="3" />
-          <Property Name="BookAccountNumber" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="Status" Type="Int32" Nullable="false" />
-          <Property Name="DeliveryStatus" Type="Int32" Nullable="false" />
-          <NavigationProperty Name="Order_Item" Relationship="IMSModel.FK_Order_Item_Order" FromRole="Order" ToRole="Order_Item" />
+          <Property Name="Email" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
         </EntityType>
         <EntityType Name="Order_Item">
           <Key>
@@ -429,6 +463,22 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
           <Property Name="Price" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
           <Property Name="Total" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
           <NavigationProperty Name="Order" Relationship="IMSModel.FK_Order_Item_Order" FromRole="Order_Item" ToRole="Order" />
+        </EntityType>
+        <EntityType Name="Payment">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="PaymentId" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="PayoneerId" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="OrderId" Type="Int32" Nullable="false" />
+          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
+          <Property Name="Currency" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="ErrorCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ErrorMessage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="UpdatedAt" Type="DateTime" Precision="3" />
         </EntityType>
         <EntityType Name="System_Banner">
           <Key>
@@ -505,6 +555,18 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
           <Property Name="SubTitle" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
         </EntityType>
+        <Association Name="FK_Cart_Inventory">
+          <End Type="IMSModel.Inventory" Role="Inventory" Multiplicity="1" />
+          <End Type="IMSModel.Cart" Role="Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Inventory">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="InventoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_Inventory_Count_Inventory">
           <End Type="IMSModel.Inventory" Role="Inventory" Multiplicity="1" />
           <End Type="IMSModel.Inventory_Count" Role="Inventory_Count" Multiplicity="*" />
@@ -517,6 +579,34 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <EntityType Name="Order">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DueDate" Type="DateTime" Precision="3" />
+          <Property Name="OrderNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="InvoiceNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerName" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Address1" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Address2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ContactNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="ContactEmail" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="PaymentMethod" Type="Int32" Nullable="false" />
+          <Property Name="SubTotal" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
+          <Property Name="Tax" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="Shipping" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="Total" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="BookAccountNumber" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="DeliveryStatus" Type="Int32" Nullable="false" />
+          <Property Name="DeliveryMethod" Type="Int32" Nullable="false" />
+          <Property Name="DeliveryNote" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Currency" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Order_Item" Relationship="IMSModel.FK_Order_Item_Order" FromRole="Order" ToRole="Order_Item" />
+        </EntityType>
         <Association Name="FK_Order_Item_Order">
           <End Type="IMSModel.Order" Role="Order" Multiplicity="1" />
           <End Type="IMSModel.Order_Item" Role="Order_Item" Multiplicity="*" />
@@ -526,30 +616,6 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
             </Principal>
             <Dependent Role="Order_Item">
               <PropertyRef Name="OrderId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
-        <EntityType Name="Cart">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserId" Type="Int32" Nullable="false" />
-          <Property Name="InventoryId" Type="Int32" Nullable="false" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="Quantity" Type="Int32" Nullable="false" />
-          <Property Name="UserSessionId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Inventory" Relationship="IMSModel.FK_Cart_Inventory" FromRole="Cart" ToRole="Inventory" />
-        </EntityType>
-        <Association Name="FK_Cart_Inventory">
-          <End Type="IMSModel.Inventory" Role="Inventory" Multiplicity="1" />
-          <End Type="IMSModel.Cart" Role="Cart" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Inventory">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Cart">
-              <PropertyRef Name="InventoryId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -578,9 +644,26 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <EntitySetMapping Name="Carts">
+            <EntityTypeMapping TypeName="IMSModel.Cart">
+              <MappingFragment StoreEntitySet="Cart">
+                <ScalarProperty Name="UserSessionId" ColumnName="UserSessionId" />
+                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="InventoryId" ColumnName="InventoryId" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
           <EntitySetMapping Name="CustomerDetails">
             <EntityTypeMapping TypeName="IMSModel.CustomerDetail">
               <MappingFragment StoreEntitySet="CustomerDetails">
+                <ScalarProperty Name="ShippingPostal" ColumnName="ShippingPostal" />
+                <ScalarProperty Name="Postal" ColumnName="Postal" />
+                <ScalarProperty Name="ShippingCountry" ColumnName="ShippingCountry" />
+                <ScalarProperty Name="Country" ColumnName="Country" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="ShippingAddress2" ColumnName="ShippingAddress2" />
                 <ScalarProperty Name="ShippingAddress1" ColumnName="ShippingAddress1" />
                 <ScalarProperty Name="Address2" ColumnName="Address2" />
@@ -640,27 +723,10 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Orders">
-            <EntityTypeMapping TypeName="IMSModel.Order">
-              <MappingFragment StoreEntitySet="Order">
-                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="BookAccountNumber" ColumnName="BookAccountNumber" />
-                <ScalarProperty Name="Total" ColumnName="Total" />
-                <ScalarProperty Name="Shipping" ColumnName="Shipping" />
-                <ScalarProperty Name="Tax" ColumnName="Tax" />
-                <ScalarProperty Name="SubTotal" ColumnName="SubTotal" />
-                <ScalarProperty Name="PaymentMethod" ColumnName="PaymentMethod" />
-                <ScalarProperty Name="ContactEmail" ColumnName="ContactEmail" />
-                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
-                <ScalarProperty Name="Address2" ColumnName="Address2" />
-                <ScalarProperty Name="Address1" ColumnName="Address1" />
-                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
-                <ScalarProperty Name="InvoiceNumber" ColumnName="InvoiceNumber" />
-                <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
-                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <EntitySetMapping Name="NewsLetters">
+            <EntityTypeMapping TypeName="IMSModel.NewsLetter">
+              <MappingFragment StoreEntitySet="NewsLetter">
+                <ScalarProperty Name="Email" ColumnName="Email" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -676,6 +742,23 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
                 <ScalarProperty Name="SubName" ColumnName="SubName" />
                 <ScalarProperty Name="ProductName" ColumnName="ProductName" />
                 <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Payments">
+            <EntityTypeMapping TypeName="IMSModel.Payment">
+              <MappingFragment StoreEntitySet="Payments">
+                <ScalarProperty Name="UpdatedAt" ColumnName="UpdatedAt" />
+                <ScalarProperty Name="CreatedAt" ColumnName="CreatedAt" />
+                <ScalarProperty Name="ErrorMessage" ColumnName="ErrorMessage" />
+                <ScalarProperty Name="ErrorCode" ColumnName="ErrorCode" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="OrderId" ColumnName="OrderId" />
+                <ScalarProperty Name="PayoneerId" ColumnName="PayoneerId" />
+                <ScalarProperty Name="PaymentId" ColumnName="PaymentId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -757,13 +840,29 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
-          <EntitySetMapping Name="Carts">
-            <EntityTypeMapping TypeName="IMSModel.Cart">
-              <MappingFragment StoreEntitySet="Cart">
-                <ScalarProperty Name="UserSessionId" ColumnName="UserSessionId" />
-                <ScalarProperty Name="Quantity" ColumnName="Quantity" />
+          <EntitySetMapping Name="Orders">
+            <EntityTypeMapping TypeName="IMSModel.Order">
+              <MappingFragment StoreEntitySet="Order">
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="DeliveryNote" ColumnName="DeliveryNote" />
+                <ScalarProperty Name="DeliveryMethod" ColumnName="DeliveryMethod" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="BookAccountNumber" ColumnName="BookAccountNumber" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="Shipping" ColumnName="Shipping" />
+                <ScalarProperty Name="Tax" ColumnName="Tax" />
+                <ScalarProperty Name="SubTotal" ColumnName="SubTotal" />
+                <ScalarProperty Name="PaymentMethod" ColumnName="PaymentMethod" />
+                <ScalarProperty Name="ContactEmail" ColumnName="ContactEmail" />
+                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
+                <ScalarProperty Name="Address2" ColumnName="Address2" />
+                <ScalarProperty Name="Address1" ColumnName="Address1" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="InvoiceNumber" ColumnName="InvoiceNumber" />
+                <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
+                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="InventoryId" ColumnName="InventoryId" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

@@ -81,6 +81,7 @@
     <Compile Include="Dto\InventoryDto.cs" />
     <Compile Include="Dto\OrderDto.cs" />
     <Compile Include="Dto\OrderItemDto.cs" />
+    <Compile Include="Dto\PaymentDto.cs" />
     <Compile Include="Enums\InventoryCountTypeEnum.cs" />
     <Compile Include="Enums\OrderStatusEnum.cs" />
     <Compile Include="Enums\UserRoleEnum.cs" />
@@ -88,6 +89,7 @@
     <Compile Include="ReturnValue.cs" />
     <Compile Include="ScryfallCard.cs" />
     <Compile Include="User\AuthenticatedUserDto.cs" />
+    <Compile Include="User\CustomerDetailDto.cs" />
     <Compile Include="User\UserDto.cs" />
     <Compile Include="User\UserSessionDto.cs" />
   </ItemGroup>

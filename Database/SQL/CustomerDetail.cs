@@ -25,5 +25,10 @@ namespace Database.SQL
         public string Address2 { get; set; }
         public string ShippingAddress1 { get; set; }
         public string ShippingAddress2 { get; set; }
+        public int UserId { get; set; }
+        public string Country { get; set; }
+        public string ShippingCountry { get; set; }
+        public string Postal { get; set; }
+        public string ShippingPostal { get; set; }
     }
 }

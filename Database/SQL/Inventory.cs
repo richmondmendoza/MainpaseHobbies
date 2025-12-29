@@ -17,8 +17,8 @@ namespace Database.SQL
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Inventory()
         {
-            this.Inventory_Count = new HashSet<Inventory_Count>();
             this.Carts = new HashSet<Cart>();
+            this.Inventory_Count = new HashSet<Inventory_Count>();
         }
     
         public int Id { get; set; }
@@ -47,8 +47,8 @@ namespace Database.SQL
         public string IllustratedBy { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Inventory_Count> Inventory_Count { get; set; }
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Cart> Carts { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Inventory_Count> Inventory_Count { get; set; }
     }
 }

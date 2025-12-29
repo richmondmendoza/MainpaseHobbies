@@ -38,6 +38,9 @@ namespace Repository.Repo.Order
                 BookAccountNumber = item.BookAccountNumber,
                 Status = (OrderStatusEnum)item.Status,
                 DeliveryStatus = (DeliveryStatusEnum)item.DeliveryStatus,
+                DeliveryMethod = (DeliveryMethodEnum)item.DeliveryMethod,
+                DeliveryNote = item.DeliveryNote,
+                Currency = item.Currency,
             };
         }
 
@@ -74,13 +77,18 @@ namespace Repository.Repo.Order
 
             using (IMSEntities context = new IMSEntities())
             {
+                var date = dto.DateCreated.Date;
+                var count = context.Orders.Where(a => a.DateCreated >= date).Count() + 1;
+
+                dto.OrderNumber = $"MHCRCT-{date.Year}{date.ToString("MM")}{date.ToString("dd")}{count.ToString("D3")}";
+
                 var item = new Database.SQL.Order
                 {
                     UserId = dto.UserId,
                     DateCreated = dto.DateCreated,
                     DueDate = dto.DueDate,
                     OrderNumber = dto.OrderNumber,
-                    InvoiceNumber = dto.InvoiceNumber,
+                    InvoiceNumber = dto.InvoiceNumber ?? "",
                     CustomerName = dto.CustomerName,
                     Address1 = dto.Address1,
                     Address2 = dto.Address2,
@@ -91,9 +99,12 @@ namespace Repository.Repo.Order
                     Tax = dto.Tax,
                     Shipping = dto.Shipping,
                     Total = dto.Total,
-                    BookAccountNumber = dto.BookAccountNumber,
+                    BookAccountNumber = dto.BookAccountNumber ?? "",
                     Status = (int)dto.Status,
                     DeliveryStatus = (int)dto.DeliveryStatus,
+                    DeliveryMethod = (int)dto.DeliveryMethod,
+                    DeliveryNote = dto.DeliveryNote,
+                    Currency = dto.Currency,
                 };
 
                 context.Orders.Add(item);
@@ -107,7 +118,7 @@ namespace Repository.Repo.Order
                 }
 
                 Db.SaveChanges(context, result, "Your order has been placed.");
-
+                result.Data = item.Id;
             }
 
             return result;

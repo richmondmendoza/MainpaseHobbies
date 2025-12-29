@@ -2,28 +2,30 @@
 <Schema Namespace="IMSModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
   <EntityContainer Name="IMSEntities" annotation:LazyLoadingEnabled="true">
     <EntitySet Name="AuditLogs" EntityType="IMSModel.AuditLog" />
+    <EntitySet Name="Carts" EntityType="IMSModel.Cart" />
     <EntitySet Name="CustomerDetails" EntityType="IMSModel.CustomerDetail" />
     <EntitySet Name="Inventories" EntityType="IMSModel.Inventory" />
     <EntitySet Name="Inventory_Count" EntityType="IMSModel.Inventory_Count" />
-    <EntitySet Name="Orders" EntityType="IMSModel.Order" />
+    <EntitySet Name="NewsLetters" EntityType="IMSModel.NewsLetter" />
     <EntitySet Name="Order_Item" EntityType="IMSModel.Order_Item" />
+    <EntitySet Name="Payments" EntityType="IMSModel.Payment" />
     <EntitySet Name="System_Banner" EntityType="IMSModel.System_Banner" />
     <EntitySet Name="System_WebsiteInfo" EntityType="IMSModel.System_WebsiteInfo" />
     <EntitySet Name="Users" EntityType="IMSModel.User" />
     <EntitySet Name="User_Session" EntityType="IMSModel.User_Session" />
     <EntitySet Name="Events" EntityType="IMSModel.Event" />
+    <AssociationSet Name="FK_Cart_Inventory" Association="IMSModel.FK_Cart_Inventory">
+      <End Role="Inventory" EntitySet="Inventories" />
+      <End Role="Cart" EntitySet="Carts" />
+    </AssociationSet>
     <AssociationSet Name="FK_Inventory_Count_Inventory" Association="IMSModel.FK_Inventory_Count_Inventory">
       <End Role="Inventory" EntitySet="Inventories" />
       <End Role="Inventory_Count" EntitySet="Inventory_Count" />
     </AssociationSet>
+    <EntitySet Name="Orders" EntityType="IMSModel.Order" />
     <AssociationSet Name="FK_Order_Item_Order" Association="IMSModel.FK_Order_Item_Order">
       <End Role="Order" EntitySet="Orders" />
       <End Role="Order_Item" EntitySet="Order_Item" />
-    </AssociationSet>
-    <EntitySet Name="Carts" EntityType="IMSModel.Cart" />
-    <AssociationSet Name="FK_Cart_Inventory" Association="IMSModel.FK_Cart_Inventory">
-      <End Role="Inventory" EntitySet="Inventories" />
-      <End Role="Cart" EntitySet="Carts" />
     </AssociationSet>
   </EntityContainer>
   <EntityType Name="AuditLog">
@@ -44,6 +46,18 @@
     <Property Name="ReviewedByUsername" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
     <Property Name="ApprovedByUsername" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
   </EntityType>
+  <EntityType Name="Cart">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UserId" Type="Int32" Nullable="false" />
+    <Property Name="InventoryId" Type="Int32" Nullable="false" />
+    <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="Quantity" Type="Int32" Nullable="false" />
+    <Property Name="UserSessionId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Inventory" Relationship="IMSModel.FK_Cart_Inventory" FromRole="Cart" ToRole="Inventory" />
+  </EntityType>
   <EntityType Name="CustomerDetail">
     <Key>
       <PropertyRef Name="Id" />
@@ -59,6 +73,11 @@
     <Property Name="Address2" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
     <Property Name="ShippingAddress1" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
     <Property Name="ShippingAddress2" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+    <Property Name="UserId" Type="Int32" Nullable="false" />
+    <Property Name="Country" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ShippingCountry" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Postal" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+    <Property Name="ShippingPostal" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
   </EntityType>
   <EntityType Name="Inventory">
     <Key>
@@ -88,8 +107,8 @@
     <Property Name="ManaCost" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
     <Property Name="CardType" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="IllustratedBy" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-    <NavigationProperty Name="Inventory_Count" Relationship="IMSModel.FK_Inventory_Count_Inventory" FromRole="Inventory" ToRole="Inventory_Count" />
     <NavigationProperty Name="Carts" Relationship="IMSModel.FK_Cart_Inventory" FromRole="Inventory" ToRole="Cart" />
+    <NavigationProperty Name="Inventory_Count" Relationship="IMSModel.FK_Inventory_Count_Inventory" FromRole="Inventory" ToRole="Inventory_Count" />
   </EntityType>
   <EntityType Name="Inventory_Count">
     <Key>
@@ -106,30 +125,12 @@
     <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
     <NavigationProperty Name="Inventory" Relationship="IMSModel.FK_Inventory_Count_Inventory" FromRole="Inventory_Count" ToRole="Inventory" />
   </EntityType>
-  <EntityType Name="Order">
+  <EntityType Name="NewsLetter">
     <Key>
       <PropertyRef Name="Id" />
     </Key>
     <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="UserId" Type="Int32" Nullable="false" />
-    <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-    <Property Name="DueDate" Type="DateTime" Precision="3" />
-    <Property Name="OrderNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-    <Property Name="InvoiceNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-    <Property Name="CustomerName" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
-    <Property Name="Address1" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="Address2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <Property Name="ContactNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-    <Property Name="ContactEmail" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-    <Property Name="PaymentMethod" Type="Int32" Nullable="false" />
-    <Property Name="SubTotal" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
-    <Property Name="Tax" Type="Decimal" Precision="18" Scale="3" />
-    <Property Name="Shipping" Type="Decimal" Precision="18" Scale="3" />
-    <Property Name="Total" Type="Decimal" Precision="18" Scale="3" />
-    <Property Name="BookAccountNumber" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-    <Property Name="Status" Type="Int32" Nullable="false" />
-    <Property Name="DeliveryStatus" Type="Int32" Nullable="false" />
-    <NavigationProperty Name="Order_Item" Relationship="IMSModel.FK_Order_Item_Order" FromRole="Order" ToRole="Order_Item" />
+    <Property Name="Email" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
   </EntityType>
   <EntityType Name="Order_Item">
     <Key>
@@ -145,6 +146,22 @@
     <Property Name="Price" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
     <Property Name="Total" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
     <NavigationProperty Name="Order" Relationship="IMSModel.FK_Order_Item_Order" FromRole="Order_Item" ToRole="Order" />
+  </EntityType>
+  <EntityType Name="Payment">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="PaymentId" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="PayoneerId" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="OrderId" Type="Int32" Nullable="false" />
+    <Property Name="Amount" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
+    <Property Name="Currency" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="Status" Type="Int32" Nullable="false" />
+    <Property Name="ErrorCode" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ErrorMessage" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="CreatedAt" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="UpdatedAt" Type="DateTime" Precision="3" />
   </EntityType>
   <EntityType Name="System_Banner">
     <Key>
@@ -221,6 +238,18 @@
     <Property Name="SubTitle" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
     <Property Name="IsActive" Type="Boolean" Nullable="false" />
   </EntityType>
+  <Association Name="FK_Cart_Inventory">
+    <End Type="IMSModel.Inventory" Role="Inventory" Multiplicity="1" />
+    <End Type="IMSModel.Cart" Role="Cart" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Inventory">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Cart">
+        <PropertyRef Name="InventoryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
   <Association Name="FK_Inventory_Count_Inventory">
     <End Type="IMSModel.Inventory" Role="Inventory" Multiplicity="1" />
     <End Type="IMSModel.Inventory_Count" Role="Inventory_Count" Multiplicity="*" />
@@ -233,6 +262,34 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <EntityType Name="Order">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="UserId" Type="Int32" Nullable="false" />
+    <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+    <Property Name="DueDate" Type="DateTime" Precision="3" />
+    <Property Name="OrderNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="InvoiceNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="CustomerName" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+    <Property Name="Address1" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Address2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="ContactNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="ContactEmail" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="PaymentMethod" Type="Int32" Nullable="false" />
+    <Property Name="SubTotal" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
+    <Property Name="Tax" Type="Decimal" Precision="18" Scale="3" />
+    <Property Name="Shipping" Type="Decimal" Precision="18" Scale="3" />
+    <Property Name="Total" Type="Decimal" Precision="18" Scale="3" />
+    <Property Name="BookAccountNumber" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+    <Property Name="Status" Type="Int32" Nullable="false" />
+    <Property Name="DeliveryStatus" Type="Int32" Nullable="false" />
+    <Property Name="DeliveryMethod" Type="Int32" Nullable="false" />
+    <Property Name="DeliveryNote" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+    <Property Name="Currency" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+    <NavigationProperty Name="Order_Item" Relationship="IMSModel.FK_Order_Item_Order" FromRole="Order" ToRole="Order_Item" />
+  </EntityType>
   <Association Name="FK_Order_Item_Order">
     <End Type="IMSModel.Order" Role="Order" Multiplicity="1" />
     <End Type="IMSModel.Order_Item" Role="Order_Item" Multiplicity="*" />
@@ -242,30 +299,6 @@
       </Principal>
       <Dependent Role="Order_Item">
         <PropertyRef Name="OrderId" />
-      </Dependent>
-    </ReferentialConstraint>
-  </Association>
-  <EntityType Name="Cart">
-    <Key>
-      <PropertyRef Name="Id" />
-    </Key>
-    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-    <Property Name="UserId" Type="Int32" Nullable="false" />
-    <Property Name="InventoryId" Type="Int32" Nullable="false" />
-    <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-    <Property Name="Quantity" Type="Int32" Nullable="false" />
-    <Property Name="UserSessionId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-    <NavigationProperty Name="Inventory" Relationship="IMSModel.FK_Cart_Inventory" FromRole="Cart" ToRole="Inventory" />
-  </EntityType>
-  <Association Name="FK_Cart_Inventory">
-    <End Type="IMSModel.Inventory" Role="Inventory" Multiplicity="1" />
-    <End Type="IMSModel.Cart" Role="Cart" Multiplicity="*" />
-    <ReferentialConstraint>
-      <Principal Role="Inventory">
-        <PropertyRef Name="Id" />
-      </Principal>
-      <Dependent Role="Cart">
-        <PropertyRef Name="InventoryId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>

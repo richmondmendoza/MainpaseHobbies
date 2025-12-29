@@ -1,0 +1,211 @@
+﻿@using Dto.Enums;
+
+
+@model Web.Models.CheckoutViewModel
+@{
+    ViewBag.Title = "Checkout";
+    var user = Web.Controllers.BaseController.Identity ?? new Dto.User.AuthenticatedUserDto();
+}
+
+<style>
+    .badge {
+        width: 80px;
+    }
+
+    .service-details a {
+        padding: 0.375rem 0.75rem;
+        line-height: 1.5;
+        margin-bottom: 1rem !important;
+    }
+</style>
+
+
+<div class="page-title" data-aos="fade">
+    <nav class="breadcrumbs">
+        <div class="container">
+            <ol>
+                <li><a href="@Url.Action("Index", "Home", new { area ="" })">Home</a></li>
+                <li><a href="@Url.Action("Cart", "Home", new { area ="" })">Shopping Cart</a></li>
+                <li class="current">Check Out</li>
+            </ol>
+        </div>
+    </nav>
+</div>
+
+<section class="service-details section">
+
+    <div class="container">
+        @using (Html.BeginForm("Index", "Checkout", FormMethod.Post, new { area = "", id = "frm-checkout" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(a => a.Id)
+            @Html.HiddenFor(a => a.UserId)
+            @Html.HiddenFor(a => a.DateCreated)
+            @Html.HiddenFor(a => a.OrderNumber)
+            @Html.HiddenFor(a => a.InvoiceNumber)
+            @Html.HiddenFor(a => a.BookAccountNumber)
+            @Html.HiddenFor(a => a.PaymentMethod)
+            @Html.HiddenFor(a => a.DeliveryMethod)
+            @Html.HiddenFor(a => a.Currency)
+            @Html.HiddenFor(a => a.Total)
+            @Html.HiddenFor(a => a.SubTotal)
+            @Html.HiddenFor(a => a.Shipping)
+            @Html.HiddenFor(a => a.Tax)
+            @Html.HiddenFor(a => a.BookAccountNumber)
+
+            <div class="row">
+                <div class="col-sm-8">
+                    <div class="services-list" style="border-radius: 10px;">
+                        <div class="form-group">
+                            <h4>Billing Information</h4>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-5 col-form-label mb-2">Customer Name<span class="text-red">*</span></label>
+                            <div class="col-md-7">
+                                @Html.TextBoxFor(a => a.CustomerName, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(a => a.CustomerName)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-5 col-form-label mb-2">Mobile Number<span class="text-red">*</span></label>
+                            <div class="col-md-7">
+                                @Html.TextBoxFor(a => a.ContactNumber, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(a => a.ContactNumber)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-5 col-form-label mb-2">E-mail Address<span class="text-red">*</span></label>
+                            <div class="col-md-7">
+                                @Html.TextBoxFor(a => a.ContactEmail, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(a => a.ContactEmail)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-5 col-form-label mb-2">Address<span class="text-red">*</span></label>
+                            <div class="col-md-7">
+                                @Html.TextBoxFor(a => a.Address1, new { @class = "form-control" })
+                                <p class="small font-italic mb-0">(Floor#, Block, Lot, Street)</p>
+                                @Html.ValidationMessageFor(a => a.Address1)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-5 col-form-label mb-2">Address<span class="text-red">*</span></label>
+                            <div class="col-md-7">
+                                @Html.TextBoxFor(a => a.Address2, new { @class = "form-control" })
+                                <p class="small font-italic mb-0">(Barangay, City, Province, Postal)</p>
+                                @Html.ValidationMessageFor(a => a.Address2)
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <label class="col-md-5 col-form-label mb-2">Order Notes</label>
+                            <div class="col-md-7">
+                                @Html.TextAreaFor(a => a.DeliveryNote, new { @class = "form-control", style = "min-height: 150px; min-width: 100%; max-width: 100%;" })
+                                @Html.ValidationMessageFor(a => a.DeliveryNote)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-sm-4">
+
+                    <div class="services-list" style="border-radius: 10px;">
+                        <div class="form-group">
+                            <h4>Payment Method</h4>
+                        </div>
+                        <div class="form-group">
+                            <div class="icheck-primary">
+                                <input type="checkbox" class="chk-payment" id="chk-payment-1" value="@PaymentMethodEnum.Cash" @(Model.PaymentMethod == PaymentMethodEnum.Cash ? "checked" : "")>
+                                <label for="chk-payment-1">Pay in Store</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="icheck-primary">
+                                <input type="checkbox" class="chk-payment" id="chk-payment-2" value="@PaymentMethodEnum.CreditCard" @(Model.PaymentMethod == PaymentMethodEnum.CreditCard ? "checked" : "")>
+                                <label for="chk-payment-2">Card Payment</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-5">
+                            <h4>Shipping Method</h4>
+                        </div>
+                        <div class="form-group">
+                            <div class="icheck-primary">
+                                <input type="checkbox" class="chk-ship" id="chk-ship-1" value="@DeliveryMethodEnum.StorePickup" @(Model.DeliveryMethod == DeliveryMethodEnum.StorePickup ? "checked" : "")>
+                                <label for="chk-ship-1">Pickup at Store</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="icheck-primary">
+                                <input type="checkbox" class="chk-ship" id="chk-ship-2" value="@DeliveryMethodEnum.BookYourOwn" @(Model.DeliveryMethod == DeliveryMethodEnum.BookYourOwn ? "checked" : "")>
+                                <label for="chk-ship-2">Book Your Own Rider</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="icheck-primary">
+                                <input type="checkbox" class="chk-ship" id="chk-ship-3" value="@DeliveryMethodEnum.LBC" @(Model.DeliveryMethod == DeliveryMethodEnum.LBC ? "checked" : "")>
+                                <label for="chk-ship-3">Ship via LBC</label>
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-4 font-italic text-center">
+                            By placing this order, you acknowledge that you have read and understood our <a class="border-0 m-0 p-0 d-inline text-primary font-italic" target="_blank" href="@Url.Action("PrivacyPolicy", "Home", new {area = ""})">Privacy Policy</a> and agree to our <a class="border-0 m-0 p-0 d-inline text-primary font-italic" target="_blank" href="@Url.Action("TermsOfService", "Home", new {area = ""})">Terms of Service</a>
+                        </div>
+
+                        <div class="mt-4 form-group">
+                            <button type="submit" class="btn btn-primary btn-block">Continue</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="" style="z-index: 0; position: absolute; top: 0; left: 0;">
+                @for (int i = 0; i < Model.Items.Count; i++)
+                {
+                    <input type="hidden" name="Items[@i].ProductName" value="@Model.Items[i].ProductName" />
+                    <input type="hidden" name="Items[@i].SubName" value="@Model.Items[i].SubName" />
+                    <input type="hidden" name="Items[@i].SerialNumber" value="@Model.Items[i].SerialNumber" />
+                    <input type="hidden" name="Items[@i].Description" value="@Model.Items[i].Description" />
+                    <input type="hidden" name="Items[@i].Quantity" value="@Model.Items[i].Quantity" />
+                    <input type="hidden" name="Items[@i].Price" value="@Model.Items[i].Price" />
+                    <input type="hidden" name="Items[@i].Total" value="@Model.Items[i].Total" />
+                }
+            </div>
+        }
+    </div>
+
+</section>
+
+@section scripts{
+    <script>
+
+        function UpdateCheckbox(id, className) {
+            $.each($('.' + className), function (index, element) {
+                $(element).prop('checked', false);
+            });
+
+            $('#' + id).prop('checked', true);
+        }
+
+
+        $(document).ready(function () {
+
+            $(document).on('click', '.chk-payment', function () {
+                var id = $(this).attr('id');
+                var value = $(this).val();
+                UpdateCheckbox(id, 'chk-payment');
+                $('#PaymentMethod').val(value);
+            });
+
+            $(document).on('click', '.chk-ship', function () {
+                var id = $(this).attr('id');
+                var value = $(this).val();
+                UpdateCheckbox(id, 'chk-ship');
+                $('#DeliveryMethod').val(value);
+            });
+
+        });
+
+    </script>
+
+}

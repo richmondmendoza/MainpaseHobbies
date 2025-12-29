@@ -15,7 +15,7 @@ using Web.Models;
 
 namespace Web.Controllers
 {
-    public class HomeController : BaseController
+    public class HomeController : MainSiteController
     {
         CartRepo _cart = new CartRepo();
 
@@ -134,6 +134,31 @@ namespace Web.Controllers
             var result = _cart.Add(item);
 
             return Json(new { Success = result.Success, Message = result.Message }, JsonRequestBehavior.AllowGet);
+        }
+
+        [HttpPost]
+        public ActionResult DeleteCart(ConfirmDto dto)
+        {
+            int inventoryId = Convert.ToInt32(Fletcher.Decrypt(dto.Param1));
+            var result = _cart.Delete(inventoryId);
+
+            ShowMessage(result.Message, result.Success);
+
+            return RedirectToAction("cart");
+        }
+
+        [HttpPost]
+        public ActionResult UpdateCartItem(string id, int quantity)
+        {
+            int inventoryId = Convert.ToInt32(Fletcher.Decrypt(id));
+            var result = _cart.Update(inventoryId, quantity);
+
+            if (!result.Success)
+            {
+                ShowErrorMessage(result.Message);
+            }
+
+            return RedirectToAction("cart");
         }
     }
 }

@@ -45,6 +45,14 @@ namespace Web.App_Filters.Services
             var formsCookie = new HttpCookie(FormsAuthentication.FormsCookieName, encryptedTicket);
 
             context.Response.Cookies.Add(formsCookie);
+
+            var userSessionKey = context.Request.Cookies["Microsoft.Application.Key"].Value;
+
+            if (userSessionKey != null)
+            {
+                context.Request.Cookies.Remove(userSessionKey);
+                BaseController.UserSessionKey = "";
+            }
         }
 
         public void SetUserSessionKey()

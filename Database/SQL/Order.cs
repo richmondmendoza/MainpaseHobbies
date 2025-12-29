@@ -39,6 +39,9 @@ namespace Database.SQL
         public string BookAccountNumber { get; set; }
         public int Status { get; set; }
         public int DeliveryStatus { get; set; }
+        public int DeliveryMethod { get; set; }
+        public string DeliveryNote { get; set; }
+        public string Currency { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Order_Item> Order_Item { get; set; }

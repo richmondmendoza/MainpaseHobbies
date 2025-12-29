@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Infrastructure;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -38,6 +39,7 @@ namespace Dto.Dto
         public string Currency { get; set; } = string.Empty;
 
         public string ImageBase64 { get { return Convert.ToBase64String(ImageData); } }
+        public string EncId { get { return Fletcher.Encrypt(this.Id.ToString()); } }
 
     }
 }

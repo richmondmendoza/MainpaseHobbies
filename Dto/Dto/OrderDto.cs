@@ -28,6 +28,9 @@ namespace Dto.Dto
         public string BookAccountNumber { get; set; } = string.Empty;
         public OrderStatusEnum Status { get; set; } = OrderStatusEnum.Pending;
         public DeliveryStatusEnum DeliveryStatus { get; set; } = DeliveryStatusEnum.Pending;
+        public DeliveryMethodEnum DeliveryMethod { get; set; } = DeliveryMethodEnum.StorePickup;
+        public string DeliveryNote { get; set; } = string.Empty;
+        public string Currency { get; set; } = string.Empty;
     }
 
     public class OrderDetailsDto : OrderDto
@@ -54,6 +57,9 @@ namespace Dto.Dto
             this.BookAccountNumber = dto.BookAccountNumber;
             this.Status = dto.Status;
             this.DeliveryStatus = dto.DeliveryStatus;
+            this.DeliveryMethod = dto.DeliveryMethod;
+            this.DeliveryNote = dto.DeliveryNote;
+            this.Currency = dto.Currency;
         }
 
         public List<OrderItemDto> Items { get; set; } = new List<OrderItemDto>();

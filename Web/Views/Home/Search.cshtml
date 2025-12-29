@@ -262,6 +262,18 @@
         }
 
 
+        $(document).on('click', '.btn-add-to-cart', function (e) {
+
+            var id = $(this).attr('link-id');
+            var element = $('#quantity-' + $(this).attr('index'));
+
+            AddToCart({
+                limit: parseInt(element.attr('limit')),
+                value: element.val(),
+                cardId: id,
+            });
+        });
+
 
         $(document).ready(function () {
 

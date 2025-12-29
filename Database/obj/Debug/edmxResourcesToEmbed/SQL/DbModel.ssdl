@@ -44,6 +44,11 @@
     <Property Name="Address2" Type="nvarchar" MaxLength="250" />
     <Property Name="ShippingAddress1" Type="nvarchar" MaxLength="250" />
     <Property Name="ShippingAddress2" Type="nvarchar" MaxLength="250" />
+    <Property Name="UserId" Type="int" Nullable="false" />
+    <Property Name="Country" Type="nvarchar(max)" />
+    <Property Name="ShippingCountry" Type="nvarchar(max)" />
+    <Property Name="Postal" Type="nvarchar" MaxLength="20" />
+    <Property Name="ShippingPostal" Type="nvarchar" MaxLength="20" />
   </EntityType>
   <!--Errors Found During Generation:
 warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
@@ -105,6 +110,13 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
     <Property Name="Remarks" Type="text" />
     <Property Name="IsDeleted" Type="bit" Nullable="false" />
   </EntityType>
+  <EntityType Name="NewsLetter">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Email" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
   <EntityType Name="Order">
     <Key>
       <PropertyRef Name="Id" />
@@ -128,6 +140,9 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
     <Property Name="BookAccountNumber" Type="nvarchar" MaxLength="150" />
     <Property Name="Status" Type="int" Nullable="false" />
     <Property Name="DeliveryStatus" Type="int" Nullable="false" />
+    <Property Name="DeliveryMethod" Type="int" Nullable="false" />
+    <Property Name="DeliveryNote" Type="nvarchar(max)" />
+    <Property Name="Currency" Type="nvarchar" MaxLength="50" />
   </EntityType>
   <EntityType Name="Order_Item">
     <Key>
@@ -142,6 +157,22 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
     <Property Name="Quantity" Type="int" Nullable="false" />
     <Property Name="Price" Type="decimal" Precision="18" Scale="3" Nullable="false" />
     <Property Name="Total" Type="decimal" Precision="18" Scale="3" Nullable="false" />
+  </EntityType>
+  <EntityType Name="Payments">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="PaymentId" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="PayoneerId" Type="nvarchar(max)" Nullable="false" />
+    <Property Name="OrderId" Type="int" Nullable="false" />
+    <Property Name="Amount" Type="decimal" Precision="18" Scale="3" Nullable="false" />
+    <Property Name="Currency" Type="nvarchar" MaxLength="150" />
+    <Property Name="Status" Type="int" Nullable="false" />
+    <Property Name="ErrorCode" Type="nvarchar(max)" />
+    <Property Name="ErrorMessage" Type="nvarchar(max)" />
+    <Property Name="CreatedAt" Type="datetime" Nullable="false" />
+    <Property Name="UpdatedAt" Type="datetime" />
   </EntityType>
   <EntityType Name="System_Banner">
     <Key>
@@ -245,8 +276,10 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
     <EntitySet Name="CustomerDetails" EntityType="Self.CustomerDetails" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Inventory" EntityType="Self.Inventory" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Inventory_Count" EntityType="Self.Inventory_Count" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="NewsLetter" EntityType="Self.NewsLetter" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Order" EntityType="Self.Order" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Order_Item" EntityType="Self.Order_Item" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Payments" EntityType="Self.Payments" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="System_Banner" EntityType="Self.System_Banner" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="System_WebsiteInfo" EntityType="Self.System_WebsiteInfo" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />

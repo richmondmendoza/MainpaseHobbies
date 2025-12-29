@@ -66,8 +66,11 @@
     <Compile Include="Repo\Order\CartRepo.cs" />
     <Compile Include="Repo\Order\OrderItemRepo.cs" />
     <Compile Include="Repo\Order\OrderRepo.cs" />
+    <Compile Include="Repo\Order\PaymentRepo.cs" />
+    <Compile Include="Repo\Services\PayoneerTokenService.cs" />
     <Compile Include="Repo\Settings\SystemInfoRepo.cs" />
     <Compile Include="Repo\Settings\Utilities.cs" />
+    <Compile Include="Repo\User\CustomerRepo.cs" />
     <Compile Include="Repo\User\UserRepo.cs" />
     <Compile Include="Repo\User\SessionManagerRepo.cs" />
   </ItemGroup>

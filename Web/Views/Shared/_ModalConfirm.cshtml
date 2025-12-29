@@ -1,0 +1,31 @@
+﻿@model Dto.ConfirmDto
+
+<style>
+    #confirm-modal {
+        z-index: 1061;
+    }
+</style>
+
+<div class="modal" id="confirm-modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Message</h4>
+            </div>
+            <div class="modal-body">Content Here</div>
+            <div class="modal-footer">
+                <a href="javascript:;" type="button" class="btn btn-default btn-flat" data-bs-dismiss="modal">Close</a>
+
+                @using (Html.BeginForm("", "", FormMethod.Post, new { id = "form-confirm" }))
+                {
+                    @Html.HiddenFor(a => a.Param1)
+                    @Html.HiddenFor(a => a.Param2)
+                    @Html.HiddenFor(a => a.Param3)
+                    @Html.HiddenFor(a => a.Param4)
+
+                    <button type="submit" class="btn btn-primary btn-flat"><i class="fa fa-check"></i> Confirm</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>

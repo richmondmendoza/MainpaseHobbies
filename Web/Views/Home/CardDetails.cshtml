@@ -13,6 +13,18 @@
     }
 </style>
 
+<div class="page-title" data-aos="fade">
+    <nav class="breadcrumbs">
+        <div class="container">
+            <ol>
+                <li><a href="@Url.Action("Index", "Home", new { area ="" })">Home</a></li>
+                <li>Details</li>
+                <li class="current">@Model.Details.Name</li>
+            </ol>
+        </div>
+    </nav>
+</div>
+
 <section id="service-details" class="service-details section">
 
     <div class="container">

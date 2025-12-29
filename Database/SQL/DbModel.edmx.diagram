@@ -6,20 +6,22 @@
     <edmx:Diagrams>
       <Diagram DiagramId="b337a4c3172348208ce9b619a1137d2a" Name="Diagram1">
         <EntityTypeShape EntityType="IMSModel.AuditLog" Width="1.5" PointX="5.75" PointY="6.75" />
+        <EntityTypeShape EntityType="IMSModel.Cart" Width="1.5" PointX="3" PointY="4.875" />
         <EntityTypeShape EntityType="IMSModel.CustomerDetail" Width="1.5" PointX="7.75" PointY="5.75" />
         <EntityTypeShape EntityType="IMSModel.Inventory" Width="1.5" PointX="0.75" PointY="1.125" />
-        <EntityTypeShape EntityType="IMSModel.Inventory_Count" Width="1.5" PointX="3" PointY="1.25" />
-        <EntityTypeShape EntityType="IMSModel.Order" Width="1.5" PointX="5.75" PointY="1.125" />
+        <EntityTypeShape EntityType="IMSModel.Inventory_Count" Width="1.5" PointX="3" PointY="1.125" />
+        <EntityTypeShape EntityType="IMSModel.NewsLetter" Width="1.5" PointX="0.75" PointY="8.75" />
         <EntityTypeShape EntityType="IMSModel.Order_Item" Width="1.5" PointX="8" PointY="2" />
-        <EntityTypeShape EntityType="IMSModel.System_Banner" Width="1.5" PointX="0.75" PointY="8.75" />
-        <EntityTypeShape EntityType="IMSModel.System_WebsiteInfo" Width="1.5" PointX="2.75" PointY="8.75" />
-        <EntityTypeShape EntityType="IMSModel.User" Width="1.5" PointX="9.75" PointY="5.75" />
-        <EntityTypeShape EntityType="IMSModel.User_Session" Width="1.5" PointX="10.75" PointY="0.75" />
-        <EntityTypeShape EntityType="IMSModel.Event" Width="1.5" PointX="7.75" PointY="10.75" />
-        <AssociationConnector Association="IMSModel.FK_Inventory_Count_Inventory" />
-        <AssociationConnector Association="IMSModel.FK_Order_Item_Order" />
-        <EntityTypeShape EntityType="IMSModel.Cart" Width="1.5" PointX="3" PointY="5" />
+        <EntityTypeShape EntityType="IMSModel.Payment" Width="1.5" PointX="2.75" PointY="8.75" />
+        <EntityTypeShape EntityType="IMSModel.System_Banner" Width="1.5" PointX="9.75" PointY="5.75" />
+        <EntityTypeShape EntityType="IMSModel.System_WebsiteInfo" Width="1.5" PointX="9.75" PointY="8.75" />
+        <EntityTypeShape EntityType="IMSModel.User" Width="1.5" PointX="10.75" PointY="0.75" />
+        <EntityTypeShape EntityType="IMSModel.User_Session" Width="1.5" PointX="4.75" PointY="11.75" />
+        <EntityTypeShape EntityType="IMSModel.Event" Width="1.5" PointX="11.75" PointY="5.75" />
         <AssociationConnector Association="IMSModel.FK_Cart_Inventory" />
+        <AssociationConnector Association="IMSModel.FK_Inventory_Count_Inventory" />
+        <EntityTypeShape EntityType="IMSModel.Order" Width="1.5" PointX="5.75" PointY="0.75" />
+        <AssociationConnector Association="IMSModel.FK_Order_Item_Order" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

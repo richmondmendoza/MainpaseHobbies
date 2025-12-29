@@ -12,4 +12,13 @@ namespace Web.Models
         public bool RememberMe { get; set; }
         public string ReturnUrl { get; set; }
     }
+
+    public class CheckoutLogin
+    {
+        public string Email { get; set; } = string.Empty;
+        public string Username { get; set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
+        public bool IsGuest { get; set; } = false;
+    }
+
 }

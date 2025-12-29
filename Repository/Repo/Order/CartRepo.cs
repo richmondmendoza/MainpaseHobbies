@@ -3,6 +3,7 @@ using Dto;
 using Dto.Dto;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -66,6 +67,28 @@ namespace Repository.Repo.Order
             }
         }
 
+        public static int GetCount(int userId, string userSessionId = "")
+        {
+            int count = 0;
+            using (IMSEntities context = new IMSEntities())
+            {
+                var list = context.Carts.Where(a => a != null);
+
+                if (userId > 0)
+                {
+                    list = list.Where(a => a.UserId == userId);
+                }
+                else if (!string.IsNullOrEmpty(userSessionId))
+                {
+                    list = list.Where(a => !(a.UserId > 0) & a.UserSessionId == userSessionId);
+                }
+
+                count = list.Count();
+            }
+
+            return count;
+        }
+
         public static CartDetailsDto Get(int id)
         {
             using (IMSEntities context = new IMSEntities())
@@ -80,31 +103,56 @@ namespace Repository.Repo.Order
             var result = new ReturnValue();
             using (IMSEntities context = new IMSEntities())
             {
-                var item = new Cart
-                {
-                    UserId = dto.UserId,
-                    InventoryId = dto.InventoryId,
-                    DateCreated = dto.DateCreated,
-                    Quantity = dto.Quantity,
-                    UserSessionId = dto.UserSessionId,
-                };
-                context.Carts.Add(item);
+                var inventory = context.Inventories.Where(a => a.Id == dto.InventoryId).Include(a => a.Inventory_Count).FirstOrDefault();
+                var exists = context.Carts.FirstOrDefault(a => a.InventoryId == dto.InventoryId);
+                var limit = inventory?.Inventory_Count.Sum(a => a.Quantity) ?? 0;
 
-                Db.SaveChanges(context, result, "Cart item added successfully.");
+                if (exists != null)
+                {
+                    var quantity = dto.Quantity + exists.Quantity;
+
+                    if (quantity > limit)
+                        return new ReturnValue("The selected quantity exceeds the current inventory stock. Please reload the page and try again.");
+
+                    exists.Quantity = quantity;
+                }
+                else
+                {
+                    if (dto.Quantity > limit)
+                        return new ReturnValue("The selected quantity exceeds the current inventory stock. Please reload the page and try again.");
+
+                    var item = new Cart
+                    {
+                        UserId = dto.UserId,
+                        InventoryId = dto.InventoryId,
+                        DateCreated = dto.DateCreated,
+                        Quantity = dto.Quantity,
+                        UserSessionId = dto.UserSessionId,
+                    };
+                    context.Carts.Add(item);
+                }
+
+                Db.SaveChanges(context, result, "Item added to cart.");
             }
 
             return result;
         }
 
-        public ReturnValue Update(CartDto dto)
+        public ReturnValue Update(int id, int quantity)
         {
             var result = new ReturnValue();
             using (IMSEntities context = new IMSEntities())
             {
-                var item = context.Carts.FirstOrDefault(a => a.Id == dto.Id);
+                var item = context.Carts.FirstOrDefault(a => a.Id == id);
                 if (item != null)
                 {
-                    item.Quantity = dto.Quantity;
+                    var inventory = context.Inventories.Where(a => a.Id == item.InventoryId).Include(a => a.Inventory_Count).FirstOrDefault();
+                    var limit = inventory?.Inventory_Count.Sum(a => a.Quantity) ?? 0;
+
+                    if (quantity > limit)
+                        return new ReturnValue("The selected quantity exceeds the current inventory stock. Please reload the page and try again.");
+
+                    item.Quantity = quantity;
                     Db.SaveChanges(context, result, "Cart item updated successfully.");
                 }
                 else
@@ -112,6 +160,22 @@ namespace Repository.Repo.Order
                     result.Success = false;
                     result.Message = "Cart item not found.";
                 }
+            }
+            return result;
+        }
+
+        public ReturnValue UpdateOnLogin(int userId, string userSessionKey)
+        {
+            var result = new ReturnValue();
+            using (IMSEntities context = new IMSEntities())
+            {
+                var items = context.Carts.Where(a => !(a.UserId > 0) & a.UserSessionId == userSessionKey);
+                foreach (var item in items)
+                {
+                    item.UserId = userId;
+                }
+
+                Db.SaveChanges(context, result, "Updated successfully.");
             }
             return result;
         }
