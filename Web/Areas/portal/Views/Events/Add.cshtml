@@ -1,0 +1,140 @@
+﻿
+@model Web.Models.EventViewModel
+
+@{
+    ViewBag.title = "Add New Event";
+}
+<link href="~/Content/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
+<link href="~/Content/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css" rel="stylesheet" />
+<link href="~/Content/assets/plugins/monUpload/monUpload.css" rel="stylesheet" />
+
+<div class="row">
+    <div class="col-md-8">
+
+        @using (Html.BeginForm("Add", "Events", FormMethod.Post, new { area = "portal", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(a => a.Id)
+            @Html.HiddenFor(a => a.IsActive)
+            @Html.HiddenFor(a => a.DateCreated)
+            @Html.HiddenFor(a => a.FeaturedImage)
+
+            <div class="card">
+                <div class="card-header pt-4 pb-4">
+                    <h3 class="card-title">New Event</h3>
+                </div>
+
+                <div class="card-body mb-0" id="row-with-image">
+
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">Date of Event<span class="text-red">*</span></label>
+                        <div class="col-lg-9 col-md-7 col-sm-12">
+                            <div class="input-group date" id="eventdatetime" data-target-input="nearest">
+                                @Html.TextBoxFor(a => a.DateOfEvent, new { @class = "form-control datetimepicker-input", data_target = "#eventdatetime", data_toggle = "datetimepicker" })
+                                <div class="input-group-append" data-target="#eventdatetime" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                            @Html.ValidationMessageFor(a => a.DateOfEvent)
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">Featured Image</label>
+                        <div class="col-lg-9 col-md-7 col-sm-12">
+
+                            <div class="custom-file">
+                                @Html.TextBoxFor(a => a.FeaturedImageFile, new { type = "file", @class = "custom-file-input", accept = ".png, .jpg, .jpeg" })
+                                <label class="custom-file-label" for="FeaturedImageFile">Choose your featured image.</label>
+                            </div>
+
+                            <p class="small mb-0 font-italic">Upload .jpeg, .jpg, and .png</p>
+                            @Html.ValidationMessageFor(a => a.FeaturedImageFile)
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">Title<span class="text-red">*</span></label>
+                        <div class="col-lg-9 col-md-7 col-sm-12">
+                            @Html.TextBoxFor(a => a.Title, new { @class = "form-control", autocomplete = "off" })
+                            @Html.ValidationMessageFor(a => a.Title)
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-lg-12 col-form-label">Sub-Title</label>
+                        <div class="col-lg-12">
+                            @Html.TextAreaFor(a => a.SubTitle, new { @class = "summernote", autocomplete = "off" })
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-lg-12col-form-label">Event Details</label>
+                        <div class="col-lg-12">
+                            @Html.TextAreaFor(a => a.Body, new { @class = "summernote", autocomplete = "off" })
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <div class="col-lg-12">
+                            <div class="icheck-primary">
+                                @Html.CheckBoxFor(a => a.IsFeatured)
+                                <label for="IsFeatured">Feature this event.</label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card-footer text-right">
+                    <a href="@Url.Action("GoBack", "Base", new {area = "", ReturnUrl = Url.Action("List", "Item", new {area = "portal"})})" class="btn btn-default mr-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+
+            </div>
+        }
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/Content/assets/plugins/select2/js/select2.min.js"></script>
+    <script src="~/Content/assets/plugins/bs-custom-file-input/bs-custom-file-input.min.js"></script>
+    <script>
+        $(function () {
+            bsCustomFileInput.init();
+        });
+    </script>
+
+    <script>
+
+        function previewImage(event) {
+            const input = event.target;
+            const preview = document.getElementById("tcg-image-preview");
+
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    preview.src = e.target.result;
+                    preview.style.display = "block";
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            } else {
+                preview.src = "";
+            }
+        }
+
+        $(document).ready(function () {
+            $('.select2').select2({ "theme": "bootstrap4" });
+
+            $('#eventdatetime').datetimepicker({ icons: { time: 'far fa-clock' } });
+
+            $('.summernote').summernote({
+                minHeight: 300
+            });
+
+        })
+    </script>
+}

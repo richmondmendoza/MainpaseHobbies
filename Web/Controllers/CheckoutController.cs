@@ -57,6 +57,7 @@ namespace Web.Controllers
                 Description = "",
                 Total = a.Price * a.Quantity,
                 SerialNumber = "",
+                PreviousOwnerName = a.PreviousOwnerName
             }).ToList();
 
             model.SubTotal = model.Items.Sum(a => a.Total);

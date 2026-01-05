@@ -2,7 +2,7 @@
 @model Web.Models.InventoryViewModel
 
 @{
-    ViewBag.title = "Update Inventory Item";
+    ViewBag.title = "Add Inventory Item";
 }
 <link href="~/Content/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
 <link href="~/Content/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css" rel="stylesheet" />
@@ -42,7 +42,7 @@
 <div class="row">
     <div class="col-md-12">
 
-        @Using (Html.BeginForm("Add", "Inventory", FormMethod.Post, New { area = "portal", enctype = "multipart/form-data" }))
+        @using (Html.BeginForm("Add", "Inventory", FormMethod.Post, new { area = "portal", enctype = "multipart/form-data" }))
         {
             @Html.AntiForgeryToken()
             @Html.HiddenFor(a => a.Id)
@@ -215,6 +215,21 @@
                                 <div class="col-lg-9 col-md-7 col-sm-12">
                                     @Html.TextBoxFor(a => a.IllustratedBy, new { @class = "form-control", autocomplete = "off" })
                                     @Html.ValidationMessageFor(a => a.IllustratedBy)
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body bg-light">
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6 col-sm-8">
+                            <div class="form-group row">
+                                <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">Owner</label>
+                                <div class="col-lg-9 col-md-7 col-sm-12">
+                                    @Html.DropDownListFor(a => a.OwnerId, Model.OwnerNames, new { @class = "form-control select2" })
+                                    @Html.ValidationMessageFor(a => a.OwnerId)
                                 </div>
                             </div>
 

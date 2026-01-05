@@ -50,22 +50,27 @@
     <Property Name="Postal" Type="nvarchar" MaxLength="20" />
     <Property Name="ShippingPostal" Type="nvarchar" MaxLength="20" />
   </EntityType>
-  <!--Errors Found During Generation:
-warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+  <EntityType Name="Event_Image">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="EventId" Type="int" Nullable="false" />
+    <Property Name="Image" Type="varbinary(max)" />
+  </EntityType>
   <EntityType Name="Events">
     <Key>
       <PropertyRef Name="Id" />
-      <PropertyRef Name="DateCreated" />
-      <PropertyRef Name="Title" />
-      <PropertyRef Name="IsActive" />
     </Key>
-    <Property Name="Id" Type="int" Nullable="false" />
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="FeaturedImage" Type="varbinary(max)" />
     <Property Name="DateOfEvent" Type="datetime" />
     <Property Name="DateCreated" Type="datetime" Nullable="false" />
     <Property Name="Body" Type="text" />
     <Property Name="Title" Type="varchar(max)" Nullable="false" />
     <Property Name="SubTitle" Type="varchar(max)" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
+    <Property Name="IsFeatured" Type="bit" Nullable="false" />
   </EntityType>
   <EntityType Name="Inventory">
     <Key>
@@ -95,6 +100,8 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
     <Property Name="ManaCost" Type="varchar" MaxLength="250" />
     <Property Name="CardType" Type="varchar(max)" />
     <Property Name="IllustratedBy" Type="varchar(max)" />
+    <Property Name="CollectionGroup" Type="nvarchar(max)" />
+    <Property Name="OwnerId" Type="int" Nullable="false" />
   </EntityType>
   <EntityType Name="Inventory_Count">
     <Key>
@@ -157,6 +164,7 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
     <Property Name="Quantity" Type="int" Nullable="false" />
     <Property Name="Price" Type="decimal" Precision="18" Scale="3" Nullable="false" />
     <Property Name="Total" Type="decimal" Precision="18" Scale="3" Nullable="false" />
+    <Property Name="PreviousOwnerName" Type="nvarchar(max)" />
   </EntityType>
   <EntityType Name="Payments">
     <Key>
@@ -220,6 +228,7 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
     <Property Name="Role" Type="nvarchar(max)" Nullable="false" />
     <Property Name="IsDeleted" Type="bit" Nullable="false" />
     <Property Name="IsLocked" Type="bit" Nullable="false" />
+    <Property Name="IsCardOwner" Type="bit" Nullable="false" />
   </EntityType>
   <EntityType Name="User_Session">
     <Key>
@@ -243,6 +252,18 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
       </Principal>
       <Dependent Role="Cart">
         <PropertyRef Name="InventoryId" />
+      </Dependent>
+    </ReferentialConstraint>
+  </Association>
+  <Association Name="FK_Event_Image_Events">
+    <End Role="Events" Type="Self.Events" Multiplicity="1" />
+    <End Role="Event_Image" Type="Self.Event_Image" Multiplicity="*" />
+    <ReferentialConstraint>
+      <Principal Role="Events">
+        <PropertyRef Name="Id" />
+      </Principal>
+      <Dependent Role="Event_Image">
+        <PropertyRef Name="EventId" />
       </Dependent>
     </ReferentialConstraint>
   </Association>
@@ -274,6 +295,8 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
     <EntitySet Name="AuditLog" EntityType="Self.AuditLog" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Cart" EntityType="Self.Cart" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CustomerDetails" EntityType="Self.CustomerDetails" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Event_Image" EntityType="Self.Event_Image" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Events" EntityType="Self.Events" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Inventory" EntityType="Self.Inventory" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Inventory_Count" EntityType="Self.Inventory_Count" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="NewsLetter" EntityType="Self.NewsLetter" Schema="dbo" store:Type="Tables" />
@@ -284,20 +307,13 @@ warning 6002: The table/view 'IMS.dbo.Events' does not have a primary key define
     <EntitySet Name="System_WebsiteInfo" EntityType="Self.System_WebsiteInfo" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="User_Session" EntityType="Self.User_Session" Schema="dbo" store:Type="Tables" />
-    <EntitySet Name="Events" EntityType="Self.Events" store:Type="Tables" store:Schema="dbo">
-      <DefiningQuery>SELECT 
-    [Events].[Id] AS [Id], 
-    [Events].[DateOfEvent] AS [DateOfEvent], 
-    [Events].[DateCreated] AS [DateCreated], 
-    [Events].[Body] AS [Body], 
-    [Events].[Title] AS [Title], 
-    [Events].[SubTitle] AS [SubTitle], 
-    [Events].[IsActive] AS [IsActive]
-    FROM [dbo].[Events] AS [Events]</DefiningQuery>
-    </EntitySet>
     <AssociationSet Name="FK_Cart_Inventory" Association="Self.FK_Cart_Inventory">
       <End Role="Inventory" EntitySet="Inventory" />
       <End Role="Cart" EntitySet="Cart" />
+    </AssociationSet>
+    <AssociationSet Name="FK_Event_Image_Events" Association="Self.FK_Event_Image_Events">
+      <End Role="Events" EntitySet="Events" />
+      <End Role="Event_Image" EntitySet="Event_Image" />
     </AssociationSet>
     <AssociationSet Name="FK_Inventory_Count_Inventory" Association="Self.FK_Inventory_Count_Inventory">
       <End Role="Inventory" EntitySet="Inventory" />

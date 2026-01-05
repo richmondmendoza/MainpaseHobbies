@@ -3,7 +3,14 @@
 
 @{
     ViewBag.Title = "Upload";
+
+    var names = ViewBag.CardOwners;
+    var group = TempData.Peek("Group")?.ToString() ?? "";
+    int ownerid = Convert.ToInt32(TempData.Peek("OwnerId")?.ToString() ?? "0");
+
 }
+<link href="~/Content/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
+<link href="~/Content/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css" rel="stylesheet" />
 
 <div class="row">
     <div class="col-md-12">
@@ -16,6 +23,38 @@
                     @*<div class="card-tools">
                             <a href="@Url.Action("GoBack", "Base", new {area = "", ReturnUrl = Url.Action("List", "Inventory", new {area = "portal"}) })" class="mr-2"><i class="fa fa-times"></i></a>
                         </div>*@
+                </div>
+
+                <div class="card-body bg-light mb-0">
+                    <div class="row">
+
+                        <div class="col-lg-6">
+                            <div class="form-group row">
+                                <label class="form-label col-lg-5">Collection Group</label>
+                                <div class="col-lg-6">
+                                    <select class="select2 form-control" name="collectionGroup" @(!string.IsNullOrEmpty(group) ? "disabled" : "")>
+                                        <option value="Magic the Gathering" @(group == "Magic the Gathering" ? "selected" : "")>Magic the Gathering</option>
+                                        <option value="Grand Archive" @(group == "Grand Archive" ? "selected" : "")>Grand Archive</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group row">
+                                <label class="form-label col-lg-5">Owner</label>
+                                <div class="col-lg-7">
+                                    <select class="select2 form-control" name="ownerId" @(ownerid > 0 ? "disabled" : "")>
+                                        @foreach (var item in names)
+                                        {
+                                            <option value="@item.Value" @(item.Value == ownerid.ToString() ? "selected" : "")>@item.Text</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
                 </div>
 
                 <div class="card-body mb-0">
@@ -113,6 +152,8 @@
                                                 @Html.HiddenFor(a => a[index].IsDeleted)
                                                 @Html.HiddenFor(a => a[index].Description)
                                                 @Html.HiddenFor(a => a[index].Color)
+                                                @Html.HiddenFor(a => a[index].OwnerId)
+                                                @Html.HiddenFor(a => a[index].CollectionGroup)
 
                                                 @for (int countIndex = 0; countIndex < Model[index].InventoryCounts.Count(); countIndex++)
                                                 {
@@ -146,6 +187,7 @@
 </div>
 
 @section scripts{
+    <script src="~/Content/assets/plugins/select2/js/select2.min.js"></script>
     <script>
 
         var accountTable = $('#data-table').DataTable({
@@ -203,7 +245,7 @@
         });
 
         $(document).ready(function () {
-
+            $('.select2').select2({ "theme": "bootstrap4" });
         });
 
     </script>

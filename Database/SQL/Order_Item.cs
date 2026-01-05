@@ -23,6 +23,7 @@ namespace Database.SQL
         public int Quantity { get; set; }
         public decimal Price { get; set; }
         public decimal Total { get; set; }
+        public string PreviousOwnerName { get; set; }
     
         public virtual Order Order { get; set; }
     }

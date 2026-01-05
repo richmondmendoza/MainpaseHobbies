@@ -180,6 +180,8 @@ namespace Dto
 
         [JsonProperty("image_uris")]
         public ImageUris ImageUris { get; set; }
+
+        public string ImageData { get; set; }
     }
 
     public class ImageUris

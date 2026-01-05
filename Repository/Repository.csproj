@@ -61,6 +61,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Repo\AuditLogRepo.cs" />
     <Compile Include="Repo\Db.cs" />
+    <Compile Include="Repo\EventRepo.cs" />
     <Compile Include="Repo\InventoryCountRepo.cs" />
     <Compile Include="Repo\InventoryRepo.cs" />
     <Compile Include="Repo\Order\CartRepo.cs" />

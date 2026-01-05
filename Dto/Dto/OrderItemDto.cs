@@ -17,5 +17,6 @@ namespace Dto.Dto
         public int Quantity { get; set; } = 0;
         public decimal Price { get; set; } = 0;
         public decimal Total { get; set; } = 0;
+        public string PreviousOwnerName { get; set; } = string.Empty;
     }
 }

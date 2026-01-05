@@ -25,9 +25,6 @@
                                 <i class="fa fa-plus"></i> Add New
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#sales-chart" data-toggle="tab">Donut</a>
-                        </li>
                     </ul>
                 </div>
             </div>
@@ -38,12 +35,13 @@
                             <th>Name</th>
                             <th>Set Code</th>
                             <th>Set Name</th>
-                            <th>Rarity</th>
-                            <th>Condition</th>
+                            @*<th>Rarity</th>*@
+                            @*<th>Condition</th>*@
                             <th>Foil Type</th>
                             <th>Currency</th>
                             <th>Price</th>
                             <th>Available</th>
+                            <th>Owner</th>
                             <th>&nbsp;</th>
                         </tr>
                     </thead>
@@ -56,12 +54,13 @@
                                     <td>@item.Name</td>
                                     <td>@item.SetCode</td>
                                     <td>@item.SetName</td>
-                                    <td>@item.Rarity</td>
-                                    <td>@item.Condition</td>
+                                    @*<td>@item.Rarity</td>*@
+                                    @*<td>@item.Condition</td>*@
                                     <td>@item.FoilType</td>
-                                    <td>@item.PurchaseCurrency</td>
-                                    <td>@item.Price.ToString("n2")</td>
-                                    <td>@item.Count.ToString("n0")</td>
+                                    <td class="text-right">@item.PurchaseCurrency</td>
+                                    <td class="text-right">@item.Price.ToString("n2")</td>
+                                    <td class="text-right">@item.Count.ToString("n0")</td>
+                                    <td>@item.OwnerName</td>
                                     <td style="text-align: center;">
                                         <a href="@Url.Action("Update", "Inventory", new {area = "portal", id = item.Id})" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>
                                         <a href="@Url.Action("Details", "Inventory", new {area = "portal", id = item.Id})" class="btn btn-sm btn-secondary ml-2"><i class="fa fa-eye"></i></a>
@@ -86,7 +85,7 @@
                 "searching": true,
                 //"bLengthChange": false,
                 "responsive": true,
-                "autoWidth": true,
+                "autoWidth": false,
                 "paging": true,
                 buttons: [],
                 "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, 'All']]

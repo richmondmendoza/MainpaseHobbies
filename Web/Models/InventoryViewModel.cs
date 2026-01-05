@@ -11,6 +11,7 @@ using System.Web;
 using System.Web.Mvc;
 using Web.Utils;
 using Repository.Extensions;
+using Repository.Repo.User;
 
 namespace Web.Models
 {
@@ -45,6 +46,7 @@ namespace Web.Models
                 ManaCost = record.ManaCost;
                 CardType = record.CardType;
                 IllustratedBy = record.IllustratedBy;
+                OwnerId = record.OwnerId;
 
                 ImageFile = (HttpPostedFileBase)new MemoryPostedFile(this.Image);
             }
@@ -86,6 +88,7 @@ namespace Web.Models
         public string ManaCost { get; set; }
         public string CardType { get; set; }
         public string IllustratedBy { get; set; }
+        public int OwnerId { get; set; } = 0;
 
         public string ImageBase64
         {
@@ -172,6 +175,14 @@ namespace Web.Models
 
         public IEnumerable<SelectListItem> SetNames { get; set; } = new List<SelectListItem>();
 
+        public IEnumerable<SelectListItem> OwnerNames
+        {
+            get
+            {
+                return new UserRepo().GetNames().Select(a => new SelectListItem() { Value = a.Item1.ToString(), Text = a.Item2 });
+            }
+        }
+
         public InventoryDetailsDto ToDto()
         {
             if (this.ImageFile != null)
@@ -211,7 +222,7 @@ namespace Web.Models
                 IsDeleted = this.IsDeleted,
                 Color = this.Color,
                 Description = this.Description,
-
+                OwnerId = this.OwnerId,
             };
         }
     }

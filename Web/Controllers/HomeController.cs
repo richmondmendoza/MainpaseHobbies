@@ -28,13 +28,15 @@ namespace Web.Controllers
         public ActionResult Index()
         {
             ViewBag.Inventories = new InventoryRepo().GetListRandom(11);
+            ViewBag.Events = EventRepo.GetList();
+
             return View();
             //return RedirectToAction("Index", "Dashboard", new { area = "portal" });
         }
 
         public ActionResult Events()
         {
-            return View();
+            return View(EventRepo.GetList());
         }
 
         public ActionResult Shop()
@@ -102,6 +104,15 @@ namespace Web.Controllers
 
                     var cardJson = client.GetStringAsync(cardUrl).Result;
                     card = JsonConvert.DeserializeObject<ScryfallCard>(cardJson);
+
+                    if (card.CardFaces != null & card.CardFaces.Any())
+                    {
+                        for (int index = 0; index < card.CardFaces.Count; index++)
+                        {
+                            var imageBytes = client.GetByteArrayAsync(card.CardFaces[index].ImageUris.Png).Result;
+                            card.CardFaces[index].ImageData = Convert.ToBase64String(imageBytes);
+                        }
+                    }
                 }
 
                 return card;

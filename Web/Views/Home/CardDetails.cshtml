@@ -11,6 +11,10 @@
     .badge {
         width: 80px;
     }
+
+    .hidden {
+        display: none !important;
+    }
 </style>
 
 <div class="page-title" data-aos="fade">
@@ -33,36 +37,88 @@
 
             <div class="col-lg-5" data-aos="fade-up" data-aos-delay="100">
                 <div class="services-list">
-                    <div class="tcg-image-container">
-                        <img id="tcg-image-preview" src="data:image/@Model.Details.Image.GetImageExtension().Replace(".", "");base64,@Model.Details.ImageBase64" class="img-fluid" alt="">
-                        @if (Model.Details.FoilType.ToLower().Replace(" ", "") == "foil" ||
-                             Model.Details.FoilType.ToLower().Replace(" ", "") == "etchedfoil")
+                    @if (Model.ScryfallCard.CardFaces.Any())
+                    {
+                        int index = 0;
+                        foreach (var item in Model.ScryfallCard.CardFaces)
                         {
-                            <div class="tcg-foil"></div>
-                        }
-                    </div>
-                </div>
+                            <div class="tcg-image-container @(index == 1 ? "hidden" : "")" id="@(index == 0 ? "image-front": "image-back")">
+                                <img id="tcg-image-preview" src="data:image/png;base64,@item.ImageData" class="img-fluid" alt="">
+                                @if (Model.Details.FoilType.ToLower().Replace(" ", "") == "foil" ||
+                                     Model.Details.FoilType.ToLower().Replace(" ", "") == "etchedfoil")
+                                {
+                                    <div class="tcg-foil"></div>
+                                }
+                            </div>
 
-                @*<h4>@Model.Details.PurchaseCurrency @Model.Details.Price.ToString("n2")</h4>*@
-                @*<p>Nam voluptatem quasi numquam quas fugiat ex temporibus quo est. Quia aut quam quod facere ut non occaecati ut aut. Nesciunt mollitia illum tempore corrupti sed eum reiciendis. Maxime modi rerum.</p>*@
+                            index++;
+                        }
+                    }
+                    else
+                    {
+                        <div class="tcg-image-container">
+                            <img id="tcg-image-preview" src="data:image/@Model.Details.Image.GetImageExtension().Replace(".", "");base64,@Model.Details.ImageBase64" class="img-fluid" alt="">
+                            @if (Model.Details.FoilType.ToLower().Replace(" ", "") == "foil" ||
+                                 Model.Details.FoilType.ToLower().Replace(" ", "") == "etchedfoil")
+                            {
+                                <div class="tcg-foil"></div>
+                            }
+                        </div>
+                    }
+                </div>
+                @if (Model.ScryfallCard.CardFaces.Any())
+                {
+                    <div class="text-center">
+                        <button class="btn btn-warning btn-sm" id="btn-rotate"><i class="fa fa-rotate"></i> Rotate</button>
+                    </div>
+                }
+
+
+
+                @*<h4>@Model.Details.PurchaseCurrency @Model.Details.Price.ToString("n2")</h4>*@@*<p>Nam voluptatem quasi numquam quas fugiat ex temporibus quo est. Quia aut quam quod facere ut non occaecati ut aut. Nesciunt mollitia illum tempore corrupti sed eum reiciendis. Maxime modi rerum.</p>*@
             </div>
 
             <div class="col-lg-7" data-aos="fade-up" data-aos-delay="200">
-                <img src="assets/img/services.jpg" alt="" class="img-fluid services-img">
-                <h3>@Model.Details.Name</h3>
-                <p>@Model.Details.CardType</p>
-                <p>
-                    Mana Cost: @Html.Raw(Model.Details.ManaCost.TransformToCardSymbols()) <br />
-                    Rarity: @Model.Details.Rarity.ToUpper() <br />
-                    Set Name: @Model.Details.SetName <br />
-                    Artist: @Model.Details.IllustratedBy <br />
-                    Color: @(!string.IsNullOrEmpty(Model.Details.Color)? Model.Details.Color.Replace("|", ", ") : "Colorless")
-                </p>
-                <p>@Html.Raw(Model.Details.Description.TransformToCardSymbols())</p>
-
-                @if (!string.IsNullOrEmpty(Model.ScryfallCard.FlavorText))
+                @if (Model.ScryfallCard.CardFaces.Any())
                 {
-                    <p style="font-style: italic;">@Model.ScryfallCard.FlavorText</p>
+                    foreach (var item in Model.ScryfallCard.CardFaces)
+                    {
+                        <img src="assets/img/services.jpg" alt="" class="img-fluid services-img">
+                        <h3>@item.Name</h3>
+                        <p>@item.TypeLine</p>
+                        <p>
+                            Mana Cost: @Html.Raw(item.ManaCost.TransformToCardSymbols()) <br />
+                            Rarity: @Model.Details.Rarity.ToUpper() <br />
+                            Set Name: @Model.Details.SetName <br />
+                            Artist: @item.Artist <br />
+                            Color: @Html.Raw((string.Join("", item.Colors.Select(a => "{" + a + "}")).TransformToCardSymbols()))
+                        </p>
+                        <p>@Html.Raw(item.OracleText.TransformToCardSymbols())</p>
+
+                        if (!string.IsNullOrEmpty(item.FlavorText))
+                        {
+                            <p style="font-style: italic;">@item.FlavorText</p>
+                        }
+                    }
+                }
+                else
+                {
+                    <img src="assets/img/services.jpg" alt="" class="img-fluid services-img">
+                    <h3>@Model.Details.Name</h3>
+                    <p>@Model.Details.CardType</p>
+                    <p>
+                        Mana Cost: @Html.Raw(Model.Details.ManaCost.TransformToCardSymbols()) <br />
+                        Rarity: @Model.Details.Rarity.ToUpper() <br />
+                        Set Name: @Model.Details.SetName <br />
+                        Artist: @Model.Details.IllustratedBy <br />
+                        Color: @Html.Raw(!string.IsNullOrEmpty(Model.Details.Color) ? Model.Details.Color.TransformToCardSymbols() : "Colorless")
+                    </p>
+                    <p>@Html.Raw(Model.Details.Description.TransformToCardSymbols())</p>
+
+                    if (!string.IsNullOrEmpty(Model.ScryfallCard.FlavorText))
+                    {
+                        <p style="font-style: italic;">@Model.ScryfallCard.FlavorText</p>
+                    }
                 }
 
 
@@ -224,7 +280,13 @@
 @section scripts{
     <script>
 
+        function rotate(id) {
+            angle += 45;
+            $(id).css({ 'transform': 'rotate(' + angle + 'deg)' });
+        }
+
         $(document).ready(function () {
+
             $('#btn-add-to-cart').on('click', function (e) {
                 AddToCart({
                     limit: @((int)Model.Details.Count),
@@ -232,6 +294,20 @@
                     cardId: "@Infrastructure.Fletcher.Encrypt(Model.Details.Id.ToString())",
                 });
             });
+
+            $(document).on('click', '#btn-rotate', function () {
+
+                if ($("#image-back").hasClass("hidden")) {
+                    $("#image-front").addClass("hidden");
+                    $("#image-back").removeClass("hidden");
+                } else {
+                    $("#image-front").removeClass("hidden");
+                    $("#image-back").addClass("hidden");
+                }
+
+            });
+
+
         });
 
     </script>

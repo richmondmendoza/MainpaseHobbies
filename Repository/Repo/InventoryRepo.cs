@@ -20,7 +20,8 @@ namespace Repository.Repo
 {
     public class InventoryRepo
     {
-        public InventoryDetailsDto ToDetails(Inventory inventory)
+        HttpClient _client;
+        public InventoryDetailsDto ToDetails(Inventory inventory, DbSet<Database.SQL.User> users)
         {
             var details = ToDto(inventory);
 
@@ -35,6 +36,15 @@ namespace Repository.Repo
                     .ToList()
                     .Select(ic => new InventoryCountRepo().ToDto(ic))
                     .ToList();
+            }
+
+            if (users != null && users.Any())
+            {
+                var owner = users.FirstOrDefault(a => a.Id == (dto.OwnerId));
+                if (owner != null)
+                {
+                    dto.OwnerName = $"{owner.Firstname} {owner.LastName}";
+                }
             }
 
             return dto;
@@ -70,6 +80,9 @@ namespace Repository.Repo
                 IllustratedBy = inventory.IllustratedBy,
                 CardType = inventory.CardType,
                 ManaCost = inventory.ManaCost,
+                CollectionGroup = inventory.CollectionGroup,
+                OwnerId = inventory.OwnerId,
+
             };
         }
 
@@ -91,7 +104,7 @@ namespace Repository.Repo
                 using (IMSEntities context = new IMSEntities())
                 {
                     var record = context.Inventories.FirstOrDefault(i => i.Id == id && !i.IsDeleted);
-                    return ToDetails(record);
+                    return ToDetails(record, context.Users);
                 }
             }
             catch
@@ -105,7 +118,7 @@ namespace Repository.Repo
             using (IMSEntities context = new IMSEntities())
             {
                 var record = context.Inventories.Where(i => i.Id == id && !i.IsDeleted).Include(b => b.Inventory_Count);
-                return ToDetails(record.FirstOrDefault());
+                return ToDetails(record.FirstOrDefault(), context.Users);
             }
         }
 
@@ -113,8 +126,9 @@ namespace Repository.Repo
         {
             using (IMSEntities context = new IMSEntities())
             {
+                var users = context.Users;
                 var records = context.Inventories.Where(i => !i.IsDeleted).Include(b => b.Inventory_Count).ToList();
-                return records.Select(r => ToDetails(r)).ToList();
+                return records.Select(r => ToDetails(r, users)).ToList();
             }
         }
 
@@ -124,13 +138,14 @@ namespace Repository.Repo
             {
                 var skip = new Random().Next(0, Math.Max(0, context.Inventories.Count(i => !i.IsDeleted) - count));
 
+                var users = context.Users;
                 var records = context.Inventories
                     .Where(i => !i.IsDeleted)
                     .OrderBy(a => a.Id)
                     .Skip(skip)
                     .Take(count)
                     .Include(b => b.Inventory_Count).ToList();
-                return records.Select(r => ToDetails(r)).ToList();
+                return records.Select(r => ToDetails(r, users)).ToList();
             }
         }
 
@@ -143,7 +158,7 @@ namespace Repository.Repo
 
                 if (!string.IsNullOrEmpty(searchParam))
                 {
-                    records = records.Where(i => i.Name.Contains(searchParam) | i.SetName.Contains(searchParam) | i.SetCode.Contains(searchParam));
+                    records = records.Where(i => i.Name.ToLower().Contains(searchParam.ToLower()) || i.SetName.ToLower().Contains(searchParam.ToLower()) || i.SetCode.ToLower().Contains(searchParam.ToLower()));
                 }
 
                 if (!string.IsNullOrEmpty(colors))
@@ -226,6 +241,8 @@ namespace Repository.Repo
                     CardType = dto.CardType,
                     IllustratedBy = dto.IllustratedBy,
                     ManaCost = dto.ManaCost,
+                    CollectionGroup = dto.CollectionGroup,
+                    OwnerId = dto.OwnerId,
                 };
 
                 context.Inventories.Add(inventory);
@@ -259,7 +276,7 @@ namespace Repository.Repo
                         if (existing.Image == null || existing.Image.Length == 0)
                         {
                             if (cardDetails == null)
-                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName);
+                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName).Result;
 
                             existing.Image = cardDetails.Item1;
                         }
@@ -268,7 +285,7 @@ namespace Repository.Repo
                         {
 
                             if (cardDetails == null)
-                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName);
+                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName).Result;
 
                             existing.Description = cardDetails.Item2.OracleText ?? "";
                         }
@@ -276,7 +293,7 @@ namespace Repository.Repo
                         if (string.IsNullOrEmpty(existing.Color))
                         {
                             if (cardDetails == null)
-                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName);
+                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName).Result;
 
                             dto.Color = GetColorIdentityString(cardDetails.Item2.ColorIdentity);
                         }
@@ -284,7 +301,7 @@ namespace Repository.Repo
                         if (string.IsNullOrEmpty(existing.ManaCost))
                         {
                             if (cardDetails == null)
-                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName);
+                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName).Result;
 
                             existing.ManaCost = cardDetails.Item2.ManaCost;
                         }
@@ -292,7 +309,7 @@ namespace Repository.Repo
                         if (string.IsNullOrEmpty(existing.CardType))
                         {
                             if (cardDetails == null)
-                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName);
+                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName).Result;
 
                             existing.CardType = cardDetails.Item2.TypeLine;
                         }
@@ -300,7 +317,7 @@ namespace Repository.Repo
                         if (string.IsNullOrEmpty(existing.IllustratedBy))
                         {
                             if (cardDetails == null)
-                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName);
+                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName).Result;
 
                             existing.IllustratedBy = cardDetails.Item2.Artist;
                         }
@@ -323,6 +340,8 @@ namespace Repository.Repo
                         existing.ManaCost = dto.ManaCost;
                         existing.CardType = dto.CardType;
                         existing.IllustratedBy = dto.IllustratedBy;
+                        existing.CollectionGroup = dto.CollectionGroup;
+                        existing.OwnerId = dto.OwnerId;
 
                         if (dto.InventoryCounts.Any())
                         {
@@ -334,7 +353,7 @@ namespace Repository.Repo
                     }
                     else
                     {
-                        var cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName);
+                        var cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName).Result;
 
                         dto.Color = GetColorIdentityString(cardDetails.Item2.ColorIdentity);
 
@@ -363,6 +382,8 @@ namespace Repository.Repo
                             CardType = cardDetails.Item2.TypeLine,
                             IllustratedBy = cardDetails.Item2.Artist,
                             ManaCost = cardDetails.Item2.ManaCost,
+                            OwnerId = dto.OwnerId,
+                            CollectionGroup = dto.CollectionGroup,
                         };
 
                         if (dto.InventoryCounts.Any())
@@ -383,75 +404,110 @@ namespace Repository.Repo
             return result;
         }
 
-
-
-
-
-
-        private Tuple<byte[], ScryfallCard> FetchCardDetailsAsync(string scryfallId, string cardfaceName)
+        public ReturnValue Update(InventoryDetailsDto dto)
         {
+            var result = new ReturnValue();
+
+            using (IMSEntities context = new IMSEntities())
+            {
+                var inventory = context.Inventories.FirstOrDefault(i => i.Id == dto.Id && !i.IsDeleted);
+
+                if (inventory == null)
+                    return new ReturnValue("Unable to find inventory item.");
+
+                inventory.Image = dto.Image;
+                inventory.Name = dto.Name;
+                inventory.SetCode = dto.SetCode;
+                inventory.SetName = dto.SetName;
+                inventory.Collector = dto.Collector;
+                inventory.Language = dto.Language;
+                inventory.FoilType = dto.FoilType;
+                inventory.Rarity = dto.Rarity;
+                inventory.Condition = dto.Condition;
+                inventory.ManaboxId = dto.ManaboxId;
+                inventory.Misprint = dto.Misprint;
+                inventory.PurchaseCurrency = dto.PurchaseCurrency;
+                inventory.Price = dto.Price;
+                inventory.ScryfallId = dto.ScryfallId;
+                inventory.Tampered = dto.Tampered;
+                inventory.Color = dto.Color;
+                inventory.Description = dto.Description;
+                inventory.CardType = dto.CardType;
+                inventory.IllustratedBy = dto.IllustratedBy;
+                inventory.ManaCost = dto.ManaCost;
+                inventory.OwnerId = dto.OwnerId;
+                inventory.CollectionGroup = dto.CollectionGroup;
+
+                Db.SaveChanges(context, result, "Inventory updated successfully.");
+            }
+
+            return result;
+        }
+
+        public ReturnValue Delete(int id)
+        {
+            var result = new ReturnValue();
+
+            using (IMSEntities context = new IMSEntities())
+            {
+                var inventory = context.Inventories.FirstOrDefault(i => i.Id == id && !i.IsDeleted);
+
+                if (inventory == null)
+                    return new ReturnValue("Unable to find inventory item.");
+
+                inventory.IsDeleted = true;
+                Db.SaveChanges(context, result, "Inventory deleted successfully.");
+            }
+
+            return result;
+        }
+
+
+
+
+        private async Task<Tuple<byte[], ScryfallCard>> FetchCardDetailsAsync(string scryfallId, string cardfaceName)
+        {
+            _client = new HttpClient();
             var imageBytes = new byte[0];
             var card = new ScryfallCard();
             string cardUrl = $"https://api.scryfall.com/cards/{scryfallId}";
-            using (HttpClient client = new HttpClient())
+
+            _client.DefaultRequestHeaders.UserAgent.ParseAdd("MyApp/1.0");
+
+            var cardJson = _client.GetStringAsync(cardUrl).Result;
+            card = JsonConvert.DeserializeObject<ScryfallCard>(cardJson);
+
+
+            if (card.CardFaces != null & card.CardFaces.Any())
             {
-                client.DefaultRequestHeaders.UserAgent.ParseAdd("MyApp/1.0");
+                //var cardFace = card.CardFaces.Where(a => a.Name == cardfaceName).FirstOrDefault();
+                var cardFace = card.CardFaces.FirstOrDefault();
 
-                var cardJson = client.GetStringAsync(cardUrl).Result;
-                card = JsonConvert.DeserializeObject<ScryfallCard>(cardJson);
-
-
-                if (card.ImageUris == null)
+                if (cardFace != null)
                 {
-                    var cardFace = card.CardFaces.Where(a => a.Name == cardfaceName).FirstOrDefault();
+                    if (!string.IsNullOrEmpty(cardFace.ImageUris.Png))
+                        imageBytes = _client.GetByteArrayAsync(cardFace.ImageUris.Png).Result;
 
-                    if (cardFace != null)
-                    {
-                        if (!string.IsNullOrEmpty(cardFace.ImageUris.Png))
-                            imageBytes = client.GetByteArrayAsync(cardFace.ImageUris.Png).Result;
-
-                        card.OracleText = cardFace?.OracleText ?? card.OracleText;
-                        card.Artist = cardFace?.Artist ?? card.Artist;
-                        card.ManaCost = cardFace?.ManaCost ?? card.ManaCost;
-                        card.TypeLine = cardFace?.TypeLine ?? card.TypeLine;
-                        card.ColorIdentity = cardFace?.Colors ?? card.ColorIdentity;
-                    }
-                }
-                else
-                {
-                    if (!string.IsNullOrEmpty(card.ImageUris.Png))
-                        imageBytes = client.GetByteArrayAsync(card.ImageUris.Png).Result;
+                    //card.OracleText = cardFace?.OracleText ?? card.OracleText;
+                    //card.Artist = cardFace?.Artist ?? card.Artist;
+                    //card.ManaCost = cardFace?.ManaCost ?? card.ManaCost;
+                    //card.TypeLine = cardFace?.TypeLine ?? card.TypeLine;
+                    //card.ColorIdentity = cardFace?.Colors ?? card.ColorIdentity;
                 }
             }
+            else
+            {
+                if (!string.IsNullOrEmpty(card.ImageUris.Png))
+                    imageBytes = _client.GetByteArrayAsync(card.ImageUris.Png).Result;
+            }
 
+            _client.Dispose();
             return Tuple.Create(imageBytes, card);
         }
 
         private string GetColorIdentityString(List<string> colorIdentity)
         {
-            StringBuilder colorString = new StringBuilder();
-            foreach (var color in colorIdentity)
-            {
-                switch (color)
-                {
-                    case "W":
-                        colorString.Append("White|");
-                        break;
-                    case "U":
-                        colorString.Append("Blue|");
-                        break;
-                    case "B":
-                        colorString.Append("Black|");
-                        break;
-                    case "R":
-                        colorString.Append("Red|");
-                        break;
-                    case "G":
-                        colorString.Append("Green|");
-                        break;
-                }
-            }
-            return colorString.ToString().TrimEnd('|');
+            return string.Join("", colorIdentity.Select(a => "{" + a + "}"));
         }
 
     }

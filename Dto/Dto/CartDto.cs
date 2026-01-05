@@ -15,6 +15,7 @@ namespace Dto.Dto
         public DateTime DateCreated { get; set; } = DateTime.Now;
         public int Quantity { get; set; } = 0;
         public string UserSessionId { get; set; }
+        public string PreviousOwnerName { get; set; } = string.Empty;
     }
 
     public class CartDetailsDto : CartDto
@@ -28,6 +29,7 @@ namespace Dto.Dto
             this.DateCreated = dto.DateCreated;
             this.Quantity = dto.Quantity;
             this.UserSessionId = dto.UserSessionId;
+            this.PreviousOwnerName = dto.PreviousOwnerName;
         }
 
         public string ProductName { get; set; } = string.Empty;

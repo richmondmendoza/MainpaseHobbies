@@ -14,12 +14,23 @@ namespace Database.SQL
     
     public partial class Event
     {
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
+        public Event()
+        {
+            this.Event_Image = new HashSet<Event_Image>();
+        }
+    
         public int Id { get; set; }
+        public byte[] FeaturedImage { get; set; }
         public Nullable<System.DateTime> DateOfEvent { get; set; }
         public System.DateTime DateCreated { get; set; }
         public string Body { get; set; }
         public string Title { get; set; }
         public string SubTitle { get; set; }
         public bool IsActive { get; set; }
+        public bool IsFeatured { get; set; }
+    
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Event_Image> Event_Image { get; set; }
     }
 }

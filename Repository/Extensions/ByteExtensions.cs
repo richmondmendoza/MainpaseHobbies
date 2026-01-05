@@ -30,7 +30,7 @@ namespace Repository.Extensions
             if (bytes[0] == 0x42 && bytes[1] == 0x4D)
                 return ".bmp";
 
-            return null;
+            return ".png";
         }
     }
 }

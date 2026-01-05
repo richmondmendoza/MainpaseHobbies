@@ -27,6 +27,7 @@ namespace Web.Models
                 Role = dto.Role;
                 IsDeleted = dto.IsDeleted;
                 IsLocked = dto.IsLocked;
+                IsCardOwner = dto.IsCardOwner;
             }
         }
 
@@ -48,6 +49,7 @@ namespace Web.Models
         public string Role { get; set; } = string.Empty;
         public bool IsDeleted { get; set; }
         public bool IsLocked { get; set; }
+        public bool IsCardOwner { get; set; }
 
         public List<string> Roles
         {
@@ -73,7 +75,8 @@ namespace Web.Models
                 InvalidLoginCounter = this.InvalidLoginCounter,
                 Role = this.Role,
                 IsDeleted = this.IsDeleted,
-                IsLocked = this.IsLocked
+                IsLocked = this.IsLocked,
+                IsCardOwner = this.IsCardOwner
             };
         }
     }

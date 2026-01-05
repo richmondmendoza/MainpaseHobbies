@@ -54,9 +54,35 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="Event_Image">
+      <EntityTypeMapping TypeName="IMSModel.Event_Image">
+        <MappingFragment StoreEntitySet="Event_Image">
+          <ScalarProperty Name="Image" ColumnName="Image" />
+          <ScalarProperty Name="EventId" ColumnName="EventId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Events">
+      <EntityTypeMapping TypeName="IMSModel.Event">
+        <MappingFragment StoreEntitySet="Events">
+          <ScalarProperty Name="IsFeatured" ColumnName="IsFeatured" />
+          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+          <ScalarProperty Name="SubTitle" ColumnName="SubTitle" />
+          <ScalarProperty Name="Title" ColumnName="Title" />
+          <ScalarProperty Name="Body" ColumnName="Body" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="DateOfEvent" ColumnName="DateOfEvent" />
+          <ScalarProperty Name="FeaturedImage" ColumnName="FeaturedImage" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="Inventories">
       <EntityTypeMapping TypeName="IMSModel.Inventory">
         <MappingFragment StoreEntitySet="Inventory">
+          <ScalarProperty Name="OwnerId" ColumnName="OwnerId" />
+          <ScalarProperty Name="CollectionGroup" ColumnName="CollectionGroup" />
           <ScalarProperty Name="IllustratedBy" ColumnName="IllustratedBy" />
           <ScalarProperty Name="CardType" ColumnName="CardType" />
           <ScalarProperty Name="ManaCost" ColumnName="ManaCost" />
@@ -107,9 +133,38 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
+    <EntitySetMapping Name="Orders">
+      <EntityTypeMapping TypeName="IMSModel.Order">
+        <MappingFragment StoreEntitySet="Order">
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="DeliveryNote" ColumnName="DeliveryNote" />
+          <ScalarProperty Name="DeliveryMethod" ColumnName="DeliveryMethod" />
+          <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="BookAccountNumber" ColumnName="BookAccountNumber" />
+          <ScalarProperty Name="Total" ColumnName="Total" />
+          <ScalarProperty Name="Shipping" ColumnName="Shipping" />
+          <ScalarProperty Name="Tax" ColumnName="Tax" />
+          <ScalarProperty Name="SubTotal" ColumnName="SubTotal" />
+          <ScalarProperty Name="PaymentMethod" ColumnName="PaymentMethod" />
+          <ScalarProperty Name="ContactEmail" ColumnName="ContactEmail" />
+          <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
+          <ScalarProperty Name="Address2" ColumnName="Address2" />
+          <ScalarProperty Name="Address1" ColumnName="Address1" />
+          <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+          <ScalarProperty Name="InvoiceNumber" ColumnName="InvoiceNumber" />
+          <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
+          <ScalarProperty Name="DueDate" ColumnName="DueDate" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
     <EntitySetMapping Name="Order_Item">
       <EntityTypeMapping TypeName="IMSModel.Order_Item">
         <MappingFragment StoreEntitySet="Order_Item">
+          <ScalarProperty Name="PreviousOwnerName" ColumnName="PreviousOwnerName" />
           <ScalarProperty Name="Total" ColumnName="Total" />
           <ScalarProperty Name="Price" ColumnName="Price" />
           <ScalarProperty Name="Quantity" ColumnName="Quantity" />
@@ -172,6 +227,7 @@
     <EntitySetMapping Name="Users">
       <EntityTypeMapping TypeName="IMSModel.User">
         <MappingFragment StoreEntitySet="User">
+          <ScalarProperty Name="IsCardOwner" ColumnName="IsCardOwner" />
           <ScalarProperty Name="IsLocked" ColumnName="IsLocked" />
           <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
           <ScalarProperty Name="Role" ColumnName="Role" />
@@ -198,47 +254,6 @@
           <ScalarProperty Name="LastDateOfActivity" ColumnName="LastDateOfActivity" />
           <ScalarProperty Name="Date" ColumnName="Date" />
           <ScalarProperty Name="Token" ColumnName="Token" />
-          <ScalarProperty Name="UserId" ColumnName="UserId" />
-          <ScalarProperty Name="Id" ColumnName="Id" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="Events">
-      <EntityTypeMapping TypeName="IMSModel.Event">
-        <MappingFragment StoreEntitySet="Events">
-          <ScalarProperty Name="IsActive" ColumnName="IsActive" />
-          <ScalarProperty Name="SubTitle" ColumnName="SubTitle" />
-          <ScalarProperty Name="Title" ColumnName="Title" />
-          <ScalarProperty Name="Body" ColumnName="Body" />
-          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-          <ScalarProperty Name="DateOfEvent" ColumnName="DateOfEvent" />
-          <ScalarProperty Name="Id" ColumnName="Id" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
-    <EntitySetMapping Name="Orders">
-      <EntityTypeMapping TypeName="IMSModel.Order">
-        <MappingFragment StoreEntitySet="Order">
-          <ScalarProperty Name="Currency" ColumnName="Currency" />
-          <ScalarProperty Name="DeliveryNote" ColumnName="DeliveryNote" />
-          <ScalarProperty Name="DeliveryMethod" ColumnName="DeliveryMethod" />
-          <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
-          <ScalarProperty Name="Status" ColumnName="Status" />
-          <ScalarProperty Name="BookAccountNumber" ColumnName="BookAccountNumber" />
-          <ScalarProperty Name="Total" ColumnName="Total" />
-          <ScalarProperty Name="Shipping" ColumnName="Shipping" />
-          <ScalarProperty Name="Tax" ColumnName="Tax" />
-          <ScalarProperty Name="SubTotal" ColumnName="SubTotal" />
-          <ScalarProperty Name="PaymentMethod" ColumnName="PaymentMethod" />
-          <ScalarProperty Name="ContactEmail" ColumnName="ContactEmail" />
-          <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
-          <ScalarProperty Name="Address2" ColumnName="Address2" />
-          <ScalarProperty Name="Address1" ColumnName="Address1" />
-          <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
-          <ScalarProperty Name="InvoiceNumber" ColumnName="InvoiceNumber" />
-          <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
-          <ScalarProperty Name="DueDate" ColumnName="DueDate" />
-          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />
           <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>

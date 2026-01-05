@@ -26,7 +26,8 @@ namespace Repository.Repo.Order
                 Description = item.Description,
                 Quantity = item.Quantity,
                 Price = item.Price,
-                Total = item.Total
+                Total = item.Total,
+                PreviousOwnerName = item.PreviousOwnerName,
             };
         }
 
@@ -70,7 +71,8 @@ namespace Repository.Repo.Order
                 Description = dto.Description,
                 Quantity = dto.Quantity,
                 Price = dto.Price,
-                Total = dto.Total
+                Total = dto.Total,
+                PreviousOwnerName = dto.PreviousOwnerName,
             };
 
             order.Order_Item.Add(item);

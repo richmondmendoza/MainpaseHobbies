@@ -35,6 +35,7 @@ namespace Repository.Repo.User
                 PasswordKey = "",
                 Role = user.Role,
                 Username = user.Username,
+                IsCardOwner = user.IsCardOwner,
             };
         }
 
@@ -122,6 +123,24 @@ namespace Repository.Repo.User
             }
         }
 
+        public string GetName(int id)
+        {
+            using (IMSEntities context = new IMSEntities())
+            {
+                var record = context.Users.Where(a => a.Id == id).FirstOrDefault();
+                return $"{(record?.Firstname ?? "")} {(record?.LastName ?? "")}";
+            }
+        }
+
+        public IEnumerable<Tuple<int, string>> GetNames()
+        {
+            using (IMSEntities context = new IMSEntities())
+            {
+                var records = context.Users.Where(a => a.IsCardOwner);
+                return records.ToList().Select(a => Tuple.Create(a.Id, $"{a.Firstname} {a.LastName}")).ToList();
+            }
+        }
+
         public ReturnValue Create(UserDto dto)
         {
             var result = new ReturnValue();
@@ -150,6 +169,7 @@ namespace Repository.Repo.User
                     user.PasswordKey = dto.PasswordKey;
                     user.Password = encryptedPassword;
                     user.Role = dto.Role;
+                    user.IsCardOwner = dto.IsCardOwner;
 
                     var sessions = context.User_Session.Where(a => a.UserId == user.Id);
                     context.User_Session.RemoveRange(sessions);
@@ -172,6 +192,7 @@ namespace Repository.Repo.User
                         PasswordKey = dto.PasswordKey,
                         Role = dto.Role,
                         Username = dto.Username,
+                        IsCardOwner = dto.IsCardOwner,
                     };
 
                     context.Users.Add(user);
@@ -201,6 +222,7 @@ namespace Repository.Repo.User
                 record.IsLocked = dto.IsLocked;
                 record.Middlename = dto.Middlename;
                 record.Role = dto.Role;
+                record.IsCardOwner = dto.IsCardOwner;
 
                 Db.SaveChanges(context, result, "Successfully Updated.");
                 result.Data = ToDto(record);

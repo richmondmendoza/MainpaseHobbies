@@ -77,6 +77,7 @@
     <Compile Include="BaseSettings\SystemInfoDto.cs" />
     <Compile Include="ConfirmDto.cs" />
     <Compile Include="Dto\CartDto.cs" />
+    <Compile Include="Dto\EventDto.cs" />
     <Compile Include="Dto\InventoryCountDto.cs" />
     <Compile Include="Dto\InventoryDto.cs" />
     <Compile Include="Dto\OrderDto.cs" />

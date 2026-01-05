@@ -198,6 +198,7 @@
     <Compile Include="Areas\portal\Controllers\AccountController.cs" />
     <Compile Include="Areas\portal\Controllers\BaseAdminController.cs" />
     <Compile Include="Areas\portal\Controllers\DashboardController.cs" />
+    <Compile Include="Areas\portal\Controllers\EventsController.cs" />
     <Compile Include="Areas\portal\Controllers\InventoryController.cs" />
     <Compile Include="Areas\portal\portalAreaRegistration.cs" />
     <Compile Include="Controllers\BaseController.cs" />
@@ -209,6 +210,7 @@
     </Compile>
     <Compile Include="Models\CardDetailsViewModel.cs" />
     <Compile Include="Models\CheckoutViewModel.cs" />
+    <Compile Include="Models\EventViewModel.cs" />
     <Compile Include="Models\InventoryViewModel.cs" />
     <Compile Include="Models\LoginViewModel.cs" />
     <Compile Include="Models\SearchViewModel.cs" />
@@ -2337,6 +2339,9 @@
     <Content Include="Areas\portal\Views\Account\Add.cshtml" />
     <Content Include="Areas\portal\Views\Account\Details.cshtml" />
     <Content Include="Areas\portal\Views\Account\_ChangePassword.cshtml" />
+    <Content Include="Areas\portal\Views\Events\Index.cshtml" />
+    <Content Include="Areas\portal\Views\Events\Add.cshtml" />
+    <Content Include="Areas\portal\Views\Events\Update.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\Cart.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />

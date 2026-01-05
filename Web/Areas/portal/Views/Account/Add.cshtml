@@ -68,9 +68,10 @@
                         <div class="form-group row">
                             <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">&nbsp;</label>
                             <div class="col-lg-9 col-md-7 col-sm-12">
-                                <label>
-                                    <input type="checkbox" id="chk-customer" @(Model.Roles.Any(a => a.Contains(Dto.Enums.UserRoleEnum.Customer.ToString())) ? "checked" : "") /> Use this account to log into Customer Profile
-                                </label>
+                                <div class="icheck-primary">
+                                    <input type="checkbox" id="chk-customer" @(Model.Roles.Any(a => a.Contains(Dto.Enums.UserRoleEnum.Customer.ToString())) ? "checked" : "") />
+                                    <label for="chk-customer">Use this account to log into Customer Profile</label>
+                                </div>
                             </div>
                         </div>
 
@@ -78,16 +79,32 @@
                             <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">&nbsp;</label>
                             <div class="col-lg-9 col-md-7 col-sm-12 row">
                                 <div class="col-6">
-                                    <label><input type="checkbox" id="chk-portal-user" @(Model.Roles.Any(a => a.Contains(Dto.Enums.UserRoleEnum.PortalUser.ToString())) ? "checked" : "") /> Portal User</label>
+                                    <div class="icheck-primary">
+                                        <input type="checkbox" id="chk-portal-user" @(Model.Roles.Any(a => a.Contains(Dto.Enums.UserRoleEnum.PortalUser.ToString())) ? "checked" : "") />
+                                        <label for="chk-portal-user">Portal User</label>
+                                    </div>
                                 </div>
 
                                 @if (user.Roles.Any(a => a.Contains(Dto.Enums.UserRoleEnum.PortalAdmin.ToString())))
                                 {
                                     <div class="col-6">
-                                        <label><input type="checkbox" id="chk-portal-admin" @(Model.Roles.Any(a => a.Contains(Dto.Enums.UserRoleEnum.PortalAdmin.ToString())) ? "checked" : "") /> Portal Admin</label>
+                                        <div class="icheck-primary">
+                                            <input type="checkbox" id="chk-portal-admin" @(Model.Roles.Any(a => a.Contains(Dto.Enums.UserRoleEnum.PortalAdmin.ToString())) ? "checked" : "") />
+                                            <label for="chk-portal-admin">Portal Admin</label>
+                                        </div>
                                     </div>
                                 }
 
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">&nbsp;</label>
+                            <div class="col-lg-9 col-md-7 col-sm-12">
+                                <div class="icheck-primary">
+                                    @Html.CheckBoxFor(a => a.IsCardOwner)
+                                    <label for="IsCardOwner">List this user as card owner</label>
+                                </div>
                             </div>
                         </div>
 

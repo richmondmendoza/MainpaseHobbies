@@ -3,6 +3,7 @@ using Dto.Dto;
 using Dto.Enums;
 using Newtonsoft.Json;
 using Repository.Repo;
+using Repository.Repo.User;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -56,6 +57,7 @@ namespace Web.Areas.portal.Controllers
         [HttpPost]
         public ActionResult Update(InventoryViewModel model)
         {
+            var result = _repo.Update(model.ToDto());
             return RedirectToAction("update", new { id = model.Id });
         }
 
@@ -72,13 +74,23 @@ namespace Web.Areas.portal.Controllers
         public ActionResult Upload()
         {
             var model = new List<InventoryDetailsDto>();
+
+            var names = new UserRepo().GetNames().ToList().Select(a => new SelectListItem() { Value = a.Item1.ToString(), Text = a.Item2 });
+            ViewBag.CardOwners = names;
+            TempData["OwnerId"] = 0;
+            TempData["Group"] = "";
+
             return View(model);
         }
 
         [HttpPost]
-        public ActionResult Upload(HttpPostedFileBase file)
+        public ActionResult Upload(HttpPostedFileBase file, int ownerId, string collectionGroup)
         {
             var model = new List<InventoryDetailsDto>();
+
+            ViewBag.CardOwners = new UserRepo().GetNames().ToList().Select(a => new SelectListItem() { Value = a.Item1.ToString(), Text = a.Item2 });
+            TempData["OwnerId"] = ownerId;
+            TempData["Group"] = collectionGroup;
 
             using (var reader = new StreamReader(file.InputStream))
             {
@@ -101,7 +113,7 @@ namespace Web.Areas.portal.Controllers
                         Condition = a.Condition.ToUpper().Replace("_", " "),
                         Language = a.Language.ToLower(),
                         PurchaseCurrency = a.PurchasePriceCurrency.ToUpper(),
-                        CreatedBy = $"Uploaded by .",
+                        CreatedBy = $"Uploaded by [{Identity.Username}].",
                         DateCreated = DateTime.Now,
                         InventoryCounts = new List<InventoryCountDto>()
                             {
@@ -114,7 +126,9 @@ namespace Web.Areas.portal.Controllers
                                     Remarks = $"Inventory uploaded by .",
                                     Type = InventoryCountTypeEnum.Upload,
                                 }
-                            }
+                            },
+                        OwnerId = ownerId,
+                        CollectionGroup = collectionGroup,
                     }).ToList();
                 }
             }

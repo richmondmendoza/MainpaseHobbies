@@ -13,9 +13,20 @@ namespace Repository.Repo.Order
 {
     public class CartRepo
     {
-        public static CartDto ToDto(Cart item)
+        public static CartDto ToDto(Cart item, IEnumerable<Database.SQL.User> users)
         {
             if (item == null) return null;
+
+            string userName = string.Empty;
+
+            if (users != null && users.Any())
+            {
+                var user = users.FirstOrDefault(a => a.Id == (item.Inventory?.OwnerId ?? 0));
+                if (user != null)
+                {
+                    userName = $"{user.Firstname} {user.LastName}";
+                }
+            }
 
             return new CartDto
             {
@@ -25,14 +36,15 @@ namespace Repository.Repo.Order
                 DateCreated = item.DateCreated,
                 Quantity = item.Quantity,
                 UserSessionId = item.UserSessionId,
+                PreviousOwnerName = userName,
             };
         }
 
-        public static CartDetailsDto ToDetailsDto(Cart item)
+        public static CartDetailsDto ToDetailsDto(Cart item, IEnumerable<Database.SQL.User> users)
         {
             if (item == null) return null;
 
-            var dto = new CartDetailsDto(ToDto(item));
+            var dto = new CartDetailsDto(ToDto(item, users));
             dto.ProductName = item.Inventory.Name;
             dto.Price = item.Inventory.Price;
             dto.Stock = (int)item.Inventory.Inventory_Count.Sum(a => a.Quantity);
@@ -48,6 +60,7 @@ namespace Repository.Repo.Order
         {
             using (IMSEntities context = new IMSEntities())
             {
+                var users = context.Users.ToList();
                 var list = context.Carts.Where(a => a != null);
 
                 if (userId > 0)
@@ -63,7 +76,7 @@ namespace Repository.Repo.Order
                     return new List<CartDetailsDto>();
                 }
 
-                return list.ToList().Select(x => ToDetailsDto(x)).ToList();
+                return list.ToList().Select(x => ToDetailsDto(x, users)).ToList();
             }
         }
 
@@ -93,8 +106,9 @@ namespace Repository.Repo.Order
         {
             using (IMSEntities context = new IMSEntities())
             {
+                var users = context.Users.ToList();
                 var item = context.Carts.FirstOrDefault(a => a.Id == id);
-                return ToDetailsDto(item);
+                return ToDetailsDto(item, users);
             }
         }
 

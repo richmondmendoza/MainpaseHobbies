@@ -33,6 +33,8 @@ namespace Dto.Dto
         public string ManaCost { get; set; }
         public string CardType { get; set; }
         public string IllustratedBy { get; set; }
+        public string CollectionGroup { get; set; }
+        public int OwnerId { get; set; }
 
 
     }
@@ -67,6 +69,7 @@ namespace Dto.Dto
             ManaCost = inventory.ManaCost;
             CardType = inventory.CardType;
             IllustratedBy = inventory.IllustratedBy;
+            OwnerId = inventory.OwnerId;
         }
 
         public string ImageBase64
@@ -80,6 +83,7 @@ namespace Dto.Dto
         public List<InventoryCountDto> InventoryCounts { get; set; } = new List<InventoryCountDto>();
 
         public decimal Count { get { return InventoryCounts.Sum(a => a.Quantity); } }
+        public string OwnerName { get; set; }
     }
 
     public class CardDetailsDto

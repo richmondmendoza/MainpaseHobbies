@@ -45,6 +45,8 @@ namespace Database.SQL
         public string ManaCost { get; set; }
         public string CardType { get; set; }
         public string IllustratedBy { get; set; }
+        public string CollectionGroup { get; set; }
+        public int OwnerId { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Cart> Carts { get; set; }
