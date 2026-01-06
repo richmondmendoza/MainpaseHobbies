@@ -64,6 +64,25 @@
                             </li>*@
                     </ul>
                 </li>
+
+                <li class="nav-item @Html.RouteIf("portal", "OrderManagement", "Details", "menu-open")">
+                    <a href="#" class="nav-link">
+                        <i class="nav-icon fas fa-cart-shopping"></i>
+                        <p>Orders <i class="right fas fa-angle-left"></i></p>
+                    </a>
+                    <ul class="nav nav-treeview">
+                        <li class="nav-item">
+                            <a href="@Url.Action("List_Pending", "OrderManagement", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "OrderManagement", "List_Pending", "active")">
+                                <i class="far fa-circle nav-icon text-warning"></i><p>Pending</p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("List_Completed", "OrderManagement", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "OrderManagement", "List_Completed", "active")">
+                                <i class="far fa-circle nav-icon text-success"></i><p>Completed</p>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
                 <li class="nav-item">
                     <a href="@Url.Action("Index", "Events", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Events", "Index|Add|Update", "active")">
                         <i class="nav-icon fas fa-calendar"></i><p>Events</p>
@@ -73,21 +92,21 @@
                 <li class="nav-header">SETTINGS</li>
 
 
-                <li class="nav-item">
+                @*<li class="nav-item">
                     <a href="@Url.Action("Index", "Dashboard", new {area = "portal"})" class="nav-link">
                         <i class="nav-icon fas fa-clipboard-list"></i>
                         <p>Audit Logs</p>
                     </a>
-                </li>
+                </li>*@
 
                 <li class="nav-item">
-                    <a href="@Url.Action("List", "Account", new {area = "portal"})" class="nav-link">
+                    <a href="@Url.Action("List", "Account", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Account", "List|Add|Details", "active")">
                         <i class="nav-icon fas fa-users-cog"></i>
                         <p>Users</p>
                     </a>
                 </li>
 
-                <li class="nav-item">
+                @*<li class="nav-item">
                     <a href="#" class="nav-link">
                         <i class="nav-icon fas fa-sliders-h"></i>
                         <p>
@@ -109,7 +128,7 @@
                             </a>
                         </li>
                     </ul>
-                </li>
+                </li>*@
 
             </ul>
         </nav>

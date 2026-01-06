@@ -13,7 +13,7 @@
 
     <link rel="stylesheet" href="~/Content/assets/plugins/overlayScrollbars/css/OverlayScrollbars.min.css">
     <link rel="stylesheet" href="~/Content/assets/plugins/icheck-bootstrap/icheck-bootstrap.min.css">
-    @*<link rel="stylesheet" href="~/Content/assets/plugins/daterangepicker/daterangepicker.css">*@
+    <link rel="stylesheet" href="~/Content/assets/plugins/daterangepicker/daterangepicker.css">
     <link rel="stylesheet" href="~/Content/assets/plugins/summernote/summernote-bs4.min.css">
     <link rel="stylesheet" href="~/Content/assets/plugins/tempusdominus-bootstrap-4/css/tempusdominus-bootstrap-4.min.css">
 
@@ -51,31 +51,8 @@
         }
     </style>
 </head>
-<body class="hold-transition sidebar-mini" onbeforeunload="ShowLoading();">
-    <div class="wrapper">
-
-        <!-- Preloader -->
-        <div class="preloader flex-column justify-content-center align-items-center">
-            @*<img class="animation__shake" src="~/Content/assets/img/AdminLTELogo.png" alt="AdminLTELogo" height="60" width="60">*@
-
-            <span id="spinner" class="spinner"></span>
-        </div>
-        <!-- End Preloader-->
-
-        @Html.Partial("_Header")
-        @Html.Partial("_Sidebar")
-        <div class="content-wrapper">
-            @Html.Partial("_ContentHeader")
-            <section class="app-content">
-                <div class="container-fluid">
-                    @RenderBody()
-                </div>
-            </section>
-        </div>
-        @Html.Partial("_ControlSidebar")
-        @Html.Partial("_Footer")
-        <div class="sidebar-overlay"></div>
-    </div>
+<body class="hold-transition login-page">
+    @RenderBody()
 
 
     @Scripts.Render("~/bundles/jquery")
@@ -85,8 +62,8 @@
     @Scripts.Render("~/plugin/DataTables")
 
     <script src="~/Content/assets/plugins/moment/moment.min.js"></script>
+    <script src="~/Content/assets/plugins/daterangepicker/daterangepicker.js"></script>
     <script src="~/Content/assets/plugins/tempusdominus-bootstrap-4/js/tempusdominus-bootstrap-4.min.js"></script>
-    @*<script src="~/Content/assets/plugins/daterangepicker/daterangepicker.js"></script>*@
     <script src="~/Content/assets/plugins/summernote/summernote-bs4.min.js"></script>
     <script src="~/Content/assets/plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js"></script>
 
@@ -122,11 +99,6 @@
                 popY: 600,
                 strict: true
             });
-        }
-
-        function ShowLoading() {
-            $('.preloader').css({ height: '100vh' });
-            $('.preloader').find('#spinner').show();
         }
 
         $(document).ready(function () {

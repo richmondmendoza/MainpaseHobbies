@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Dto.Dto
 {
-    public class OrderDto
+    public class    OrderDto
     {
         public int Id { get; set; } = 0;
         public int UserId { get; set; } = 0;
@@ -31,6 +31,7 @@ namespace Dto.Dto
         public DeliveryMethodEnum DeliveryMethod { get; set; } = DeliveryMethodEnum.StorePickup;
         public string DeliveryNote { get; set; } = string.Empty;
         public string Currency { get; set; } = string.Empty;
+        public bool IsPaid { get; set; } = false;
     }
 
     public class OrderDetailsDto : OrderDto
@@ -60,6 +61,7 @@ namespace Dto.Dto
             this.DeliveryMethod = dto.DeliveryMethod;
             this.DeliveryNote = dto.DeliveryNote;
             this.Currency = dto.Currency;
+            this.IsPaid = dto.IsPaid;
         }
 
         public List<OrderItemDto> Items { get; set; } = new List<OrderItemDto>();

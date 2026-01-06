@@ -133,34 +133,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="Orders">
-      <EntityTypeMapping TypeName="IMSModel.Order">
-        <MappingFragment StoreEntitySet="Order">
-          <ScalarProperty Name="Currency" ColumnName="Currency" />
-          <ScalarProperty Name="DeliveryNote" ColumnName="DeliveryNote" />
-          <ScalarProperty Name="DeliveryMethod" ColumnName="DeliveryMethod" />
-          <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
-          <ScalarProperty Name="Status" ColumnName="Status" />
-          <ScalarProperty Name="BookAccountNumber" ColumnName="BookAccountNumber" />
-          <ScalarProperty Name="Total" ColumnName="Total" />
-          <ScalarProperty Name="Shipping" ColumnName="Shipping" />
-          <ScalarProperty Name="Tax" ColumnName="Tax" />
-          <ScalarProperty Name="SubTotal" ColumnName="SubTotal" />
-          <ScalarProperty Name="PaymentMethod" ColumnName="PaymentMethod" />
-          <ScalarProperty Name="ContactEmail" ColumnName="ContactEmail" />
-          <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
-          <ScalarProperty Name="Address2" ColumnName="Address2" />
-          <ScalarProperty Name="Address1" ColumnName="Address1" />
-          <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
-          <ScalarProperty Name="InvoiceNumber" ColumnName="InvoiceNumber" />
-          <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
-          <ScalarProperty Name="DueDate" ColumnName="DueDate" />
-          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-          <ScalarProperty Name="UserId" ColumnName="UserId" />
-          <ScalarProperty Name="Id" ColumnName="Id" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="Order_Item">
       <EntityTypeMapping TypeName="IMSModel.Order_Item">
         <MappingFragment StoreEntitySet="Order_Item">
@@ -254,6 +226,35 @@
           <ScalarProperty Name="LastDateOfActivity" ColumnName="LastDateOfActivity" />
           <ScalarProperty Name="Date" ColumnName="Date" />
           <ScalarProperty Name="Token" ColumnName="Token" />
+          <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Orders">
+      <EntityTypeMapping TypeName="IMSModel.Order">
+        <MappingFragment StoreEntitySet="Order">
+          <ScalarProperty Name="IsPaid" ColumnName="IsPaid" />
+          <ScalarProperty Name="Currency" ColumnName="Currency" />
+          <ScalarProperty Name="DeliveryNote" ColumnName="DeliveryNote" />
+          <ScalarProperty Name="DeliveryMethod" ColumnName="DeliveryMethod" />
+          <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+          <ScalarProperty Name="Status" ColumnName="Status" />
+          <ScalarProperty Name="BookAccountNumber" ColumnName="BookAccountNumber" />
+          <ScalarProperty Name="Total" ColumnName="Total" />
+          <ScalarProperty Name="Shipping" ColumnName="Shipping" />
+          <ScalarProperty Name="Tax" ColumnName="Tax" />
+          <ScalarProperty Name="SubTotal" ColumnName="SubTotal" />
+          <ScalarProperty Name="PaymentMethod" ColumnName="PaymentMethod" />
+          <ScalarProperty Name="ContactEmail" ColumnName="ContactEmail" />
+          <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
+          <ScalarProperty Name="Address2" ColumnName="Address2" />
+          <ScalarProperty Name="Address1" ColumnName="Address1" />
+          <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+          <ScalarProperty Name="InvoiceNumber" ColumnName="InvoiceNumber" />
+          <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
+          <ScalarProperty Name="DueDate" ColumnName="DueDate" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />
           <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>

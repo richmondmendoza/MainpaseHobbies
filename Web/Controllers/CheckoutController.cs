@@ -50,6 +50,7 @@ namespace Web.Controllers
 
             model.Items = items.Select(a => new OrderItemDto()
             {
+                Id = a.Id,
                 Price = a.Price,
                 Quantity = a.Quantity,
                 ProductName = a.ProductName,

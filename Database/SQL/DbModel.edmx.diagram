@@ -13,7 +13,6 @@
         <EntityTypeShape EntityType="IMSModel.Inventory" Width="1.5" PointX="0.75" PointY="1.125" />
         <EntityTypeShape EntityType="IMSModel.Inventory_Count" Width="1.5" PointX="3" PointY="1.375" />
         <EntityTypeShape EntityType="IMSModel.NewsLetter" Width="1.5" PointX="10.75" PointY="0.75" />
-        <EntityTypeShape EntityType="IMSModel.Order" Width="1.5" PointX="5.75" PointY="1.125" />
         <EntityTypeShape EntityType="IMSModel.Order_Item" Width="1.5" PointX="8" PointY="2.25" />
         <EntityTypeShape EntityType="IMSModel.Payment" Width="1.5" PointX="10.75" PointY="3.75" />
         <EntityTypeShape EntityType="IMSModel.System_Banner" Width="1.5" PointX="10.75" PointY="7.75" />
@@ -23,6 +22,7 @@
         <AssociationConnector Association="IMSModel.FK_Cart_Inventory" />
         <AssociationConnector Association="IMSModel.FK_Event_Image_Events" />
         <AssociationConnector Association="IMSModel.FK_Inventory_Count_Inventory" />
+        <EntityTypeShape EntityType="IMSModel.Order" Width="1.5" PointX="5.75" PointY="1" />
         <AssociationConnector Association="IMSModel.FK_Order_Item_Order" />
       </Diagram>
     </edmx:Diagrams>

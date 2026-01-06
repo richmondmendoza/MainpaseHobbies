@@ -12,3 +12,4 @@ dbcc checkident('[order]', reseed, 0 );
 
 truncate table user_session;
 truncate table customerdetails;
+truncate table payments;

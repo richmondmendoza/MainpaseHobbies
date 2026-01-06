@@ -9,19 +9,13 @@
         <div class="row gy-4">
             <div class="col-lg-4 col-md-6 footer-about">
                 <a href="index.html" class="logo d-flex align-items-center">
-                    <span class="sitename">@info.Name</span>
+                    <span class="sitename">@info.LongName</span>
                 </a>
                 <div class="footer-contact pt-3">
                     <p>@info.Address1</p>
                     <p>@info.Address2</p>
                     <p class="mt-3"><strong>Phone:</strong> <span>@info.ContactNumber1</span></p>
                     <p><strong>Email:</strong> <span>@info.ContactEmail1</span></p>
-                </div>
-                <div class="social-links d-flex mt-4">
-                    <a target="_blank" href="@info.Twitter"><i class="bi bi-twitter-x"></i></a>
-                    <a target="_blank" href="@info.FB"><i class="bi bi-facebook"></i></a>
-                    <a target="_blank" href="@info.Insta"><i class="bi bi-instagram"></i></a>
-                    <a target="_blank" href="@info.LinkeIn"><i class="bi bi-linkedin"></i></a>
                 </div>
             </div>
 
@@ -38,36 +32,44 @@
             </div>
 
             <div class="col-lg-2 col-md-3 footer-links">
-                <h4>Our Services</h4>
+                <h4>Our Collections</h4>
                 <ul>
-                    <li><a href="#">Web Design</a></li>
-                    <li><a href="#">Web Development</a></li>
-                    <li><a href="#">Product Management</a></li>
-                    <li><a href="#">Marketing</a></li>
-                    <li><a href="#">Graphic Design</a></li>
+                    <li><a href="#">Magic the Gathering</a></li>
+                    <li><a href="#">Grand Archive</a></li>
                 </ul>
             </div>
 
-            <div class="col-lg-2 col-md-3 footer-links">
-                <h4>Hic solutasetp</h4>
-                <ul>
-                    <li><a href="#">Molestiae accusamus iure</a></li>
-                    <li><a href="#">Excepturi dignissimos</a></li>
-                    <li><a href="#">Suscipit distinctio</a></li>
-                    <li><a href="#">Dilecta</a></li>
-                    <li><a href="#">Sit quas consectetur</a></li>
-                </ul>
-            </div>
+            @*<div class="col-lg-2 col-md-3 footer-links">
+                    <h4>Hic solutasetp</h4>
+                    <ul>
+                        <li><a href="#">Molestiae accusamus iure</a></li>
+                        <li><a href="#">Excepturi dignissimos</a></li>
+                        <li><a href="#">Suscipit distinctio</a></li>
+                        <li><a href="#">Dilecta</a></li>
+                        <li><a href="#">Sit quas consectetur</a></li>
+                    </ul>
+                </div>*@
 
-            <div class="col-lg-2 col-md-3 footer-links">
-                <h4>Nobis illum</h4>
-                <ul>
-                    <li><a href="#">Ipsam</a></li>
-                    <li><a href="#">Laudantium dolorum</a></li>
-                    <li><a href="#">Dinera</a></li>
-                    <li><a href="#">Trodelas</a></li>
-                    <li><a href="#">Flexo</a></li>
-                </ul>
+            <div class="col-lg-4 col-md-5 footer-links">
+                <h4>Subscribe to @info.Name</h4>
+                <p class="strong">Get the latest strategies, promos, and more from your favorite games.</p>
+
+                <div class="mb-3">
+                    @using (Html.BeginForm("Subscribe", "Home", FormMethod.Post, new { area = "", @class = "d-flex" }))
+                    {
+                        <input class="form-control input-sm" name="email" placeholder="E-mail address">
+                        <button class="btn btn-primary btn-sm ms-1" type="submit">Subscribe</button>
+                    }
+                </div>
+
+                <p>By subscribing, you consent to receive emails from TCGplayer in line with our Privacy Policy.</p>
+
+                <div class="social-links d-flex mt-4">
+                    <a target="_blank" href="@info.Twitter"><i class="bi bi-twitter-x"></i></a>
+                    <a target="_blank" href="@info.FB"><i class="bi bi-facebook"></i></a>
+                    <a target="_blank" href="@info.Insta"><i class="bi bi-instagram"></i></a>
+                    <a target="_blank" href="@info.LinkeIn"><i class="bi bi-linkedin"></i></a>
+                </div>
             </div>
 
         </div>

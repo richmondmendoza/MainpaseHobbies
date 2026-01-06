@@ -109,7 +109,7 @@ namespace Repository.Repo.User
         {
             using (IMSEntities context = new IMSEntities())
             {
-                var records = context.Users.Where(a => !a.IsDeleted).ToList();
+                var records = context.Users.Where(a => !a.IsDeleted && a.Role.ToLower().Contains("portal")).ToList();
                 return records.Select(a => ToDto(a));
             }
         }

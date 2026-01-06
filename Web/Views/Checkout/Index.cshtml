@@ -162,6 +162,7 @@
             <div class="" style="z-index: 0; position: absolute; top: 0; left: 0;">
                 @for (int i = 0; i < Model.Items.Count; i++)
                 {
+                    <input type="hidden" name="Items[@i].Id" value="@Model.Items[i].Id" />
                     <input type="hidden" name="Items[@i].ProductName" value="@Model.Items[i].ProductName" />
                     <input type="hidden" name="Items[@i].SubName" value="@Model.Items[i].SubName" />
                     <input type="hidden" name="Items[@i].SerialNumber" value="@Model.Items[i].SerialNumber" />

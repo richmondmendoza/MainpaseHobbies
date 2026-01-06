@@ -150,6 +150,7 @@
     <Property Name="DeliveryMethod" Type="int" Nullable="false" />
     <Property Name="DeliveryNote" Type="nvarchar(max)" />
     <Property Name="Currency" Type="nvarchar" MaxLength="50" />
+    <Property Name="IsPaid" Type="bit" Nullable="false" />
   </EntityType>
   <EntityType Name="Order_Item">
     <Key>

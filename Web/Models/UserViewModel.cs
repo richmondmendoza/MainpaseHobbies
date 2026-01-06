@@ -51,6 +51,13 @@ namespace Web.Models
         public bool IsLocked { get; set; }
         public bool IsCardOwner { get; set; }
 
+        [Required(ErrorMessage = "Password is required.")]
+        public string Password { get; set; }
+
+        [RequiredIfNotEmpty("Password", ErrorMessage = "Re-enter your password.")]
+        [EqualTo("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; }
+
         public List<string> Roles
         {
             get
@@ -76,7 +83,8 @@ namespace Web.Models
                 Role = this.Role,
                 IsDeleted = this.IsDeleted,
                 IsLocked = this.IsLocked,
-                IsCardOwner = this.IsCardOwner
+                IsCardOwner = this.IsCardOwner,
+                Password = this.Password
             };
         }
     }

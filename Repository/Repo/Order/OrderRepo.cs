@@ -13,7 +13,7 @@ namespace Repository.Repo.Order
 {
     public class OrderRepo
     {
-        public static OrderDto ToDto(Database.SQL.Order item)
+        public OrderDto ToDto(Database.SQL.Order item)
         {
             if (item == null) return null;
 
@@ -41,10 +41,11 @@ namespace Repository.Repo.Order
                 DeliveryMethod = (DeliveryMethodEnum)item.DeliveryMethod,
                 DeliveryNote = item.DeliveryNote,
                 Currency = item.Currency,
+                IsPaid = item.IsPaid,
             };
         }
 
-        public static OrderDetailsDto ToDetailsDto(Database.SQL.Order item)
+        public OrderDetailsDto ToDetailsDto(Database.SQL.Order item)
         {
             if (item == null) return null;
             var dto = new OrderDetailsDto(ToDto(item));
@@ -53,7 +54,16 @@ namespace Repository.Repo.Order
             return dto;
         }
 
-        public static IEnumerable<OrderDetailsDto> GetList()
+        public IEnumerable<OrderDto> GetList(int status = (int)OrderStatusEnum.Pending)
+        {
+            using (IMSEntities context = new IMSEntities())
+            {
+                var list = context.Orders.Where(a => a.Status == status).ToList();
+                return list.Select(x => ToDto(x)).ToList();
+            }
+        }
+
+        public IEnumerable<OrderDetailsDto> GetListDetails()
         {
             using (IMSEntities context = new IMSEntities())
             {
@@ -62,7 +72,7 @@ namespace Repository.Repo.Order
             }
         }
 
-        public static OrderDetailsDto Get(int id)
+        public OrderDetailsDto Get(int id)
         {
             using (IMSEntities context = new IMSEntities())
             {
@@ -105,6 +115,7 @@ namespace Repository.Repo.Order
                     DeliveryMethod = (int)dto.DeliveryMethod,
                     DeliveryNote = dto.DeliveryNote,
                     Currency = dto.Currency,
+                    IsPaid = dto.IsPaid
                 };
 
                 context.Orders.Add(item);
@@ -114,6 +125,9 @@ namespace Repository.Repo.Order
                     foreach (var itemDto in dto.Items)
                     {
                         new OrderItemRepo().AddToDB(item, itemDto);
+
+                        var cartItem = context.Carts.FirstOrDefault(a => a.Id == itemDto.Id);
+                        context.Carts.Remove(cartItem);
                     }
                 }
 
@@ -168,7 +182,121 @@ namespace Repository.Repo.Order
             return result;
         }
 
+        public ReturnValue Pay(int id)
+        {
+            var result = new ReturnValue();
 
+            using (IMSEntities context = new IMSEntities())
+            {
+                var record = context.Orders.FirstOrDefault(a => a.Id == id);
+                if (record != null)
+                {
+                    record.IsPaid = true;
+                    record.Status = (int)OrderStatusEnum.Processing;
+
+                    var payment = context.Payments.FirstOrDefault(a => a.OrderId == record.Id);
+                    if (payment != null)
+                        payment.Status = (int)PaymentStatus.Paid;
+
+                    Db.SaveChanges(context, result, "Order paid!");
+                }
+                else
+                {
+                    result.Success = false;
+                    result.Message = "Order item not found.";
+                }
+            }
+
+            return result;
+        }
+
+        public ReturnValue Completed(int id)
+        {
+            var result = new ReturnValue();
+
+            using (IMSEntities context = new IMSEntities())
+            {
+                var record = context.Orders.FirstOrDefault(a => a.Id == id);
+                if (record != null)
+                {
+                    record.Status = (int)OrderStatusEnum.Completed;
+                    Db.SaveChanges(context, result, "Order complete!");
+                }
+                else
+                {
+                    result.Success = false;
+                    result.Message = "Order item not found.";
+                }
+            }
+
+            return result;
+        }
+
+        public ReturnValue Refunded(int id)
+        {
+            var result = new ReturnValue();
+
+            using (IMSEntities context = new IMSEntities())
+            {
+                var record = context.Orders.FirstOrDefault(a => a.Id == id);
+                if (record != null)
+                {
+                    record.Status = (int)OrderStatusEnum.Refunded;
+                    Db.SaveChanges(context, result, "Payment refunded!");
+                }
+                else
+                {
+                    result.Success = false;
+                    result.Message = "Order item not found.";
+                }
+            }
+
+            return result;
+        }
+
+        public ReturnValue ForDelivery(int id)
+        {
+            var result = new ReturnValue();
+
+            using (IMSEntities context = new IMSEntities())
+            {
+                var record = context.Orders.FirstOrDefault(a => a.Id == id);
+                if (record != null)
+                {
+                    record.DeliveryStatus = (int)DeliveryStatusEnum.Processing;
+                    Db.SaveChanges(context, result, "Pending for delivery!");
+                }
+                else
+                {
+                    result.Success = false;
+                    result.Message = "Order item not found.";
+                }
+            }
+
+            return result;
+        }
+
+        public ReturnValue DeliveryCompleted(int id)
+        {
+            var result = new ReturnValue();
+
+            using (IMSEntities context = new IMSEntities())
+            {
+                var record = context.Orders.FirstOrDefault(a => a.Id == id);
+                if (record != null)
+                {
+                    record.DeliveryStatus = (int)DeliveryStatusEnum.Completed;
+                    Db.SaveChanges(context, result, "Order delivered!");
+                }
+                else
+                {
+                    result.Success = false;
+                    result.Message = "Order item not found.";
+                }
+            }
+
+            return result;
+        }
 
 
 

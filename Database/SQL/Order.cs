@@ -42,6 +42,7 @@ namespace Database.SQL
         public int DeliveryMethod { get; set; }
         public string DeliveryNote { get; set; }
         public string Currency { get; set; }
+        public bool IsPaid { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Order_Item> Order_Item { get; set; }
