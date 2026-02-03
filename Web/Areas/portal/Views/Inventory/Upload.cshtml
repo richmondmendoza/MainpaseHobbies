@@ -154,6 +154,7 @@
                                                 @Html.HiddenFor(a => a[index].Color)
                                                 @Html.HiddenFor(a => a[index].OwnerId)
                                                 @Html.HiddenFor(a => a[index].CollectionGroup)
+                                                @Html.HiddenFor(a => a[index].Category)
 
                                                 @for (int countIndex = 0; countIndex < Model[index].InventoryCounts.Count(); countIndex++)
                                                 {

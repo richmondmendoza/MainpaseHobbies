@@ -1,8 +1,12 @@
 ﻿<script>
     @{
         var timeOut = (HttpContext.Current.Session["TimeOutMessage"] ?? "").ToString();
-		var message = Convert.ToString(TempData["ViewMessage"] ?? "");
+        var message = Convert.ToString(TempData["ViewMessage"] ?? "");
         var type = Convert.ToString(TempData["ViewMessageType"] ?? "Error");
+
+        HttpContext.Current.Session.Remove("TimeOutMessage");
+        TempData["ViewMessage"] = "";
+        TempData["ViewMessageType"] = "";
     }
 
     @if (!string.IsNullOrEmpty(message))

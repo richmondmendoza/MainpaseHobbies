@@ -34,7 +34,9 @@ namespace Dto.Enums
         Cash = 0,
         CreditCard = 1,
         PayPal,
-        BankTransfer
+        PayMongo,
+        CoinsPH,
+        BankTransfer,
     }
 
     public enum PaymentStatus

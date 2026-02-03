@@ -57,6 +57,15 @@ namespace Repository.Repo
             };
         }
 
+        public static IEnumerable<EventDto> GetListFeatured()
+        {
+            using (IMSEntities context = new IMSEntities())
+            {
+                var items = context.Events.Where(a => a.IsActive & a.IsFeatured).ToList().Select(a => ToDto(a));
+                return items.ToList();
+            }
+        }
+
         public static IEnumerable<EventDto> GetList()
         {
             using (IMSEntities context = new IMSEntities())

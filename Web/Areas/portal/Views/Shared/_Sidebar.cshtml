@@ -91,13 +91,19 @@
 
                 <li class="nav-header">SETTINGS</li>
 
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "Conversion", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Conversion", "Index", "active")">
+                        <i class="nav-icon fas fa-circle-dollar-to-slot"></i>
+                        <p>Conversion</p>
+                    </a>
+                </li>
 
                 @*<li class="nav-item">
-                    <a href="@Url.Action("Index", "Dashboard", new {area = "portal"})" class="nav-link">
-                        <i class="nav-icon fas fa-clipboard-list"></i>
-                        <p>Audit Logs</p>
-                    </a>
-                </li>*@
+                        <a href="@Url.Action("Index", "Dashboard", new {area = "portal"})" class="nav-link">
+                            <i class="nav-icon fas fa-clipboard-list"></i>
+                            <p>Audit Logs</p>
+                        </a>
+                    </li>*@
 
                 <li class="nav-item">
                     <a href="@Url.Action("List", "Account", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Account", "List|Add|Details", "active")">
@@ -107,28 +113,28 @@
                 </li>
 
                 @*<li class="nav-item">
-                    <a href="#" class="nav-link">
-                        <i class="nav-icon fas fa-sliders-h"></i>
-                        <p>
-                            System
-                            <i class="right fas fa-angle-left"></i>
-                        </p>
-                    </a>
-                    <ul class="nav nav-treeview">
-                        <li class="nav-item">
-                            <a href="../../index.html" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Items</p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a href="../../index2.html" class="nav-link">
-                                <i class="far fa-circle nav-icon"></i>
-                                <p>Adjust</p>
-                            </a>
-                        </li>
-                    </ul>
-                </li>*@
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-sliders-h"></i>
+                            <p>
+                                System
+                                <i class="right fas fa-angle-left"></i>
+                            </p>
+                        </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="../../index.html" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Items</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="../../index2.html" class="nav-link">
+                                    <i class="far fa-circle nav-icon"></i>
+                                    <p>Adjust</p>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>*@
 
             </ul>
         </nav>

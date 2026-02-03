@@ -1,6 +1,7 @@
 ﻿using Dto.Enums;
 using Dto.User;
 using Infrastructure;
+using Microsoft.AspNetCore.Mvc.Filters;
 using Newtonsoft.Json;
 using Repository.Interfaces;
 using Repository.Repo.User;
@@ -38,7 +39,11 @@ namespace Web.App_Filters
                 throw new ArgumentNullException("httpContext");
 
             if (!httpContext.User.Identity.IsAuthenticated)
+            {
+                var urlHelper = new UrlHelper(httpContext.Request.RequestContext);
+                httpContext.Response.Redirect(urlHelper.Action("login", "account", new { area = "portal" }));
                 return RedirectUnauthorized(httpContext);
+            }
 
             var identity = (FormsIdentity)httpContext.User.Identity;
 
@@ -60,12 +65,6 @@ namespace Web.App_Filters
                 HttpContext.Current.Session["TimeOutMessage"] = session.Message;
                 return false;
             }
-
-            var roles = SplitString(Roles, '|');
-
-            if (roles == null || roles.Length == 0)
-                return true;
-
 
             if (userInfo.HasAdminAccess)
                 return true;

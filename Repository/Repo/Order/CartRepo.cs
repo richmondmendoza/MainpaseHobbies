@@ -40,7 +40,7 @@ namespace Repository.Repo.Order
             };
         }
 
-        public static CartDetailsDto ToDetailsDto(Cart item, IEnumerable<Database.SQL.User> users)
+        public static CartDetailsDto ToDetailsDto(Cart item, IEnumerable<Database.SQL.User> users, bool isPhpDisplayed)
         {
             if (item == null) return null;
 
@@ -51,7 +51,7 @@ namespace Repository.Repo.Order
             dto.FoilType = item.Inventory.FoilType;
             dto.Condition = item.Inventory.Condition;
             dto.ImageData = item.Inventory.Image;
-            dto.Currency = item.Inventory.PurchaseCurrency;
+            dto.Currency = isPhpDisplayed ? "PHP" : item.Inventory.PurchaseCurrency;
 
             return dto;
         }
@@ -76,7 +76,7 @@ namespace Repository.Repo.Order
                     return new List<CartDetailsDto>();
                 }
 
-                return list.ToList().Select(x => ToDetailsDto(x, users)).ToList();
+                return list.ToList().Select(x => ToDetailsDto(x, users, true)).ToList();
             }
         }
 
@@ -108,7 +108,7 @@ namespace Repository.Repo.Order
             {
                 var users = context.Users.ToList();
                 var item = context.Carts.FirstOrDefault(a => a.Id == id);
-                return ToDetailsDto(item, users);
+                return ToDetailsDto(item, users, true);
             }
         }
 

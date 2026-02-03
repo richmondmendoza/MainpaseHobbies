@@ -30,11 +30,11 @@
             });
         </text>
 
-        if (HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString().ToLower() == "login")
-        {
+            //if (HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString().ToLower() == "login")
+            //{
             timeOut = "";
             HttpContext.Current.Session.Remove("TimeOutMessage");
-        }
+        //}
     }
 
 </script>
@@ -43,10 +43,10 @@
     #message-modal {
         z-index: 1062 !important;
     }
-
+    /*
     .modal-backdrop.show:not(.fade) {
         z-index: 1060 !important;
-    }
+    }*/
 </style>
 
 <div class="modal" id="message-modal">

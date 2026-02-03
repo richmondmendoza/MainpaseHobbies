@@ -28,7 +28,7 @@ namespace Web.Controllers
         public ActionResult Index()
         {
             ViewBag.Inventories = new InventoryRepo().GetListRandom(11);
-            ViewBag.Events = EventRepo.GetList();
+            ViewBag.Events = EventRepo.GetListFeatured();
 
             return View();
             //return RedirectToAction("Index", "Dashboard", new { area = "portal" });
@@ -77,7 +77,7 @@ namespace Web.Controllers
             var model = new CardDetailsViewModel();
 
             var currentUrl = (TempData["PreviousUrl"]?.ToString() ?? "") as string;
-            model.Details = new InventoryRepo().GetById(cardId);
+            model.Details = new InventoryRepo().GetById(cardId, true);
             if (model.Details == null)
             {
                 ShowErrorMessage("Card not found.");
@@ -89,6 +89,17 @@ namespace Web.Controllers
             }
 
             model.ScryfallCard = GetScryfallCard(model.Details.ScryfallId);
+
+            var conversionRate = ConversionInfo.Amount;
+            var currentPrice = model.Details.Price / conversionRate;
+            var isFoiled = model.Details.FoilType.ToLower() != "non-foil" & model.Details.FoilType.ToLower() != "normal";
+            var scryfallPrice = Convert.ToDecimal(isFoiled ? (model.ScryfallCard.Prices?.UsdFoil ?? model.Details.Price.ToString()) : (model.ScryfallCard.Prices?.Usd ?? model.Details.Price.ToString()));
+            if (currentPrice != scryfallPrice)
+            {
+                model.Details.Price = scryfallPrice * conversionRate;
+                InventoryRepo.UpdatePrice(model.Details.Id, model.Details.Price);
+            }
+
             return View(model);
         }
 
@@ -171,5 +182,22 @@ namespace Web.Controllers
 
             return RedirectToAction("cart");
         }
+
+        public ActionResult TermsOfService()
+        {
+            return View();
+        }
+
+        public ActionResult PrivacyPolicy()
+        {
+            return View();
+        }
+
+        public ActionResult AboutUs()
+        {
+            return View();
+        }
+
+
     }
 }

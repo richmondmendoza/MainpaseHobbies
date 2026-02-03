@@ -22,6 +22,15 @@
     @*@Scripts.Render("~/bundles/modernizr")*@
 
     <style>
+
+        .modal-backdrop.show:not(.fade) {
+            z-index: 1060 !important;
+        }
+
+        .field-validation-error {
+            color: red !important;
+        }
+
         .preloader {
             background-color: black !important;
             opacity: 0.6 !important;
@@ -80,7 +89,9 @@
 
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/bootstrap")
-    @Scripts.Render("~/bundles/jqueryval")
+    <script src="~/Scripts/jquery.validate.min.js"></script>
+    <script src="~/Scripts/jquery.validate.unobtrusive.min.js"></script>
+    @*@Scripts.Render("~/bundles/jqueryval")*@
 
     @Scripts.Render("~/plugin/DataTables")
 
@@ -130,6 +141,11 @@
         }
 
         $(document).ready(function () {
+
+            $(document).on('click', '.print', function () {
+                var printArea = $(this).attr('print-data');
+                print(printArea);
+            });
 
         });
 

@@ -51,12 +51,14 @@ namespace Web.Areas.portal.Controllers
         public ActionResult Update(int id)
         {
             var record = _repo.GetDetailsById(id);
+            //record.Price = record.Price / ConversionInfo.Amount;
             return View(new InventoryViewModel(record));
         }
 
         [HttpPost]
         public ActionResult Update(InventoryViewModel model)
         {
+            //model.Price = model.Price * ConversionInfo.Amount;
             var result = _repo.Update(model.ToDto());
             return RedirectToAction("update", new { id = model.Id });
         }
@@ -88,6 +90,7 @@ namespace Web.Areas.portal.Controllers
         {
             var model = new List<InventoryDetailsDto>();
 
+            var conversionRate = ConversionInfo.Amount;
             ViewBag.CardOwners = new UserRepo().GetNames().ToList().Select(a => new SelectListItem() { Value = a.Item1.ToString(), Text = a.Item2 });
             TempData["OwnerId"] = ownerId;
             TempData["Group"] = collectionGroup;
@@ -107,7 +110,7 @@ namespace Web.Areas.portal.Controllers
                         Rarity = a.Rarity,
                         ManaboxId = Convert.ToInt32(a.ManaBoxId ?? "0"),
                         ScryfallId = a.ScryfallId,
-                        Price = a.PurchasePrice,
+                        Price = a.PurchasePrice * conversionRate,
                         Misprint = a.Misprint,
                         Tampered = a.Altered,
                         Condition = a.Condition.ToUpper().Replace("_", " "),

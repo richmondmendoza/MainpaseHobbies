@@ -1,0 +1,99 @@
+﻿@model Web.Models.ConversionViewModel
+
+@{
+    ViewBag.Title = "Conversion Amount";
+}
+
+
+<link href="~/Content/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
+<link href="~/Content/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css" rel="stylesheet" />
+<link href="~/Content/assets/plugins/monUpload/monUpload.css" rel="stylesheet" />
+
+<style>
+</style>
+
+<div class="row">
+    <div class="col-md-6">
+
+        @using (Html.BeginForm("Index", "Conversion", FormMethod.Post, new { area = "portal", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(a => a.Id)
+            @Html.HiddenFor(a => a.IsActive)
+            @Html.HiddenFor(a => a.Date)
+
+            <div class="card">
+                <div class="card-header pt-4 pb-4">
+                    <h3 class="card-title">Current Conversion Value</h3>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">Amount</label>
+                        <div class="col-lg-9 col-md-7 col-sm-12">
+                            @Html.TextBoxFor(a => a.Amount, new { @class = "form-control", autocomplete = "off" })
+                            @Html.ValidationMessageFor(a => a.Amount)
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card-footer text-right">
+                    <a href="@Url.Action("GoBack", "Base", new {area = "", ReturnUrl = Url.Action("List", "Item", new {area = "portal"})})" class="btn btn-default mr-2">Cancel</a>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+
+            </div>
+        }
+    </div>
+</div>
+
+
+@section scripts{
+    <script src="~/Content/assets/plugins/select2/js/select2.min.js"></script>
+    <script src="~/Content/assets/plugins/monUpload/monUpload.js"></script>
+
+    <script>
+
+        function UpdateRole(role, add) {
+            var userRole = $('#Role').val();
+
+            if (add) {
+                userRole = userRole + role + "|";
+            } else {
+                userRole = userRole.replace(new RegExp(role + "\\|", "g"), "")
+            }
+
+            $('#Role').val(userRole);
+        }
+
+        $(document).ready(function () {
+
+            $('.select2').select2({ "theme": "bootstrap4" });
+
+            $('#chk-portal-admin').on('change', function () {
+                var value = '@Dto.Enums.UserRoleEnum.PortalAdmin';
+                var isAdd = $(this).is(':checked');
+
+                UpdateRole(value, this.checked);
+            });
+
+            $('#chk-portal-user').on('change', function () {
+                var value = '@Dto.Enums.UserRoleEnum.PortalUser';
+                var isAdd = $(this).is(':checked');
+
+                UpdateRole(value, this.checked);
+            });
+
+            $('#chk-customer').on('change', function () {
+                var value = '@Dto.Enums.UserRoleEnum.Customer';
+                var isAdd = $(this).is(':checked');
+
+                UpdateRole(value, this.checked);
+            });
+
+
+        })
+    </script>
+}

@@ -12,7 +12,7 @@ namespace Dto
         public string Message { get; set; }
         public object Data { get; set; }
 
-        public ReturnValue(string message = "", bool success = true, object data = null)
+        public ReturnValue(string message = "", bool success = false, object data = null)
         {
             Success = success;
             Message = message;

@@ -47,6 +47,7 @@ namespace Web.Models
                 CardType = record.CardType;
                 IllustratedBy = record.IllustratedBy;
                 OwnerId = record.OwnerId;
+                Category = record.Category;
 
                 ImageFile = (HttpPostedFileBase)new MemoryPostedFile(this.Image);
             }
@@ -79,7 +80,7 @@ namespace Web.Models
         public string Condition { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Item currency is required.")]
-        public string PurchaseCurrency { get; set; } = "USD";
+        public string PurchaseCurrency { get; set; } = "PHP";
         public DateTime DateCreated { get; set; } = DateTime.Now;
         public string CreatedBy { get; set; } = string.Empty;
         public bool IsDeleted { get; set; } = false;
@@ -89,6 +90,8 @@ namespace Web.Models
         public string CardType { get; set; }
         public string IllustratedBy { get; set; }
         public int OwnerId { get; set; } = 0;
+        public string Category { get; set; } = string.Empty;
+        public string CollectionGroup { get; set; } = string.Empty;
 
         public string ImageBase64
         {
@@ -173,6 +176,35 @@ namespace Web.Models
             }
         }
 
+        public IEnumerable<SelectListItem> CategoryList
+        {
+            get
+            {
+                var items = new List<SelectListItem>()
+                {
+                    new SelectListItem { Value = "Single", Text = "Single", Selected = this.Category.ToLower() == "single" },
+                    new SelectListItem { Value = "Bundle", Text = "Pack / Bundle", Selected = this.Category.ToLower() == "bundle" },
+                    new SelectListItem { Value = "Accessory", Text = "Accessory", Selected = this.Category.ToLower() == "accessory" },
+                };
+
+                return items;
+            }
+        }
+
+        public IEnumerable<SelectListItem> CollectionGroupList
+        {
+            get
+            {
+                var items = new List<SelectListItem>()
+                {
+                    new SelectListItem { Value = "Magic the Gathering", Text = "Magic the Gathering", Selected = this.CollectionGroup.ToLower() == "magic the gathering" },
+                    new SelectListItem { Value = "Grand Archive", Text = "Grand Archive", Selected = this.CollectionGroup.ToLower() == "grand archive" },
+                };
+
+                return items;
+            }
+        }
+
         public IEnumerable<SelectListItem> SetNames { get; set; } = new List<SelectListItem>();
 
         public IEnumerable<SelectListItem> OwnerNames
@@ -223,6 +255,11 @@ namespace Web.Models
                 Color = this.Color,
                 Description = this.Description,
                 OwnerId = this.OwnerId,
+                Category = this.Category,
+                IllustratedBy = this.IllustratedBy,
+                CardType = this.CardType,
+                ManaCost = this.ManaCost,
+                CollectionGroup = this.CollectionGroup,
             };
         }
     }

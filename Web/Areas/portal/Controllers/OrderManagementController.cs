@@ -31,9 +31,9 @@ namespace Web.Areas.portal.Controllers
             return View(record);
         }
 
-        public ActionResult TaggedAsPaid(int id)
+        public ActionResult TaggedAsPaid(int id, string orderNumber)
         {
-            var result = _order.Pay(id);
+            var result = _order.Pay(id, orderNumber);
 
             ShowMessage(result.Message, result.Success);
             return RedirectToAction("Details", new { id = id });

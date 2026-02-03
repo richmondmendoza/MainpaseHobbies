@@ -17,7 +17,6 @@ using Web.Models;
 
 namespace Web.Areas.portal.Controllers
 {
-    [PortalAuthorize]
     public class AccountController : BaseAdminController
     {
         UserRepo _repo = new UserRepo();
@@ -82,17 +81,20 @@ namespace Web.Areas.portal.Controllers
         }
 
 
+        [PortalAuthorize]
         public ActionResult List()
         {
             var users = new UserRepo().GetList();
             return View(users);
         }
 
+        [PortalAuthorize]
         public ActionResult Add()
         {
             return View(new UserViewModel());
         }
 
+        [PortalAuthorize]
         [HttpPost]
         public ActionResult Add(UserViewModel model)
         {
@@ -111,6 +113,7 @@ namespace Web.Areas.portal.Controllers
             return View(new UserViewModel());
         }
 
+        [PortalAuthorize]
         public ActionResult Details(int id)
         {
             var user = new UserRepo().Get(id);
@@ -118,6 +121,7 @@ namespace Web.Areas.portal.Controllers
         }
 
         [HttpPost]
+        [PortalAuthorize]
         public ActionResult Details(UserViewModel model)
         {
             var result = _repo.Update(model.ToDto());
@@ -135,6 +139,7 @@ namespace Web.Areas.portal.Controllers
             return View(new UserViewModel());
         }
 
+        [PortalAuthorize]
         public ActionResult ChangePassword(int id)
         {
             var model = new ChangePasswordViewModel()
@@ -145,6 +150,7 @@ namespace Web.Areas.portal.Controllers
         }
 
         [HttpPost]
+        [PortalAuthorize]
         public ActionResult ChangePassword(ChangePasswordViewModel model)
         {
             var result = _repo.ChangePassword(model.UserId, model.NewPassword);

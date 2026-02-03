@@ -147,10 +147,10 @@ namespace Repository.Repo.User
 
             using (IMSEntities context = new IMSEntities())
             {
-                var user = context.Users.Where(a => a.Username == dto.Username).FirstOrDefault();
+                var user = context.Users.Where(a => a.Username.ToLower() == dto.Username.ToLower()).FirstOrDefault();
 
                 dto.PasswordKey = Guid.NewGuid().ToString();
-                var encryptedPassword = Fletcher.Decrypt(dto.Password, dto.PasswordKey);
+                var encryptedPassword = Fletcher.Encrypt(dto.Password, dto.PasswordKey);
 
                 if (user != null)
                 {
@@ -165,7 +165,7 @@ namespace Repository.Repo.User
                     user.InvalidLoginDate = null;
                     user.IsLocked = false;
                     user.LastLoginDate = null;
-                    user.Middlename = dto.Middlename;
+                    user.Middlename = dto.Middlename ?? "";
                     user.PasswordKey = dto.PasswordKey;
                     user.Password = encryptedPassword;
                     user.Role = dto.Role;
@@ -187,7 +187,7 @@ namespace Repository.Repo.User
                         IsDeleted = dto.IsDeleted,
                         IsLocked = dto.IsLocked,
                         LastLoginDate = null,
-                        Middlename = dto.Middlename,
+                        Middlename = dto.Middlename ?? "",
                         Password = encryptedPassword,
                         PasswordKey = dto.PasswordKey,
                         Role = dto.Role,

@@ -1,13 +1,19 @@
-﻿using Dto.Dto;
+﻿using Dto;
+using Dto.Dto;
 using Dto.Enums;
 using Dto.User;
+using Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using PaymentGateway.Coins;
+using PaymentGateway.Coins.Services;
+using Paypal.Interfaces;
 using Repository.Repo;
 using Repository.Repo.Order;
 using Repository.Repo.User;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -68,8 +74,12 @@ namespace Web.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Index(CheckoutViewModel model)
         {
+            var order = new ReturnValue();
+            var requestId = $"ORD{DateTime.UtcNow:yyyyMMddHHmmssfff}".Substring(0, 19);
+            model.OrderNumber = requestId;
             var customer = _customer.Add(new CustomerDetailDto()
             {
                 Address1 = model.Address1,
@@ -84,25 +94,114 @@ namespace Web.Controllers
                 UserId = Identity?.Id ?? 0,
             });
 
-            var order = new OrderRepo().Add(model.ToDto());
 
-            if (order.Success)
+            ReturnValue payment;
+            switch (model.PaymentMethod)
             {
-                var payment = _payment.Add(new PaymentDto()
-                {
-                    Amount = model.Total + model.Shipping,
-                    CreatedAt = DateTime.Now,
-                    Currency = model.Currency,
-                    CustomerDetailId = (int)customer.Data,
-                    OrderId = (int)order.Data,
-                    PaymentId = Guid.NewGuid().ToString(),
-                    Status = PaymentStatus.Created,
-                });
+                case PaymentMethodEnum.Cash:
+
+                    model.OrderNumber = requestId;
+                    order = new OrderRepo().Add(model.ToDto());
+
+                    payment = _payment.Add(new PaymentDto()
+                    {
+                        Amount = model.Total + model.Shipping,
+                        CreatedAt = DateTime.Now,
+                        Currency = model.Currency,
+                        CustomerDetailId = (int)customer.Data,
+                        OrderId = (int)order.Data,
+                        PaymentId = PaymentMethodEnum.Cash.ToString(),
+                        Status = PaymentStatus.Created,
+                        PayoneerId = requestId,
+                    });
+                    return RedirectToAction("Result", new { val = Fletcher.Encrypt(((int)order.Data).ToString()) });
+
+                case PaymentMethodEnum.CreditCard:
+                case PaymentMethodEnum.PayPal:
+                case PaymentMethodEnum.BankTransfer:
+                    return Content("Error creating payment.");
+                case PaymentMethodEnum.CoinsPH:
+
+                    var redirectUrls = new RedirectUrls()
+                    {
+                        success = Url.Action("CoinsSuccess", "Checkout", new { requestId = requestId }, Request.Url.Scheme),
+                        cancel = Url.Action("CoinsCancel", "Checkout", new { requestId = requestId }, Request.Url.Scheme),
+                        failure = Url.Action("CoinsFailure", "Checkout", new { requestId = requestId }, Request.Url.Scheme),
+                        defaultUrl = Url.Action("CoinsReturn", "Checkout", new { requestId = requestId }, Request.Url.Scheme),
+                    };
+
+                    var webhookUrl = Url.Action("CoinsWebhook", "Webhook", null, Request.Url.Scheme);
+                    var orders = model.Items.Select(a => new ProductDetails()
+                    {
+                        //amount = (a.Total).ToString("F2"),
+                        amount = "1.00", //testing only
+                        desc = a.Description,
+                        name = a.ProductName,
+                        quantity = a.Quantity.ToString(),
+                        type = "product",
+                    }).ToList();
+                    orders.Add(new ProductDetails()
+                    {
+                        amount = model.Shipping.ToString("F2"),
+                        desc = "Shipping Fee",
+                        name = "Shipping",
+                        quantity = "1",
+                        type = "fee",
+                    });
+                    orders.Add(new ProductDetails()
+                    {
+                        amount = model.Tax.ToString("F2"),
+                        desc = "TAX Fee",
+                        name = "Tax",
+                        quantity = "1",
+                        type = "fee",
+                    });
+
+                    var fee = 0.00m;
+                    model.Total = 1;
+                    var coinRequest = new CoinsCreateCheckoutRequest()
+                    {
+                        amount = (model.Total + model.Shipping + model.Tax).ToString("F2"),
+                        currency = "PHP",
+                        expireSeconds = "600",
+                        feeAmount = fee.ToString("F2"),
+                        merchantName = SystemInfo.LongName,
+                        productDetails = orders,
+                        redirectUrl = redirectUrls,
+                        requestId = requestId,
+                        totalAmount = (model.Total + model.Shipping + model.Tax + fee).ToString("F2"),
+                        remark = $"Order #{requestId}",
+                    };
+
+                    var coinResult = new CoinsPH().CreatePayment(coinRequest);
+
+
+                    if (coinResult?.status == 0 && coinResult.data?.checkoutUrl != null)
+                    {
+                        order = new OrderRepo().Add(model.ToDto());
+                        payment = _payment.Add(new PaymentDto()
+                        {
+                            Amount = model.Total + model.Shipping,
+                            CreatedAt = DateTime.Now,
+                            Currency = model.Currency,
+                            CustomerDetailId = (int)customer.Data,
+                            OrderId = (int)order.Data,
+                            PaymentId = PaymentMethodEnum.CoinsPH.ToString(),
+                            Status = PaymentStatus.Pending,
+                            PayoneerId = requestId,
+                        });
+
+                        return Redirect(coinResult.data.checkoutUrl);
+                    }
+
+                    return Content("Error creating CoinsPH Order");
+
+                default:
+                    break;
             }
 
-            ShowMessage(order.Message, order.Success);
-
-            return RedirectToAction("Index");
+            //ShowMessage(order.Message, order.Success);
+            return View("Index", model);
         }
 
         [HttpPost]
@@ -129,5 +228,88 @@ namespace Web.Controllers
 
             return RedirectToAction("index");
         }
+
+        public ActionResult Result(string val = "")
+        {
+            if (!string.IsNullOrEmpty(val))
+            {
+                var res = "";
+                try
+                {
+                    res = Fletcher.Decrypt(val);
+
+                    if (res == "success")
+                    {
+                        ViewBag.Message = "Your order has been placed successfully.";
+                    }
+                    else
+                    {
+                        ViewBag.Message = "There was an issue with your order.";
+                    }
+                }
+                catch { }
+
+            }
+
+
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CoinCallback(string requestId)
+        {
+            var body = new StreamReader(Request.InputStream).ReadToEnd();
+            dynamic data = JsonConvert.DeserializeObject(body);
+
+            var orderId = data.merchant_order_id;
+            var status = data.status;
+
+            if (status == "paid")
+            {
+                // 1. Verify authenticity (signature/header if provided)
+                // 2. Update order in DB
+
+            }
+
+            return new HttpStatusCodeResult(200);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> CoinStatus(string checkoutId = null, string requestId = null)
+        {
+            var res = new CoinsPH().GetCheckoutStatusAsync(checkoutId, requestId);
+            return Json(res, JsonRequestBehavior.AllowGet);
+        }
+
+        // These are the redirect landing pages configured in redirectUrl
+        [HttpGet]
+        public ActionResult CoinsSuccess(string requestId)
+        {
+            var order = new OrderRepo();
+            var record = order.GetByOrderNumber(requestId);
+            var payment = order.Pay(record.Id, record.OrderNumber);
+
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult CoinsFailure(string requestId)
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult CoinsCancel(string requestId)
+        {
+            return View();
+        }
+
+        [HttpGet]
+        public ActionResult CoinsReturn(string requestId)
+        {
+            return View();
+        }
+
+
     }
 }

@@ -156,8 +156,8 @@
                             <label>Store Payment</label>
                         </div>
                         <div class="icheck-primary">
-                            <input type="checkbox" onclick="return false;" @(Model.PaymentMethod == Dto.Enums.PaymentMethodEnum.CreditCard ? "checked" : "") />
-                            <label>Card Payment</label>
+                            <input type="checkbox" onclick="return false;" @(Model.PaymentMethod == Dto.Enums.PaymentMethodEnum.PayPal ? "checked" : "") />
+                            <label>PayPal</label>
                         </div>
                     </div>
 
@@ -214,7 +214,7 @@
 
             <div class="row no-print">
                 <div class="col-12">
-                    <a href="invoice-print.html" rel="noopener" target="_blank" class="btn btn-default"><i class="fas fa-print"></i> Print</a>
+                    <a href="javascript:;" class="btn btn-default print" print-data="#print-data"><i class="fas fa-print"></i> Print</a>
 
 
                     @switch (Model.Status)

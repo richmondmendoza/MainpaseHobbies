@@ -22,6 +22,10 @@
     @*@Scripts.Render("~/bundles/modernizr")*@
 
     <style>
+        .field-validation-error {
+            color: red !important;
+        }
+
         .preloader {
             background-color: black !important;
             opacity: 0.6 !important;
@@ -130,6 +134,11 @@
         }
 
         $(document).ready(function () {
+
+            $(document).on('click', '.print', function () {
+                var printArea = $(this).attr('print-data');
+                print(printArea);
+            });
 
         });
 

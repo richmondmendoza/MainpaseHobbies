@@ -17,6 +17,7 @@ namespace Web.Controllers
     public class BaseController : Controller
     {
         public static SystemInfoDto SystemInfo;
+        public static ConversionDto ConversionInfo;
         public static string UserSessionKey;
         internal IFormsAuthenticationService _formsAuthenticationService = new FormsAuthenticationServices();
 
@@ -32,6 +33,15 @@ namespace Web.Controllers
                 if (info != null)
                 {
                     SystemInfo = info;
+                }
+            }
+
+            if (ConversionInfo == null)
+            {
+                var info = ConversionRepo.Get();
+                if (info != null)
+                {
+                    ConversionInfo = info;
                 }
             }
 

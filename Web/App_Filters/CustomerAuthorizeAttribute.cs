@@ -29,7 +29,7 @@ namespace Web.App_Filters
 
             var urlHelper = new UrlHelper(filterContext.RequestContext);
 
-            filterContext.Result = new JavaScriptResult() { Script = "window.location = '" + urlHelper.Action("login", "account", new { area = "portal" }) + "'" };
+            filterContext.Result = new JavaScriptResult() { Script = "window.location = '" + urlHelper.Action("login", "myaccount", new { area = "customer" }) + "'" };
         }
 
         protected override bool AuthorizeCore(HttpContextBase httpContext)
@@ -38,7 +38,11 @@ namespace Web.App_Filters
                 throw new ArgumentNullException("httpContext");
 
             if (!httpContext.User.Identity.IsAuthenticated)
+            {
+                var urlHelper = new UrlHelper(httpContext.Request.RequestContext);
+                httpContext.Response.Redirect(urlHelper.Action("login", "myaccount", new { area = "customer" }));
                 return RedirectUnauthorized(httpContext);
+            }
 
             var identity = (FormsIdentity)httpContext.User.Identity;
 
@@ -61,10 +65,10 @@ namespace Web.App_Filters
                 return false;
             }
 
-            var roles = SplitString(Roles, '|');
+            //var roles = SplitString(Roles, '|');
 
-            if (roles == null || roles.Length == 0)
-                return true;
+            //if (roles == null || roles.Length == 0)
+            //    return true;
 
 
             if (userInfo.HasCustomerAccess)

@@ -8,6 +8,12 @@
 <link href="~/Content/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css" rel="stylesheet" />
 <link href="~/Content/assets/plugins/monUpload/monUpload.css" rel="stylesheet" />
 
+<style>
+    .modal-backdrop.show:not(.fade) {
+        z-index: 1049 !important;
+    }
+</style>
+
 <div class="row">
     <div class="col-md-8">
 
@@ -133,6 +139,10 @@
 
             $('.summernote').summernote({
                 minHeight: 300
+            });
+
+            $(document).on('click', '.note-editor .note-btn-group button', function () {
+                $('.modal-backdrop.show').addClass('force-zindex');
             });
 
         })

@@ -42,6 +42,15 @@ namespace Repository.Repo.Order
             }
         }
 
+        public PaymentDto GetPayment(string paymentId, string token)
+        {
+            using (IMSEntities context = new IMSEntities())
+            {
+                var item = context.Payments.FirstOrDefault(x => x.PaymentId == paymentId && x.PayoneerId == token);
+                return ToDto(item);
+            }
+        }
+
         public IEnumerable<PaymentDto> GetPayments(int id)
         {
             using (IMSEntities context = new IMSEntities())
@@ -114,6 +123,25 @@ namespace Repository.Repo.Order
                 record.ErrorCode = item.ErrorCode;
                 record.ErrorMessage = item.ErrorMessage;
                 record.Status = (int)item.Status;
+                record.UpdatedAt = DateTime.Now;
+            }
+
+            return result;
+        }
+
+        public ReturnValue UpdateStatusById(int id, PaymentStatus status)
+        {
+            var result = new ReturnValue();
+
+            using (IMSEntities context = new IMSEntities())
+            {
+                var record = context.Payments.FirstOrDefault(a => a.Id == id);
+                if (record != null)
+                {
+                    return new ReturnValue("Payment not found!");
+                }
+
+                record.Status = (int)status;
                 record.UpdatedAt = DateTime.Now;
             }
 

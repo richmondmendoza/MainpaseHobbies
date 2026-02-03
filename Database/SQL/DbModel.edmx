@@ -34,6 +34,15 @@
           <Property Name="Quantity" Type="int" Nullable="false" />
           <Property Name="UserSessionId" Type="nvarchar(max)" />
         </EntityType>
+        <EntityType Name="Conversion">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Date" Type="datetime" Nullable="false" />
+          <Property Name="Amount" Type="decimal" Precision="18" Scale="4" Nullable="false" />
+          <Property Name="IsActive" Type="bit" Nullable="false" />
+        </EntityType>
         <EntityType Name="CustomerDetails">
           <Key>
             <PropertyRef Name="Id" />
@@ -107,6 +116,7 @@
           <Property Name="IllustratedBy" Type="varchar(max)" />
           <Property Name="CollectionGroup" Type="nvarchar(max)" />
           <Property Name="OwnerId" Type="int" Nullable="false" />
+          <Property Name="Category" Type="nvarchar" MaxLength="250" />
         </EntityType>
         <EntityType Name="Inventory_Count">
           <Key>
@@ -300,6 +310,7 @@
         <EntityContainer Name="IMSModelStoreContainer">
           <EntitySet Name="AuditLog" EntityType="Self.AuditLog" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Cart" EntityType="Self.Cart" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Conversion" EntityType="Self.Conversion" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="CustomerDetails" EntityType="Self.CustomerDetails" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Event_Image" EntityType="Self.Event_Image" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="Events" EntityType="Self.Events" Schema="dbo" store:Type="Tables" />
@@ -337,12 +348,14 @@
         <EntityContainer Name="IMSEntities" annotation:LazyLoadingEnabled="true">
           <EntitySet Name="AuditLogs" EntityType="IMSModel.AuditLog" />
           <EntitySet Name="Carts" EntityType="IMSModel.Cart" />
+          <EntitySet Name="Conversions" EntityType="IMSModel.Conversion" />
           <EntitySet Name="CustomerDetails" EntityType="IMSModel.CustomerDetail" />
           <EntitySet Name="Event_Image" EntityType="IMSModel.Event_Image" />
           <EntitySet Name="Events" EntityType="IMSModel.Event" />
           <EntitySet Name="Inventories" EntityType="IMSModel.Inventory" />
           <EntitySet Name="Inventory_Count" EntityType="IMSModel.Inventory_Count" />
           <EntitySet Name="NewsLetters" EntityType="IMSModel.NewsLetter" />
+          <EntitySet Name="Orders" EntityType="IMSModel.Order" />
           <EntitySet Name="Order_Item" EntityType="IMSModel.Order_Item" />
           <EntitySet Name="Payments" EntityType="IMSModel.Payment" />
           <EntitySet Name="System_Banner" EntityType="IMSModel.System_Banner" />
@@ -361,7 +374,6 @@
             <End Role="Inventory" EntitySet="Inventories" />
             <End Role="Inventory_Count" EntitySet="Inventory_Count" />
           </AssociationSet>
-          <EntitySet Name="Orders" EntityType="IMSModel.Order" />
           <AssociationSet Name="FK_Order_Item_Order" Association="IMSModel.FK_Order_Item_Order">
             <End Role="Order" EntitySet="Orders" />
             <End Role="Order_Item" EntitySet="Order_Item" />
@@ -396,6 +408,15 @@
           <Property Name="Quantity" Type="Int32" Nullable="false" />
           <Property Name="UserSessionId" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Inventory" Relationship="IMSModel.FK_Cart_Inventory" FromRole="Cart" ToRole="Inventory" />
+        </EntityType>
+        <EntityType Name="Conversion">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Date" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="Amount" Type="Decimal" Nullable="false" Precision="18" Scale="4" />
+          <Property Name="IsActive" Type="Boolean" Nullable="false" />
         </EntityType>
         <EntityType Name="CustomerDetail">
           <Key>
@@ -472,6 +493,7 @@
           <Property Name="IllustratedBy" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
           <Property Name="CollectionGroup" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
           <Property Name="OwnerId" Type="Int32" Nullable="false" />
+          <Property Name="Category" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
           <NavigationProperty Name="Carts" Relationship="IMSModel.FK_Cart_Inventory" FromRole="Inventory" ToRole="Cart" />
           <NavigationProperty Name="Inventory_Count" Relationship="IMSModel.FK_Inventory_Count_Inventory" FromRole="Inventory" ToRole="Inventory_Count" />
         </EntityType>
@@ -496,6 +518,35 @@
           </Key>
           <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
           <Property Name="Email" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Order">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="UserId" Type="Int32" Nullable="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="DueDate" Type="DateTime" Precision="3" />
+          <Property Name="OrderNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="InvoiceNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="CustomerName" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
+          <Property Name="Address1" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Address2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="ContactNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="ContactEmail" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="PaymentMethod" Type="Int32" Nullable="false" />
+          <Property Name="SubTotal" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
+          <Property Name="Tax" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="Shipping" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="Total" Type="Decimal" Precision="18" Scale="3" />
+          <Property Name="BookAccountNumber" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="Status" Type="Int32" Nullable="false" />
+          <Property Name="DeliveryStatus" Type="Int32" Nullable="false" />
+          <Property Name="DeliveryMethod" Type="Int32" Nullable="false" />
+          <Property Name="DeliveryNote" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Currency" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
+          <Property Name="IsPaid" Type="Boolean" Nullable="false" />
+          <NavigationProperty Name="Order_Item" Relationship="IMSModel.FK_Order_Item_Order" FromRole="Order" ToRole="Order_Item" />
         </EntityType>
         <EntityType Name="Order_Item">
           <Key>
@@ -626,35 +677,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <EntityType Name="Order">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="UserId" Type="Int32" Nullable="false" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="DueDate" Type="DateTime" Precision="3" />
-          <Property Name="OrderNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="InvoiceNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="CustomerName" Type="String" Nullable="false" MaxLength="250" FixedLength="false" Unicode="true" />
-          <Property Name="Address1" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Address2" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="ContactNumber" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="ContactEmail" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="PaymentMethod" Type="Int32" Nullable="false" />
-          <Property Name="SubTotal" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
-          <Property Name="Tax" Type="Decimal" Precision="18" Scale="3" />
-          <Property Name="Shipping" Type="Decimal" Precision="18" Scale="3" />
-          <Property Name="Total" Type="Decimal" Precision="18" Scale="3" />
-          <Property Name="BookAccountNumber" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
-          <Property Name="Status" Type="Int32" Nullable="false" />
-          <Property Name="DeliveryStatus" Type="Int32" Nullable="false" />
-          <Property Name="DeliveryMethod" Type="Int32" Nullable="false" />
-          <Property Name="DeliveryNote" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="Currency" Type="String" MaxLength="50" FixedLength="false" Unicode="true" />
-          <Property Name="IsPaid" Type="Boolean" Nullable="false" />
-          <NavigationProperty Name="Order_Item" Relationship="IMSModel.FK_Order_Item_Order" FromRole="Order" ToRole="Order_Item" />
-        </EntityType>
         <Association Name="FK_Order_Item_Order">
           <End Type="IMSModel.Order" Role="Order" Multiplicity="1" />
           <End Type="IMSModel.Order_Item" Role="Order_Item" Multiplicity="*" />
@@ -700,6 +722,16 @@
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="InventoryId" ColumnName="InventoryId" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Conversions">
+            <EntityTypeMapping TypeName="IMSModel.Conversion">
+              <MappingFragment StoreEntitySet="Conversion">
+                <ScalarProperty Name="IsActive" ColumnName="IsActive" />
+                <ScalarProperty Name="Amount" ColumnName="Amount" />
+                <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -753,6 +785,7 @@
           <EntitySetMapping Name="Inventories">
             <EntityTypeMapping TypeName="IMSModel.Inventory">
               <MappingFragment StoreEntitySet="Inventory">
+                <ScalarProperty Name="Category" ColumnName="Category" />
                 <ScalarProperty Name="OwnerId" ColumnName="OwnerId" />
                 <ScalarProperty Name="CollectionGroup" ColumnName="CollectionGroup" />
                 <ScalarProperty Name="IllustratedBy" ColumnName="IllustratedBy" />
@@ -801,6 +834,35 @@
             <EntityTypeMapping TypeName="IMSModel.NewsLetter">
               <MappingFragment StoreEntitySet="NewsLetter">
                 <ScalarProperty Name="Email" ColumnName="Email" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Orders">
+            <EntityTypeMapping TypeName="IMSModel.Order">
+              <MappingFragment StoreEntitySet="Order">
+                <ScalarProperty Name="IsPaid" ColumnName="IsPaid" />
+                <ScalarProperty Name="Currency" ColumnName="Currency" />
+                <ScalarProperty Name="DeliveryNote" ColumnName="DeliveryNote" />
+                <ScalarProperty Name="DeliveryMethod" ColumnName="DeliveryMethod" />
+                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
+                <ScalarProperty Name="Status" ColumnName="Status" />
+                <ScalarProperty Name="BookAccountNumber" ColumnName="BookAccountNumber" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+                <ScalarProperty Name="Shipping" ColumnName="Shipping" />
+                <ScalarProperty Name="Tax" ColumnName="Tax" />
+                <ScalarProperty Name="SubTotal" ColumnName="SubTotal" />
+                <ScalarProperty Name="PaymentMethod" ColumnName="PaymentMethod" />
+                <ScalarProperty Name="ContactEmail" ColumnName="ContactEmail" />
+                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
+                <ScalarProperty Name="Address2" ColumnName="Address2" />
+                <ScalarProperty Name="Address1" ColumnName="Address1" />
+                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
+                <ScalarProperty Name="InvoiceNumber" ColumnName="InvoiceNumber" />
+                <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
+                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -898,35 +960,6 @@
                 <ScalarProperty Name="LastDateOfActivity" ColumnName="LastDateOfActivity" />
                 <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="Token" ColumnName="Token" />
-                <ScalarProperty Name="UserId" ColumnName="UserId" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Orders">
-            <EntityTypeMapping TypeName="IMSModel.Order">
-              <MappingFragment StoreEntitySet="Order">
-                <ScalarProperty Name="IsPaid" ColumnName="IsPaid" />
-                <ScalarProperty Name="Currency" ColumnName="Currency" />
-                <ScalarProperty Name="DeliveryNote" ColumnName="DeliveryNote" />
-                <ScalarProperty Name="DeliveryMethod" ColumnName="DeliveryMethod" />
-                <ScalarProperty Name="DeliveryStatus" ColumnName="DeliveryStatus" />
-                <ScalarProperty Name="Status" ColumnName="Status" />
-                <ScalarProperty Name="BookAccountNumber" ColumnName="BookAccountNumber" />
-                <ScalarProperty Name="Total" ColumnName="Total" />
-                <ScalarProperty Name="Shipping" ColumnName="Shipping" />
-                <ScalarProperty Name="Tax" ColumnName="Tax" />
-                <ScalarProperty Name="SubTotal" ColumnName="SubTotal" />
-                <ScalarProperty Name="PaymentMethod" ColumnName="PaymentMethod" />
-                <ScalarProperty Name="ContactEmail" ColumnName="ContactEmail" />
-                <ScalarProperty Name="ContactNumber" ColumnName="ContactNumber" />
-                <ScalarProperty Name="Address2" ColumnName="Address2" />
-                <ScalarProperty Name="Address1" ColumnName="Address1" />
-                <ScalarProperty Name="CustomerName" ColumnName="CustomerName" />
-                <ScalarProperty Name="InvoiceNumber" ColumnName="InvoiceNumber" />
-                <ScalarProperty Name="OrderNumber" ColumnName="OrderNumber" />
-                <ScalarProperty Name="DueDate" ColumnName="DueDate" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>

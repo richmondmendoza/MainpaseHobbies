@@ -2,8 +2,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.UI;
 
 namespace Dto.Dto
 {
@@ -35,7 +37,8 @@ namespace Dto.Dto
         public string IllustratedBy { get; set; }
         public string CollectionGroup { get; set; }
         public int OwnerId { get; set; }
-
+        public string Category { get; set; } = "Single";
+        public bool IsPhpDisplay { get; set; } = false;
 
     }
 
@@ -70,6 +73,8 @@ namespace Dto.Dto
             CardType = inventory.CardType;
             IllustratedBy = inventory.IllustratedBy;
             OwnerId = inventory.OwnerId;
+            Category = inventory.Category;
+            IsPhpDisplay = inventory.IsPhpDisplay;
         }
 
         public string ImageBase64
@@ -102,5 +107,21 @@ namespace Dto.Dto
 
         public string EncId { get { return Fletcher.Encrypt(Id.ToString()) ?? string.Empty; } }
     }
+
+    public class InventoryDisplayDto
+    {
+        public int Id { get; set; }
+        public string Name { get; set; } = string.Empty;
+        public string ImageBase64 { get; set; } = string.Empty;
+        public string MimeType { get; set; } = string.Empty;
+        public string FoilType { get; set; } = string.Empty;
+        public int Stock { get; set; } = 0;
+        public string Currency { get; set; } = string.Empty;
+        public decimal Price { get; set; } = 0;
+        public bool IsPhpDisplay { get; set; } = false;
+
+        public string EncId { get { return Fletcher.Encrypt(Id.ToString()) ?? string.Empty; } }
+    }
+
 
 }

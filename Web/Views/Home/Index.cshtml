@@ -4,7 +4,7 @@
 @{
     ViewBag.Title = "Home";
 
-    var inventories = ViewBag.Inventories as List<Dto.Dto.InventoryDetailsDto>;
+    var inventories = ViewBag.Inventories as List<Dto.Dto.InventoryDisplayDto>;
     var events = ViewBag.Events as List<Dto.Dto.EventDto>;
 }
 
@@ -63,10 +63,10 @@
                 {
 
                     <div class="col-xl-3 col-md-4 d-flex" data-aos="zoom-in" data-aos-delay="100">
-                        <a href="@Url.Action("CardDetails", "Home", new {area = "", cardId = Fletcher.Encrypt(item.Id.ToString())})">
+                        <a href="@Url.Action("CardDetails", "Home", new {area = "", cardId = item.EncId})">
                             <div class="team-member">
                                 <div class="member-img tcg-image-container">
-                                    <img id="tcg-image-preview" src="data:image/@item.Image.GetImageExtension().Replace(".", "");base64,@item.ImageBase64" class="img-fluid" alt="">
+                                    <img id="tcg-image-preview" src="data:image/@item.MimeType;base64,@item.ImageBase64" class="img-fluid" alt="">
                                     @if (item.FoilType.ToLower().Replace(" ", "") == "foil" ||
                                          item.FoilType.ToLower().Replace(" ", "") == "etchedfoil")
                                     {
@@ -76,7 +76,7 @@
                                 <div class="member-info">
                                     @*<h4>@item.Name</h4>*@
                                     <span>
-                                        @item.PurchaseCurrency @item.Price.ToString("n2")
+                                        @item.Currency @item.Price.ToString("n2")
                                     </span>
                                 </div>
                             </div>

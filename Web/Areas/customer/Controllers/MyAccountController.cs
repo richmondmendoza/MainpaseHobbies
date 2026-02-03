@@ -1,4 +1,5 @@
-﻿using Dto.User;
+﻿using Dto.Enums;
+using Dto.User;
 using Newtonsoft.Json;
 using Repository.Repo;
 using Repository.Repo.User;
@@ -60,21 +61,43 @@ namespace Web.Areas.customer.Controllers
         [AllowAnonymous]
         public ActionResult Register()
         {
-            return View(new UserViewModel());
+            return View(new UserViewModel()
+            {
+                Role = UserRoleEnum.Customer.ToString()
+            });
         }
 
         [HttpPost]
         [AllowAnonymous]
         public ActionResult Register(UserViewModel model)
         {
+            if (string.IsNullOrEmpty(model.Firstname) ||
+                string.IsNullOrEmpty(model.LastName) ||
+                string.IsNullOrEmpty(model.Username) ||
+                string.IsNullOrEmpty(model.Password) ||
+                string.IsNullOrEmpty(model.ConfirmPassword))
+            {
+                ShowErrorMessage("Please fill all required fields.");
+                return View(model);
+            }
+
+
+            if (model.Password != model.ConfirmPassword)
+            {
+                ShowErrorMessage("Confirm password do not match.");
+                return View(model);
+            }
+
+
             var result = _repo.Create(model.ToDto());
 
             if (result.Success)
             {
-                var user = (AuthenticatedUserDto)result.Data ?? new AuthenticatedUserDto();
-                _formsAuthenticationService.SetAuthCookie(user, true);
+                var user = (UserDto)result.Data ?? new UserDto();
                 AuditLogRepo.CreateLog("Register", user.Id, user.Username, "Users", JsonConvert.SerializeObject(user));
-                return RedirectToAction("Index", "MyOrders", new { area = "customer" });
+
+                ShowMessage("Registration successful. You may now login.");
+                return RedirectToAction("Login", "MyAccount", new { area = "customer" });
             }
 
             ShowErrorMessage(result.Message);

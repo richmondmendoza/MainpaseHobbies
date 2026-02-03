@@ -58,7 +58,7 @@ namespace Repository.Repo.Order
         {
             using (IMSEntities context = new IMSEntities())
             {
-                var list = context.Orders.Where(a => a.Status == status).ToList();
+                var list = context.Orders.ToList();
                 return list.Select(x => ToDto(x)).ToList();
             }
         }
@@ -81,6 +81,15 @@ namespace Repository.Repo.Order
             }
         }
 
+        public OrderDetailsDto GetByOrderNumber(string orderNumber)
+        {
+            using (IMSEntities context = new IMSEntities())
+            {
+                var item = context.Orders.FirstOrDefault(a => a.OrderNumber == orderNumber);
+                return ToDetailsDto(item);
+            }
+        }
+
         public ReturnValue Add(OrderDetailsDto dto)
         {
             var result = new ReturnValue();
@@ -90,7 +99,8 @@ namespace Repository.Repo.Order
                 var date = dto.DateCreated.Date;
                 var count = context.Orders.Where(a => a.DateCreated >= date).Count() + 1;
 
-                dto.OrderNumber = $"MHCRCT-{date.Year}{date.ToString("MM")}{date.ToString("dd")}{count.ToString("D3")}";
+                if(string.IsNullOrEmpty(dto.OrderNumber))
+                    dto.OrderNumber = $"ORD{DateTime.UtcNow:yyyyMMddHHmmssfff}".Substring(0, 19);
 
                 var item = new Database.SQL.Order
                 {
@@ -149,6 +159,7 @@ namespace Repository.Repo.Order
                 {
                     record.Status = (int)OrderStatusEnum.Cancelled;
                     Db.SaveChanges(context, result, "Order successfully cancelled!");
+                    result.Data = ToDto(record);
                 }
                 else
                 {
@@ -182,7 +193,7 @@ namespace Repository.Repo.Order
             return result;
         }
 
-        public ReturnValue Pay(int id)
+        public ReturnValue Pay(int id, string orderId)
         {
             var result = new ReturnValue();
 
@@ -194,7 +205,7 @@ namespace Repository.Repo.Order
                     record.IsPaid = true;
                     record.Status = (int)OrderStatusEnum.Processing;
 
-                    var payment = context.Payments.FirstOrDefault(a => a.OrderId == record.Id);
+                    var payment = context.Payments.FirstOrDefault(a => a.OrderId == record.Id & a.PayoneerId == orderId);
                     if (payment != null)
                         payment.Status = (int)PaymentStatus.Paid;
 

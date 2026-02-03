@@ -2,7 +2,7 @@
 @model Web.Models.LoginViewModel
 
 @{
-    Layout = "~/Areas/portal/Views/Shared/_Layout_Login.cshtml";
+    Layout = "~/Areas/customer/Views/Shared/_Layout_Login.cshtml";
     ViewBag.Title = "My Account Login";
 }
 
@@ -17,7 +17,7 @@
         <div class="card-body">
             <p class="login-box-msg">Login your Mainphase account</p>
 
-            @using (Html.BeginForm("Login", "Account", FormMethod.Post))
+            @using (Html.BeginForm("Login", "MyAccount", FormMethod.Post))
             {
                 @Html.AntiForgeryToken()
                 @Html.HiddenFor(m => m.ReturnUrl)
@@ -54,6 +54,10 @@
                     <!-- /.col -->
                 </div>
             }
+            <div class="social-auth-links text-center">
+                <p>- OR -</p>
+                <a href="@Url.Action("Register", "MyAccount", new {area = "customer"})" class="">Register</a>
+            </div>
 
 
         </div>

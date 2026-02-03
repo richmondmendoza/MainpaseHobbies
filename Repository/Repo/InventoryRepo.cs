@@ -4,6 +4,7 @@ using Dto.Dto;
 using Dto.Enums;
 using Infrastructure;
 using Newtonsoft.Json;
+using Repository.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,7 +13,9 @@ using System.Diagnostics;
 using System.IO.Ports;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.Remoting.Contexts;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Xml.Linq;
 
@@ -21,13 +24,13 @@ namespace Repository.Repo
     public class InventoryRepo
     {
         HttpClient _client;
-        public InventoryDetailsDto ToDetails(Inventory inventory, DbSet<Database.SQL.User> users)
+        private decimal _attemptCount = 1.0M;
+
+        public InventoryDetailsDto ToDetails(Inventory inventory, DbSet<Database.SQL.User> users, bool isPHPDisplay = false)
         {
-            var details = ToDto(inventory);
+            var dto = new InventoryDetailsDto(ToDto(inventory, isPHPDisplay));
 
-            if (details == null) return null;
-
-            var dto = new InventoryDetailsDto(ToDto(inventory));
+            if (dto == null) return null;
 
             if (inventory.Inventory_Count.Any())
             {
@@ -50,7 +53,7 @@ namespace Repository.Repo
             return dto;
         }
 
-        public InventoryDto ToDto(Inventory inventory)
+        public InventoryDto ToDto(Inventory inventory, bool isPHPDisplay = false)
         {
             if (inventory == null) return null;
 
@@ -71,7 +74,7 @@ namespace Repository.Repo
                 Misprint = inventory.Misprint,
                 Tampered = inventory.Tampered,
                 Condition = inventory.Condition,
-                PurchaseCurrency = inventory.PurchaseCurrency,
+                PurchaseCurrency = isPHPDisplay ? "PHP" : inventory.PurchaseCurrency,
                 DateCreated = inventory.DateCreated,
                 CreatedBy = inventory.CreatedBy,
                 IsDeleted = inventory.IsDeleted,
@@ -82,7 +85,26 @@ namespace Repository.Repo
                 ManaCost = inventory.ManaCost,
                 CollectionGroup = inventory.CollectionGroup,
                 OwnerId = inventory.OwnerId,
+                Category = inventory.Category,
+                IsPhpDisplay = isPHPDisplay,
+            };
+        }
 
+        public InventoryDisplayDto ToDisplayDto(Inventory inventory, bool isPHPDisplay = false)
+        {
+            if (inventory == null) return null;
+
+            return new InventoryDisplayDto
+            {
+                Id = inventory.Id,
+                Name = inventory.Name,
+                FoilType = inventory.FoilType,
+                Price = inventory.Price,
+                Currency = !isPHPDisplay ? inventory.PurchaseCurrency : "PHP",
+                ImageBase64 = inventory.Image != null ? Convert.ToBase64String(inventory.Image) : string.Empty,
+                MimeType = inventory.Image != null ? inventory.Image.GetImageExtension().Replace(".", "") : "png",
+                Stock = (int)inventory.Inventory_Count.Sum(ic => ic.Quantity),
+                IsPhpDisplay = isPHPDisplay,
             };
         }
 
@@ -95,7 +117,7 @@ namespace Repository.Repo
             }
         }
 
-        public InventoryDetailsDto GetById(string cardId)
+        public InventoryDetailsDto GetById(string cardId, bool isPhpDisplay)
         {
             try
             {
@@ -104,7 +126,7 @@ namespace Repository.Repo
                 using (IMSEntities context = new IMSEntities())
                 {
                     var record = context.Inventories.FirstOrDefault(i => i.Id == id && !i.IsDeleted);
-                    return ToDetails(record, context.Users);
+                    return ToDetails(record, context.Users, isPhpDisplay);
                 }
             }
             catch
@@ -122,7 +144,7 @@ namespace Repository.Repo
             }
         }
 
-        public IEnumerable<InventoryDetailsDto> GetList()
+        public IEnumerable<InventoryDetailsDto> GetList(bool isPHPDisplay = false)
         {
             using (IMSEntities context = new IMSEntities())
             {
@@ -132,7 +154,7 @@ namespace Repository.Repo
             }
         }
 
-        public IEnumerable<InventoryDetailsDto> GetListRandom(int count = 10)
+        public IEnumerable<InventoryDisplayDto> GetListRandom(int count = 10)
         {
             using (IMSEntities context = new IMSEntities())
             {
@@ -145,7 +167,7 @@ namespace Repository.Repo
                     .Skip(skip)
                     .Take(count)
                     .Include(b => b.Inventory_Count).ToList();
-                return records.Select(r => ToDetails(r, users)).ToList();
+                return records.Select(r => ToDisplayDto(r, true)).ToList();
             }
         }
 
@@ -243,6 +265,7 @@ namespace Repository.Repo
                     ManaCost = dto.ManaCost,
                     CollectionGroup = dto.CollectionGroup,
                     OwnerId = dto.OwnerId,
+                    Category = dto.Category,
                 };
 
                 context.Inventories.Add(inventory);
@@ -259,142 +282,20 @@ namespace Repository.Repo
 
             using (IMSEntities context = new IMSEntities())
             {
+                var conversionRate = context.Conversions.FirstOrDefault(a => a.IsActive)?.Amount ?? 0;
                 foreach (var dto in dtos)
                 {
-                    string faceName = dto.Name;
-                    if (dto.Name.Contains("//"))
+                    _attemptCount = _attemptCount + 0.1M;
+
+                    switch (dto.CollectionGroup.ToLower().Replace(" ", ""))
                     {
-                        faceName = dto.Name.Split(new string[] { "//" }, StringSplitOptions.None)[1].Trim();
-                    }
-
-                    var existing = context.Inventories.FirstOrDefault(i => i.ScryfallId == dto.ScryfallId && !i.IsDeleted);
-
-                    if (existing != null)
-                    {
-                        Tuple<byte[], ScryfallCard> cardDetails = null;
-
-                        if (existing.Image == null || existing.Image.Length == 0)
-                        {
-                            if (cardDetails == null)
-                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName).Result;
-
-                            existing.Image = cardDetails.Item1;
-                        }
-
-                        if (string.IsNullOrEmpty(existing.Description))
-                        {
-
-                            if (cardDetails == null)
-                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName).Result;
-
-                            existing.Description = cardDetails.Item2.OracleText ?? "";
-                        }
-
-                        if (string.IsNullOrEmpty(existing.Color))
-                        {
-                            if (cardDetails == null)
-                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName).Result;
-
-                            dto.Color = GetColorIdentityString(cardDetails.Item2.ColorIdentity);
-                        }
-
-                        if (string.IsNullOrEmpty(existing.ManaCost))
-                        {
-                            if (cardDetails == null)
-                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName).Result;
-
-                            existing.ManaCost = cardDetails.Item2.ManaCost;
-                        }
-
-                        if (string.IsNullOrEmpty(existing.CardType))
-                        {
-                            if (cardDetails == null)
-                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName).Result;
-
-                            existing.CardType = cardDetails.Item2.TypeLine;
-                        }
-
-                        if (string.IsNullOrEmpty(existing.IllustratedBy))
-                        {
-                            if (cardDetails == null)
-                                cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName).Result;
-
-                            existing.IllustratedBy = cardDetails.Item2.Artist;
-                        }
-
-                        existing.Name = dto.Name;
-                        existing.SetCode = dto.SetCode;
-                        existing.SetName = dto.SetName;
-                        existing.Collector = dto.Collector;
-                        existing.Language = dto.Language;
-                        existing.FoilType = dto.FoilType;
-                        existing.Rarity = dto.Rarity;
-                        existing.ManaboxId = dto.ManaboxId;
-                        existing.ScryfallId = dto.ScryfallId;
-                        existing.Price = dto.Price;
-                        existing.Misprint = dto.Misprint;
-                        existing.Tampered = dto.Tampered;
-                        existing.Condition = dto.Condition;
-                        existing.PurchaseCurrency = dto.PurchaseCurrency;
-                        existing.Color = dto.Color;
-                        existing.ManaCost = dto.ManaCost;
-                        existing.CardType = dto.CardType;
-                        existing.IllustratedBy = dto.IllustratedBy;
-                        existing.CollectionGroup = dto.CollectionGroup;
-                        existing.OwnerId = dto.OwnerId;
-
-                        if (dto.InventoryCounts.Any())
-                        {
-                            foreach (var countDto in dto.InventoryCounts)
-                            {
-                                new InventoryCountRepo().Create(existing, countDto);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        var cardDetails = FetchCardDetailsAsync(dto.ScryfallId, faceName).Result;
-
-                        dto.Color = GetColorIdentityString(cardDetails.Item2.ColorIdentity);
-
-                        var inventory = new Inventory
-                        {
-                            Image = cardDetails.Item1,
-                            Name = dto.Name,
-                            SetCode = dto.SetCode,
-                            SetName = dto.SetName,
-                            Collector = dto.Collector,
-                            Language = dto.Language,
-                            FoilType = dto.FoilType,
-                            Rarity = dto.Rarity,
-                            ManaboxId = dto.ManaboxId,
-                            ScryfallId = dto.ScryfallId,
-                            Price = dto.Price,
-                            Misprint = dto.Misprint,
-                            Tampered = dto.Tampered,
-                            Condition = dto.Condition,
-                            PurchaseCurrency = dto.PurchaseCurrency,
-                            DateCreated = dto.DateCreated,
-                            CreatedBy = dto.CreatedBy,
-                            IsDeleted = dto.IsDeleted,
-                            Color = dto.Color,
-                            Description = cardDetails.Item2.OracleText,
-                            CardType = cardDetails.Item2.TypeLine,
-                            IllustratedBy = cardDetails.Item2.Artist,
-                            ManaCost = cardDetails.Item2.ManaCost,
-                            OwnerId = dto.OwnerId,
-                            CollectionGroup = dto.CollectionGroup,
-                        };
-
-                        if (dto.InventoryCounts.Any())
-                        {
-                            foreach (var countDto in dto.InventoryCounts)
-                            {
-                                new InventoryCountRepo().Create(inventory, countDto);
-                            }
-                        }
-
-                        context.Inventories.Add(inventory);
+                        case "grandarchive":
+                            FetchClassDetails_GA(context, dto, conversionRate);
+                            break;
+                        case "magicthegathering":
+                        default:
+                            FetchClassDetails_MTG(context, dto, conversionRate);
+                            break;
                     }
                 }
 
@@ -415,7 +316,9 @@ namespace Repository.Repo
                 if (inventory == null)
                     return new ReturnValue("Unable to find inventory item.");
 
-                inventory.Image = dto.Image;
+                if (dto.Image.Length > 0)
+                    inventory.Image = dto.Image;
+
                 inventory.Name = dto.Name;
                 inventory.SetCode = dto.SetCode;
                 inventory.SetName = dto.SetName;
@@ -437,11 +340,26 @@ namespace Repository.Repo
                 inventory.ManaCost = dto.ManaCost;
                 inventory.OwnerId = dto.OwnerId;
                 inventory.CollectionGroup = dto.CollectionGroup;
+                inventory.Category = dto.Category;
 
                 Db.SaveChanges(context, result, "Inventory updated successfully.");
             }
 
             return result;
+        }
+
+        public static void UpdatePrice(int id, decimal amount)
+        {
+            using (IMSEntities context = new IMSEntities())
+            {
+                var inventory = context.Inventories.FirstOrDefault(i => i.Id == id);
+
+                if (inventory != null)
+                {
+                    inventory.Price = amount;
+                    Db.SaveChanges(context);
+                }
+            }
         }
 
         public ReturnValue Delete(int id)
@@ -465,14 +383,14 @@ namespace Repository.Repo
 
 
 
-        private async Task<Tuple<byte[], ScryfallCard>> FetchCardDetailsAsync(string scryfallId, string cardfaceName)
+        private async Task<Tuple<byte[], ScryfallCard>> FetchCardDetailsAsync_Scryfall(string scryfallId, string cardfaceName)
         {
             _client = new HttpClient();
             var imageBytes = new byte[0];
             var card = new ScryfallCard();
             string cardUrl = $"https://api.scryfall.com/cards/{scryfallId}";
 
-            _client.DefaultRequestHeaders.UserAgent.ParseAdd("MyApp/1.0");
+            _client.DefaultRequestHeaders.UserAgent.ParseAdd($"MyApp{_attemptCount.ToString("n0")}/{_attemptCount}");
 
             var cardJson = _client.GetStringAsync(cardUrl).Result;
             card = JsonConvert.DeserializeObject<ScryfallCard>(cardJson);
@@ -504,10 +422,264 @@ namespace Repository.Repo
             _client.Dispose();
             return Tuple.Create(imageBytes, card);
         }
+        private async Task<Tuple<byte[], GrandArchiveCard>> FetchCardDetailsAsync_GrandArchive(string slugName)
+        {
+            _client = new HttpClient();
+            var imageBytes = new byte[0];
+            var card = new GrandArchiveCard();
+            string cardUrl = $"https://api.gatcg.com/cards/{slugName}";
+
+            var cardJson = _client.GetStringAsync(cardUrl).Result;
+            card = JsonConvert.DeserializeObject<GrandArchiveCard>(cardJson);
+
+            if (card.editions != null & card.editions.Any())
+            {
+                var cardFace = card.editions.FirstOrDefault();
+
+                if (cardFace != null)
+                {
+                    imageBytes = _client.GetByteArrayAsync($"https://api.gatcg.com/{cardFace.image}").Result;
+                }
+            }
+
+            _client.Dispose();
+            return Tuple.Create(imageBytes, card);
+        }
 
         private string GetColorIdentityString(List<string> colorIdentity)
         {
             return string.Join("", colorIdentity.Select(a => "{" + a + "}"));
+        }
+
+        private void FetchClassDetails_MTG(IMSEntities context, InventoryDetailsDto dto, decimal conversionRate)
+        {
+            string faceName = dto.Name;
+            if (dto.Name.Contains("//"))
+            {
+                faceName = dto.Name.Split(new string[] { "//" }, StringSplitOptions.None)[1].Trim();
+            }
+
+            var existing = context.Inventories.FirstOrDefault(i => i.ScryfallId == dto.ScryfallId && !i.IsDeleted);
+
+            if (existing != null)
+            {
+                Tuple<byte[], ScryfallCard> cardDetails = FetchCardDetailsAsync_Scryfall(dto.ScryfallId, faceName).Result;
+
+                if (existing.Image == null || existing.Image.Length == 0)
+                    existing.Image = cardDetails.Item1;
+
+                if (string.IsNullOrEmpty(existing.Description))
+                    existing.Description = cardDetails.Item2.OracleText ?? "";
+
+                if (string.IsNullOrEmpty(existing.Color))
+                    dto.Color = GetColorIdentityString(cardDetails.Item2.ColorIdentity);
+
+                if (string.IsNullOrEmpty(existing.ManaCost))
+                    existing.ManaCost = cardDetails.Item2.ManaCost;
+
+                if (string.IsNullOrEmpty(existing.CardType))
+                    existing.CardType = cardDetails.Item2.TypeLine;
+
+                if (string.IsNullOrEmpty(existing.IllustratedBy))
+                    existing.IllustratedBy = cardDetails.Item2.Artist;
+
+                var currentPrice = existing.Price / conversionRate;
+                var isFoiled = existing.FoilType.ToLower() != "non-foil" & existing.FoilType.ToLower() != "normal";
+                var scryfallPrice = Convert.ToDecimal(isFoiled ? (cardDetails.Item2.Prices?.UsdFoil ?? dto.Price.ToString()) : (cardDetails.Item2.Prices?.Usd ?? dto.Price.ToString()));
+                if (currentPrice != scryfallPrice)
+                    existing.Price = scryfallPrice * conversionRate;
+
+                existing.Name = dto.Name;
+                existing.SetCode = dto.SetCode;
+                existing.SetName = dto.SetName;
+                existing.Collector = dto.Collector;
+                existing.Language = dto.Language;
+                existing.FoilType = dto.FoilType;
+                existing.Rarity = dto.Rarity;
+                existing.ManaboxId = dto.ManaboxId;
+                existing.ScryfallId = dto.ScryfallId;
+                existing.Misprint = dto.Misprint;
+                existing.Tampered = dto.Tampered;
+                existing.Condition = dto.Condition;
+                existing.PurchaseCurrency = dto.PurchaseCurrency;
+                existing.Color = dto.Color;
+                existing.ManaCost = dto.ManaCost;
+                existing.CardType = dto.CardType;
+                existing.IllustratedBy = dto.IllustratedBy;
+                existing.CollectionGroup = dto.CollectionGroup;
+                existing.OwnerId = dto.OwnerId;
+                existing.Category = dto.Category;
+
+                if (dto.InventoryCounts.Any())
+                {
+                    foreach (var countDto in dto.InventoryCounts)
+                    {
+                        new InventoryCountRepo().Create(existing, countDto);
+                    }
+                }
+            }
+            else
+            {
+                var cardDetails = FetchCardDetailsAsync_Scryfall(dto.ScryfallId, faceName).Result;
+
+                dto.Color = GetColorIdentityString(cardDetails.Item2.ColorIdentity);
+
+                var inventory = new Inventory
+                {
+                    Image = cardDetails.Item1,
+                    Name = dto.Name,
+                    SetCode = dto.SetCode,
+                    SetName = dto.SetName,
+                    Collector = dto.Collector,
+                    Language = dto.Language,
+                    FoilType = dto.FoilType,
+                    Rarity = dto.Rarity,
+                    ManaboxId = dto.ManaboxId,
+                    ScryfallId = dto.ScryfallId,
+                    Price = dto.Price,
+                    Misprint = dto.Misprint,
+                    Tampered = dto.Tampered,
+                    Condition = dto.Condition,
+                    PurchaseCurrency = dto.PurchaseCurrency,
+                    DateCreated = dto.DateCreated,
+                    CreatedBy = dto.CreatedBy,
+                    IsDeleted = dto.IsDeleted,
+                    Color = dto.Color,
+                    Description = cardDetails.Item2.OracleText,
+                    CardType = cardDetails.Item2.TypeLine,
+                    IllustratedBy = cardDetails.Item2.Artist,
+                    ManaCost = cardDetails.Item2.ManaCost,
+                    OwnerId = dto.OwnerId,
+                    CollectionGroup = dto.CollectionGroup,
+                    Category = dto.Category,
+                };
+
+                var currentPrice = inventory.Price / conversionRate;
+                var isFoiled = inventory.FoilType.ToLower() != "non-foil" & inventory.FoilType.ToLower() != "normal";
+                var scryfallPrice = Convert.ToDecimal(isFoiled ? (cardDetails.Item2.Prices?.UsdFoil ?? dto.Price.ToString()) : (cardDetails.Item2.Prices?.Usd ?? dto.Price.ToString()));
+                if (currentPrice != scryfallPrice)
+                {
+                    inventory.Price = scryfallPrice * conversionRate;
+                    inventory.PurchaseCurrency = "USD";
+                }
+
+                if (dto.InventoryCounts.Any())
+                {
+                    foreach (var countDto in dto.InventoryCounts)
+                    {
+                        new InventoryCountRepo().Create(inventory, countDto);
+                    }
+                }
+
+                context.Inventories.Add(inventory);
+            }
+        }
+
+        private void FetchClassDetails_GA(IMSEntities context, InventoryDetailsDto dto, decimal conversionRate)
+        {
+            var existing = context.Inventories.FirstOrDefault(i => i.ScryfallId == dto.ScryfallId && !i.IsDeleted);
+            var cardNameAfterSlash = dto.Name.Contains("-") ? Regex.Replace(dto.Name, "-.*$", "") : dto.Name;
+            var slugName = cardNameAfterSlash.ToLower().Replace(" ", "-").Replace(",", "").Replace("'", "").Replace(":", "").Replace("ä", "a").Replace("ö", "o").Replace("ü", "u").Replace("ß", "ss");
+            Tuple<byte[], GrandArchiveCard> cardDetails = FetchCardDetailsAsync_GrandArchive(slugName).Result;
+
+            if (existing != null)
+            {
+                if (existing.ScryfallId != slugName)
+                {
+                    existing.ScryfallId = slugName;
+                }
+
+                if (existing.Image == null || existing.Image.Length == 0)
+                    existing.Image = cardDetails.Item1;
+
+                if (string.IsNullOrEmpty(existing.Description))
+                    existing.Description = cardDetails.Item2.effect ?? "";
+
+                if (string.IsNullOrEmpty(existing.ManaCost))
+                    existing.ManaCost = $"{cardDetails.Item2.cost.type}|{cardDetails.Item2.cost.value}";
+
+                if (string.IsNullOrEmpty(existing.Color))
+                    existing.Color = string.Join(", ", cardDetails.Item2.elements).TrimEnd();
+
+                if (string.IsNullOrEmpty(existing.CardType))
+                    existing.CardType = string.Join(", ", cardDetails.Item2.classes).TrimEnd();
+
+                if (string.IsNullOrEmpty(existing.IllustratedBy))
+                    existing.IllustratedBy = cardDetails.Item2.editions.FirstOrDefault()?.illustrator ?? "";
+
+                existing.Name = dto.Name;
+                existing.SetCode = dto.SetCode;
+                existing.SetName = dto.SetName;
+                existing.Collector = dto.Collector;
+                existing.Language = dto.Language;
+                existing.FoilType = dto.FoilType;
+                existing.Rarity = dto.Rarity;
+                existing.ManaboxId = dto.ManaboxId;
+                existing.Misprint = dto.Misprint;
+                existing.Tampered = dto.Tampered;
+                existing.Condition = dto.Condition;
+                existing.PurchaseCurrency = dto.PurchaseCurrency;
+                existing.Color = dto.Color;
+                existing.ManaCost = dto.ManaCost;
+                existing.CardType = dto.CardType;
+                existing.IllustratedBy = dto.IllustratedBy;
+                existing.CollectionGroup = dto.CollectionGroup;
+                existing.OwnerId = dto.OwnerId;
+                existing.Category = dto.Category;
+                existing.Price = dto.Price;
+
+                if (dto.InventoryCounts.Any())
+                {
+                    foreach (var countDto in dto.InventoryCounts)
+                    {
+                        new InventoryCountRepo().Create(existing, countDto);
+                    }
+                }
+            }
+            else
+            {
+                var inventory = new Inventory
+                {
+                    Name = dto.Name,
+                    SetCode = dto.SetCode,
+                    SetName = dto.SetName,
+                    Collector = dto.Collector,
+                    Language = dto.Language,
+                    FoilType = dto.FoilType,
+                    Rarity = dto.Rarity,
+                    ManaboxId = dto.ManaboxId,
+                    Price = dto.Price,
+                    Misprint = dto.Misprint,
+                    Tampered = dto.Tampered,
+                    Condition = dto.Condition,
+                    PurchaseCurrency = dto.PurchaseCurrency,
+                    DateCreated = dto.DateCreated,
+                    CreatedBy = dto.CreatedBy,
+                    IsDeleted = dto.IsDeleted,
+                    Color = dto.Color,
+                    OwnerId = dto.OwnerId,
+                    CollectionGroup = dto.CollectionGroup,
+                    Category = dto.Category,
+                };
+
+                inventory.ScryfallId = slugName;
+                inventory.Image = cardDetails.Item1;
+                inventory.Description = cardDetails.Item2.effect ?? "";
+                inventory.ManaCost = $"{cardDetails.Item2.cost.type}|{cardDetails.Item2.cost.value}";
+                inventory.Color = string.Join(", ", cardDetails.Item2.elements).TrimEnd();
+                inventory.CardType = string.Join(", ", cardDetails.Item2.classes).TrimEnd();
+                inventory.IllustratedBy = cardDetails.Item2.editions.FirstOrDefault()?.illustrator ?? "";
+
+                if (dto.InventoryCounts.Any())
+                {
+                    foreach (var countDto in dto.InventoryCounts)
+                    {
+                        new InventoryCountRepo().Create(inventory, countDto);
+                    }
+                }
+
+                context.Inventories.Add(inventory);
+            }
         }
 
     }

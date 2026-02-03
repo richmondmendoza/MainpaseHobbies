@@ -30,11 +30,11 @@
             });
         </text>
 
-        if (HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString().ToLower() == "login")
-        {
+        //if (HttpContext.Current.Request.RequestContext.RouteData.Values["action"].ToString().ToLower() == "login")
+        //{
             timeOut = "";
             HttpContext.Current.Session.Remove("TimeOutMessage");
-        }
+        //}
     }
 
 </script>
@@ -58,6 +58,7 @@
             <div class="modal-body">Content Here</div>
             <div class="modal-footer">
                 <a href="javascript:;" type="button" class="btn btn-default btn-flat  btn-sm pull-right" data-bs-dismiss="modal"><i class="fa fa-times"></i>   Close</a>
+
             </div>
         </div>
     </div>
