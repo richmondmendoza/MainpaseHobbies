@@ -111,7 +111,8 @@ namespace Web.Controllers
                 string cardUrl = $"https://api.scryfall.com/cards/{scryfallId}";
                 using (HttpClient client = new HttpClient())
                 {
-                    client.DefaultRequestHeaders.UserAgent.ParseAdd("MyApp/1.0");
+                    var version = $"{new Random().Next()}.{new Random().Next()}";
+                    client.DefaultRequestHeaders.UserAgent.ParseAdd($"MyApp/{version}");
 
                     var cardJson = client.GetStringAsync(cardUrl).Result;
                     card = JsonConvert.DeserializeObject<ScryfallCard>(cardJson);

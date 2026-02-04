@@ -70,6 +70,9 @@ namespace Web.Controllers
             model.SubTotal = model.Items.Sum(a => a.Total);
             model.Total = model.Shipping + model.SubTotal;
 
+            if (!(model.Items.Count > 0))
+                return Redirect(Url.Action("Index", "Home", new { area = "" }));
+
             return View(model);
         }
 
@@ -307,6 +310,12 @@ namespace Web.Controllers
         [HttpGet]
         public ActionResult CoinsReturn(string requestId)
         {
+            var res = new CoinsPH().GetCheckoutStatusAsync("", requestId);
+            if (res != null && res.status == 0)
+            {
+                var status = res.data?.status ?? "";
+                ViewBag.LatestStatus = status;
+            }
             return View();
         }
 

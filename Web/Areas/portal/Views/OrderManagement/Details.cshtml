@@ -215,7 +215,11 @@
             <div class="row no-print">
                 <div class="col-12">
                     <a href="javascript:;" class="btn btn-default print" print-data="#print-data"><i class="fas fa-print"></i> Print</a>
-
+                    @if (Model.Status != Dto.Enums.OrderStatusEnum.Completed &
+                        Model.DeliveryStatus != Dto.Enums.DeliveryStatusEnum.Completed)
+                    {
+                        <a href="javascript:;" id="btn-cancel" class="btn btn-danger ml-2"><i class="fas fa-times"></i> Cancel Order</a>
+                    }
 
                     @switch (Model.Status)
                     {
@@ -223,7 +227,7 @@
 
                             if (Model.PaymentMethod == Dto.Enums.PaymentMethodEnum.Cash && !Model.IsPaid)
                             {
-                                <a href="@Url.Action("TaggedAsPaid", "OrderManagement", new {area = "portal", id = Model.Id })" class="btn btn-success float-right">Receive Payment</a>
+                                <a href="@Url.Action("TaggedAsPaid", "OrderManagement", new {area = "portal", id = Model.Id, orderNumber = Model.OrderNumber })" class="btn btn-success float-right">Receive Payment</a>
                             }
                             break;
 

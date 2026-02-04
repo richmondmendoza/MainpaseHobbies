@@ -1,6 +1,7 @@
 ﻿using Database.SQL;
 using Dto;
 using Dto.Dto;
+using Dto.Enums;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -44,10 +45,11 @@ namespace Repository.Repo.Order
         {
             if (item == null) return null;
 
+            var type = (int)InventoryCountTypeEnum.Sell;
             var dto = new CartDetailsDto(ToDto(item, users));
             dto.ProductName = item.Inventory.Name;
             dto.Price = item.Inventory.Price;
-            dto.Stock = (int)item.Inventory.Inventory_Count.Sum(a => a.Quantity);
+            dto.Stock = (int)item.Inventory.Inventory_Count.Sum(a => a.Type == type ? -a.Quantity : a.Quantity);
             dto.FoilType = item.Inventory.FoilType;
             dto.Condition = item.Inventory.Condition;
             dto.ImageData = item.Inventory.Image;
@@ -117,9 +119,10 @@ namespace Repository.Repo.Order
             var result = new ReturnValue();
             using (IMSEntities context = new IMSEntities())
             {
+                var type = (int)InventoryCountTypeEnum.Sell;
                 var inventory = context.Inventories.Where(a => a.Id == dto.InventoryId).Include(a => a.Inventory_Count).FirstOrDefault();
-                var exists = context.Carts.FirstOrDefault(a => a.InventoryId == dto.InventoryId);
-                var limit = inventory?.Inventory_Count.Sum(a => a.Quantity) ?? 0;
+                var exists = context.Carts.FirstOrDefault(a => a.InventoryId == dto.InventoryId & a.UserId == dto.UserId);
+                var limit = inventory?.Inventory_Count.Sum(a => a.Type == type ? -a.Quantity : a.Quantity) ?? 0;
 
                 if (exists != null)
                 {

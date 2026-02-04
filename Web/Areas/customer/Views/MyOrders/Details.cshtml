@@ -157,8 +157,8 @@
                             <label>Store Payment</label>
                         </div>
                         <div class="icheck-primary">
-                            <input type="checkbox" onclick="return false;" @(Model.PaymentMethod == Dto.Enums.PaymentMethodEnum.PayPal ? "checked" : "") />
-                            <label>PayPal</label>
+                            <input type="checkbox" onclick="return false;" @(Model.PaymentMethod == Dto.Enums.PaymentMethodEnum.CoinsPH ? "checked" : "") />
+                            <label>Pay via CoinsPH</label>
                         </div>
                     </div>
 
@@ -194,14 +194,20 @@
                                     <th style="width:50%">Subtotal:</th>
                                     <td class="text-right">@Model.Currency @Model.SubTotal.ToString("n2")</td>
                                 </tr>
-                                <tr>
-                                    <th>Tax (9.3%)</th>
-                                    <td class="text-right">@Model.Currency @Model.Tax.ToString("n2")</td>
-                                </tr>
-                                <tr>
-                                    <th>Shipping:</th>
-                                    <td class="text-right">@Model.Currency @Model.Shipping.ToString("n2")</td>
-                                </tr>
+                                @if (Model.Tax > 0)
+                                {
+                                    <tr>
+                                        <th>Tax (9.3%)</th>
+                                        <td class="text-right">@Model.Currency @Model.Tax.ToString("n2")</td>
+                                    </tr>
+                                }
+                                @if (Model.Shipping > 0)
+                                {
+                                    <tr>
+                                        <th>Shipping:</th>
+                                        <td class="text-right">@Model.Currency @Model.Shipping.ToString("n2")</td>
+                                    </tr>
+                                }
                                 <tr>
                                     <th>Total:</th>
                                     <td class="text-right">@Model.Currency @Model.Total.ToString("n2")</td>
@@ -217,6 +223,11 @@
                 <div class="col-12">
                     <a href="javascript:;" class="btn btn-default print" print-data="#print-data"><i class="fas fa-print"></i> Print</a>
 
+                    @if (!Model.IsPaid)
+                    {
+                        <a href="@Url.Action("PayWithCoins", "MyOrders", new {area = "customer", id = Model.Id })" class="btn btn-primary ml-3 float-right">Pay with CoinsPH</a>
+                    }
+
                     @if (Model.Status != Dto.Enums.OrderStatusEnum.Completed &&
                         Model.Status != Dto.Enums.OrderStatusEnum.Cancelled &&
                         Model.Status != Dto.Enums.OrderStatusEnum.Refunded &&
@@ -224,7 +235,6 @@
                     {
                         <a href="@Url.Action("Cancel", "MyOrders", new {area = "customer", id = Model.Id })" class="btn btn-danger float-right">Cancel Order</a>
                     }
-
                 </div>
             </div>
         </div>

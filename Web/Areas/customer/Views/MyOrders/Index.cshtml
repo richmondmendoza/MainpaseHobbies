@@ -32,7 +32,7 @@
                     <tbody>
                         @if (Model.Any())
                         {
-                            foreach (var item in Model)
+                            foreach (var item in Model.OrderByDescending(a => a.Id))
                             {
                                 <tr>
                                     <td>@item.OrderNumber</td>

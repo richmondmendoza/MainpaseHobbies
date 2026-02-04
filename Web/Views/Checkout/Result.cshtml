@@ -1,12 +1,14 @@
 ﻿
 @{
     ViewBag.Title = "Order Result";
+    var user = Web.Controllers.BaseController.Identity;
+
 }
 
 <section style="text-align:center; padding:60px 20px; font-family:Arial, sans-serif;">
     @*<img src="https://via.placeholder.com/600x300"
-         alt="Thank you for your order"
-         style="max-width:100%; border-radius:12px; margin-bottom:30px;" />*@
+        alt="Thank you for your order"
+        style="max-width:100%; border-radius:12px; margin-bottom:30px;" />*@
 
     <h1 style="font-size:32px; margin-bottom:15px;">Thank You for Your Order!</h1>
 
@@ -17,4 +19,20 @@
     <p style="font-size:16px; color:#777;">
         You’ll receive a confirmation email shortly with your order details.
     </p>
+
+    @if (user!= null && (user.Id > 0 & user.HasCustomerAccess))
+    {
+    <p class="text-muted">
+        You can review the status anytime in <strong>My Orders</strong>.
+    </p>
+    <a href="@Url.Action("Index", "MyOrders", new { area = "customer" })" class="btn btn-primary">
+        Go to My Orders
+    </a>
+    }
+    else
+    {
+    <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn btn-primary">
+        Return to Home
+    </a>
+    }
 </section>

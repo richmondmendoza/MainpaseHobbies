@@ -46,7 +46,7 @@ namespace Web.App_Filters.Services
 
             context.Response.Cookies.Add(formsCookie);
 
-            var userSessionKey = context.Request.Cookies["Microsoft.Application.Key"].Value;
+            var userSessionKey = context.Request.Cookies["Microsoft.Application.Key"]?.Value ?? null;
 
             if (userSessionKey != null)
             {

@@ -22,7 +22,7 @@ namespace Repository.Repo
                 DateCreated = inventoryCount.DateCreated,
                 CreatedBy = inventoryCount.CreatedBy,
                 IsDeleted = inventoryCount.IsDeleted,
-                Quantity = inventoryCount.Quantity,
+                Quantity = (Dto.Enums.InventoryCountTypeEnum)inventoryCount.Type == Dto.Enums.InventoryCountTypeEnum.Sell ? -(inventoryCount.Quantity) :inventoryCount.Quantity,
                 Remarks = inventoryCount.Remarks,
                 Type = (Dto.Enums.InventoryCountTypeEnum)inventoryCount.Type,
                 UOM = inventoryCount.UOM

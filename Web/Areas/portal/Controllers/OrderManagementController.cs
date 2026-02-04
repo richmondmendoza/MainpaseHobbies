@@ -16,13 +16,21 @@ namespace Web.Areas.portal.Controllers
 
         public ActionResult List_Pending()
         {
-            var records = _order.GetList((int)OrderStatusEnum.Pending);
-            return View("Index", records);
+            var status = string.Join("|", new List<int>()
+            {
+                (int)OrderStatusEnum.Pending,
+                (int)OrderStatusEnum.Processing,
+                (int)OrderStatusEnum.Refunded,
+            });
+            return View("Index", _order.GetListAllByFilter(status));
         }
         public ActionResult List_Completed()
         {
-            var records = _order.GetList((int)OrderStatusEnum.Completed);
-            return View("Index", records);
+            var status = string.Join("|", new List<int>()
+            {
+                (int)OrderStatusEnum.Completed
+            });
+            return View("Index", _order.GetListAllByFilter(status));
         }
 
         public ActionResult Details(int id)

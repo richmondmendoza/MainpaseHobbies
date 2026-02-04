@@ -2,6 +2,7 @@
 
 @{
     var info = Web.Controllers.BaseController.SystemInfo;
+    var user = Web.Controllers.BaseController.Identity;
 }
 
 
@@ -34,7 +35,13 @@
                 <a href="@info.FB" class="facebook" target="_blank"><i class="bi bi-facebook"></i></a>
                 <a href="@info.Insta" class="instagram" target="_blank"><i class="bi bi-instagram"></i></a>
                 <a href="@info.LinkeIn" class="linkedin" target="_blank"><i class="bi bi-linkedin"></i></a>
-                <a href="@Url.Action("Login", "MyAccount", new { area = "customer" })"><i class="bi bi-person-fill"></i></a>
+                <a href="@Url.Action("Login", "MyAccount", new { area = "customer" })">
+                    @if (user != null)
+                    {
+                        <span>@user.FirstName @user.LastName &nbsp;|&nbsp;</span>
+                    }
+                    <i class="bi bi-person-fill"></i>
+                </a>
                 <a href="@Url.Action("Cart", "Home", new { area = "" })">
                     <i class="bi bi-cart">
                         <span class="navbar-badge badge text-bg-danger" id="cart-count">0</span>

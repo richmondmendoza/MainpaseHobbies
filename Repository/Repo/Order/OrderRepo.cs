@@ -4,6 +4,7 @@ using Dto.Dto;
 using Dto.Enums;
 using System;
 using System.Collections.Generic;
+using System.Data.Entity;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -63,6 +64,29 @@ namespace Repository.Repo.Order
             }
         }
 
+        public IEnumerable<OrderDto> GetListAllByFilter(string status)
+        {
+            using (IMSEntities context = new IMSEntities())
+            {
+                var statuses = status.Split('|').Where(a => !string.IsNullOrEmpty(a)).Select(a => Convert.ToInt32(a));
+                var list = context.Orders.Where(a => statuses.Any(b => b == a.Status));
+
+
+                return list.ToList().Select(x => ToDto(x)).ToList();
+            }
+        }
+
+        public IEnumerable<OrderDto> GetListByUser(int userid, string status)
+        {
+            using (IMSEntities context = new IMSEntities())
+            {
+                var statuses = status.Split('|').Where(a => !string.IsNullOrEmpty(a)).Select(a => Convert.ToInt32(a));
+                var list = context.Orders.Where(a => a.UserId == userid & statuses.Any(b => b == a.Status));
+
+                return list.ToList().Select(x => ToDto(x)).ToList();
+            }
+        }
+
         public IEnumerable<OrderDetailsDto> GetListDetails()
         {
             using (IMSEntities context = new IMSEntities())
@@ -99,7 +123,7 @@ namespace Repository.Repo.Order
                 var date = dto.DateCreated.Date;
                 var count = context.Orders.Where(a => a.DateCreated >= date).Count() + 1;
 
-                if(string.IsNullOrEmpty(dto.OrderNumber))
+                if (string.IsNullOrEmpty(dto.OrderNumber))
                     dto.OrderNumber = $"ORD{DateTime.UtcNow:yyyyMMddHHmmssfff}".Substring(0, 19);
 
                 var item = new Database.SQL.Order
@@ -199,7 +223,7 @@ namespace Repository.Repo.Order
 
             using (IMSEntities context = new IMSEntities())
             {
-                var record = context.Orders.FirstOrDefault(a => a.Id == id);
+                var record = context.Orders.Where(a => a.Id == id).Include(a => a.Order_Item).FirstOrDefault();
                 if (record != null)
                 {
                     record.IsPaid = true;
@@ -208,6 +232,25 @@ namespace Repository.Repo.Order
                     var payment = context.Payments.FirstOrDefault(a => a.OrderId == record.Id & a.PayoneerId == orderId);
                     if (payment != null)
                         payment.Status = (int)PaymentStatus.Paid;
+
+                    foreach (var item in record.Order_Item)
+                    {
+                        var inventory = context.Inventories.FirstOrDefault(a => a.Name == item.ProductName);
+
+                        if (inventory != null)
+                        {
+                            inventory.Inventory_Count.Add(new Inventory_Count()
+                            {
+                                CreatedBy = "system",
+                                DateCreated = DateTime.Now,
+                                Quantity = item.Quantity,
+                                Type = (int)InventoryCountTypeEnum.Sell,
+                                Remarks = $"Order #{record.OrderNumber}",
+                                UOM = "PC",
+                                IsDeleted = false,
+                            });
+                        }
+                    }
 
                     Db.SaveChanges(context, result, "Order paid!");
                 }

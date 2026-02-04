@@ -90,7 +90,7 @@
 
                             @*<p class="col-12">Estimated Shipping <span class="float-right">@currency 0.00</span></p>*@
                             <h4 class="col-12 mb-0">Subtotal <span class="float-right">@currency @((Model.Sum(a => (a.Price * a.Quantity))).ToString("n2"))</span></h4>
-                            <p class="small mb-4 text-muted pl-2" style="font-style: italic;">Taxes calculated at checkout</p>
+                            @*<p class="small mb-4 text-muted pl-2" style="font-style: italic;">Taxes calculated at checkout</p>*@
 
                             <div>
                                 <a href="@Url.Action("Index", "CheckOut", new {area = ""})" class="btn btn-primary mb-3 btn-block border-0 text-white" style="padding: 0.375rem 0.75rem; line-height: 1.5; margin-bottom: 1rem !important ">Check Out</a>

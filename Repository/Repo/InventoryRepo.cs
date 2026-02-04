@@ -217,6 +217,7 @@ namespace Repository.Repo
                     records = records.Take(take);
                 }
 
+                var type = (int)InventoryCountTypeEnum.Sell;
                 return records.Include(a => a.Inventory_Count).Select(r => new CardDetailsDto()
                 {
                     Id = r.Id,
@@ -224,10 +225,10 @@ namespace Repository.Repo
                     Name = r.Name,
                     Price = r.Price,
                     CardType = r.CardType,
-                    Count = r.Inventory_Count.Where(ic => !ic.IsDeleted).Sum(ic => ic.Quantity),
+                    Count = r.Inventory_Count.Where(ic => !ic.IsDeleted).Sum(ic => (ic.Type == type ? -(ic.Quantity) : ic.Quantity)),
                     Rarity = r.Rarity,
                     FoilType = r.FoilType,
-                    PurchaseCurrency = r.PurchaseCurrency,
+                    PurchaseCurrency = "PHP" //r.PurchaseCurrency,
                 }).ToList();
             }
         }
