@@ -1,0 +1,166 @@
+﻿
+@{
+    ViewBag.Title = "Bulk Action";
+}
+
+<link href="~/Content/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
+<link href="~/Content/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css" rel="stylesheet" />
+<style>
+    .dataTables_wrapper {
+        width: 100%;
+    }
+</style>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header pt-4 pb-4">
+                <h3 class="card-title">
+                    Inventory List
+                </h3>
+                <div class="card-tools">
+                    <ul class="nav nav-pills ml-auto">
+                        <li class="nav-item">
+                            <select id="slct-action" class="form-control select2">
+                                <option value="">Select Action</option>
+                                <option value="price">Update Price</option>
+                                <option value="move">Move Ownership</option>
+                                <option value="delete">Delete</option>
+                            </select>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body">
+                <input type="hidden" id="SelectedIds" />
+
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Collection Group</label>
+                        <select class="form-control select2" id="slct-collection">
+                            <option value="">Select Collection Group</option>
+                            <option value="Magic the Gathering">Magic the Gathering</option>
+                            <option value="Grand Archive">Grand Archive</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Card Owner</label>
+                        <select class="form-control select2" id="slct-owner">
+                            <option value="0">Select Owner</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Set Code</label>
+                        <select class="form-control select2" id="slct-set">
+                            <option value="0">Select Set</option>
+                        </select>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="card-body">
+                <table id="data-table" class="table table-sm table-bordered w-100">
+                    <thead>
+                        <tr>
+                            <th>&nbsp;</th>
+                            <th>Name</th>
+                            <th>Set Code</th>
+                            <th>Set Name</th>
+                            <th>Foil Type</th>
+                            <th>Currency</th>
+                            <th>Price</th>
+                            <th>Available</th>
+                            <th>Owner</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div><!-- /.card-body -->
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Content/assets/plugins/select2/js/select2.min.js"></script>
+    <script>
+
+        var accountTable = $('#data-table').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "stateSave": true,
+            "searching": false,
+            "dom": 'lBrtip',
+            "responsive": false,
+            "autoWidth": true,
+            "paging": false,
+            buttons: [],
+            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, 'All']],
+            "ajax": {
+                "url": '@Url.Action("LoadBulkList")',
+                "type": "POST",
+                "datatype": "JSON",
+                "data": function (d) {
+            @*d.employeeId = '@Model.EmployeeId',
+                d.statusId = '@((int)HRIS.Repository.Utils.Enum.LeaveApplicationStatusEnum.ForApproval) | ' +
+                             '@((int)HRIS.Repository.Utils.Enum.LeaveApplicationStatusEnum.ForCancellationOfApproved) | ' +
+                             '@((int)HRIS.Repository.Utils.Enum.LeaveApplicationStatusEnum.ForCancellationOfRequest) | ' +
+                             '@((int)HRIS.Repository.Utils.Enum.LeaveApplicationStatusEnum.ApprovedForValidation) | ' +
+                             '@((int)HRIS.Repository.Utils.Enum.LeaveApplicationStatusEnum.ForValidationOfCancellation) | ' +
+                             '@((int)HRIS.Repository.Utils.Enum.LeaveApplicationStatusEnum.ForApprovalOfCeo)'*@
+                },
+                "beforeSend": function () {
+                    $('.dataTables_length').hide();
+                },
+                "complete": function () { }
+            },
+            "columns": [
+                {
+                    render: function (data, type, full, meta) {
+                        var icheck = '<div class="icheck-primary">';
+                        icheck += '<input type="checkbox" id="chk-' + full.Id + '" class="chk-select-id" link-id="' + full.Id + '">';
+                        icheck += '<label for="chk-' + full.Id + '"></label>';
+                        icheck += '</div>';
+                        return icheck;
+                    }, name: '', data: null, sortable: false
+                },
+                { "data": "Name", "name": "Name", "autoWidth": true },
+                { "data": "SetCode", "name": "SetCode", "autoWidth": true },
+                { "data": "SetName", "name": "SetName", "autoWidth": true },
+                { "data": "FoilType", "name": "FoilType", "autoWidth": true },
+                { "data": "PurchaseCurrency", "name": "PurchaseCurrency", "autoWidth": true, sortable: false },
+                { "data": "PriceDisplay", "name": "PriceDisplay", "autoWidth": true },
+                { "data": "Count", "name": "Count", "autoWidth": true, sortable: false },
+                { "data": "OwnerName", "name": "OwnerName", "autoWidth": true, sortable: false }
+            ],
+            columnDefs: [
+                { "className": "text-center", "targets": 0 },
+                { "className": "text-right", "targets": 6 },
+                { sortable: false, targets: 0 }
+            ],
+        });
+
+        $(document).ready(function () {
+            $('.select2').select2({ "theme": "bootstrap4" });
+
+            $(document).on('click', '.chk-select-id', function (e) {
+                var selectedIDs = $('#SelectedIds').val();
+                var id = $(this).attr('link-id');
+
+                if ($(this).is(':checked')) {
+                    if (selectedIDs === "") {
+                        selectedIDs += "|";
+                    }
+
+                    selectedIDs += id + "|";
+                } else {
+                    selectedIDs = selectedIDs.replace("|" + id + "|", "|");
+                }
+
+                $('#SelectedIds').val(selectedIDs);
+            });
+        });
+    </script>
+}

@@ -30,20 +30,20 @@ namespace Web.Models
         public UploadDataMap()
         {
             Map(m => m.Name).Name("Name");
-            Map(m => m.SetCode).Name("Set code");
-            Map(m => m.SetName).Name("Set name");
-            Map(m => m.CollectorNumber).Name("Collector number");
-            Map(m => m.Foil).Name("Foil");
-            Map(m => m.Rarity).Name("Rarity");
+            Map(m => m.SetCode).Name("Set code").Default("").Optional();
+            Map(m => m.SetName).Name("Set name").Default("").Optional();
+            Map(m => m.CollectorNumber).Name("Collector number").Default("").Optional();
+            Map(m => m.Foil).Name("Foil").Default("normal").Optional();
+            Map(m => m.Rarity).Name("Rarity").Default("").Optional();
             Map(m => m.Quantity).Name("Quantity");
-            Map(m => m.ManaBoxId).Name("ManaBox ID");
-            Map(m => m.ScryfallId).Name("Scryfall ID");
-            Map(m => m.PurchasePrice).Name("Purchase price").Default(0M);
-            Map(m => m.Misprint).Name("Misprint");
-            Map(m => m.Altered).Name("Altered");
-            Map(m => m.Condition).Name("Condition");
-            Map(m => m.Language).Name("Language");
-            Map(m => m.PurchasePriceCurrency).Name("Purchase price currency");
+            Map(m => m.ManaBoxId).Name("ManaBox ID").Default("0").Optional();
+            Map(m => m.ScryfallId).Name("Scryfall ID").Default("").Optional();
+            Map(m => m.PurchasePrice).Name("Purchase price").Default(0M).Optional();
+            Map(m => m.Misprint).Name("Misprint").Default("FALSE").Optional();
+            Map(m => m.Altered).Name("Altered").Default("FALSE").Optional();
+            Map(m => m.Condition).Name("Condition").Default("near_mint").Optional();
+            Map(m => m.Language).Name("Language").Default("en").Optional();
+            Map(m => m.PurchasePriceCurrency).Name("Purchase price currency").Default("PHP").Optional();
         }
     }
 }

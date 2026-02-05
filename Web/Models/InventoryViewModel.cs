@@ -23,6 +23,7 @@ namespace Web.Models
         {
             if (record != null)
             {
+                Id = record.Id;
                 Image = record.Image;
                 Name = record.Name;
                 SetCode = record.SetCode;
@@ -48,6 +49,7 @@ namespace Web.Models
                 IllustratedBy = record.IllustratedBy;
                 OwnerId = record.OwnerId;
                 Category = record.Category;
+                CollectionGroup = record.CollectionGroup;
 
                 ImageFile = (HttpPostedFileBase)new MemoryPostedFile(this.Image);
             }
@@ -197,8 +199,8 @@ namespace Web.Models
             {
                 var items = new List<SelectListItem>()
                 {
-                    new SelectListItem { Value = "Magic the Gathering", Text = "Magic the Gathering", Selected = this.CollectionGroup.ToLower() == "magic the gathering" },
-                    new SelectListItem { Value = "Grand Archive", Text = "Grand Archive", Selected = this.CollectionGroup.ToLower() == "grand archive" },
+                    new SelectListItem { Value = "Magic the Gathering", Text = "Magic the Gathering", Selected = (this.CollectionGroup?.ToLower() ?? "") == "magic the gathering" },
+                    new SelectListItem { Value = "Grand Archive", Text = "Grand Archive", Selected = (this.CollectionGroup?.ToLower() ?? "") == "grand archive" },
                 };
 
                 return items;
@@ -238,8 +240,8 @@ namespace Web.Models
                 Name = this.Name,
                 SetCode = this.SetCode,
                 SetName = this.SetName,
-                Collector = this.Collector,
-                Language = this.Language,
+                Collector = this.Collector ?? "",
+                Language = this.Language ?? "",
                 FoilType = this.FoilType,
                 Rarity = this.Rarity,
                 ManaboxId = this.ManaboxId,

@@ -178,9 +178,21 @@ namespace Repository.Repo.Order
 
             using (IMSEntities context = new IMSEntities())
             {
-                var record = context.Orders.FirstOrDefault(a => a.Id == id);
+                var record = context.Orders.Where(a => a.Id == id).Include(a => a.Order_Item).FirstOrDefault();
                 if (record != null)
                 {
+                    if (record.IsPaid)
+                    {
+                        foreach(var item in record.Order_Item)
+                        {
+                            var inventoryCount = context.Inventory_Count.Where(a => a.Remarks == $"Order #{record.OrderNumber}");
+                            foreach (var inv in inventoryCount)
+                            {
+                                context.Inventory_Count.Remove(inv);
+                            }
+                        }
+                    }
+
                     record.Status = (int)OrderStatusEnum.Cancelled;
                     Db.SaveChanges(context, result, "Order successfully cancelled!");
                     result.Data = ToDto(record);
@@ -295,6 +307,18 @@ namespace Repository.Repo.Order
                 var record = context.Orders.FirstOrDefault(a => a.Id == id);
                 if (record != null)
                 {
+                    if (record.IsPaid)
+                    {
+                        foreach (var item in record.Order_Item)
+                        {
+                            var inventoryCount = context.Inventory_Count.Where(a => a.Remarks == $"Order #{record.OrderNumber}");
+                            foreach (var inv in inventoryCount)
+                            {
+                                context.Inventory_Count.Remove(inv);
+                            }
+                        }
+                    }
+
                     record.Status = (int)OrderStatusEnum.Refunded;
                     Db.SaveChanges(context, result, "Payment refunded!");
                 }

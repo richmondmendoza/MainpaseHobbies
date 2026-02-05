@@ -215,8 +215,10 @@
             <div class="row no-print">
                 <div class="col-12">
                     <a href="javascript:;" class="btn btn-default print" print-data="#print-data"><i class="fas fa-print"></i> Print</a>
-                    @if (Model.Status != Dto.Enums.OrderStatusEnum.Completed &
-                        Model.DeliveryStatus != Dto.Enums.DeliveryStatusEnum.Completed)
+                    @if ((Model.Status != Dto.Enums.OrderStatusEnum.Completed &
+                        Model.DeliveryStatus != Dto.Enums.DeliveryStatusEnum.Completed) &
+                        Model.Status != Dto.Enums.OrderStatusEnum.Cancelled &
+                        Model.Status != Dto.Enums.OrderStatusEnum.Refunded)
                     {
                         <a href="javascript:;" id="btn-cancel" class="btn btn-danger ml-2"><i class="fas fa-times"></i> Cancel Order</a>
                     }
@@ -253,3 +255,24 @@
         </div>
     </div>
 </div>
+
+@section scripts{
+    <script>
+        function CancelOrder() {
+            $('#confirm-modal').modalConfirm({
+                url: '@Url.Action("Cancel", "OrderManagement", new { area = "portal" })',
+                header: 'Cancel Order',
+                message: 'Do you want to cancel this order #@Model.OrderNumber',
+                param1: '@Model.Id'
+            });
+        }
+
+        $(document).ready(function () {
+
+            $('#btn-cancel').on('click', function () {
+                CancelOrder();
+            });
+
+        })
+    </script>
+}

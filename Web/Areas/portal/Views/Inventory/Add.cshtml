@@ -98,7 +98,7 @@
 
                                 <div class="input-group">
                                     @Html.TextBoxFor(a => a.ScryfallId, new { @class = "form-control", autocomplete = "off" })
-                                    <a href="javascript:;" class="btn btn-secondary input-group-append">
+                                    <a href="javascript:;" id="btn-fetch-card" class="btn btn-secondary input-group-append">
                                         Fetch Other Details
                                     </a>
                                 </div>
@@ -135,7 +135,7 @@
                         <div class="form-group row">
                             <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">Color</label>
                             <div class="col-lg-9 col-md-7 col-sm-12">
-                                @Html.DropDownListFor(a => a.Color, Model.ColorList, new { @class = "form-control select2" })
+                                @Html.TextBoxFor(a => a.Color, new { @class = "form-control" })
                                 @Html.ValidationMessageFor(a => a.Color)
                             </div>
                         </div>
@@ -184,7 +184,15 @@
                         </div>
                         <div>
                             <div class="tcg-image-container">
-                                <img id="tcg-image-preview" class="tcg-image" src="image.png" alt="Image preview" />
+                                @if (!string.IsNullOrEmpty(Model.ImageBase64))
+                                {
+                                    @Html.HiddenFor(a => a.Image)
+                                    <img id="tcg-image-preview" class="tcg-image" src="data:image/@Model.ImageExtension;base64,@Model.ImageBase64" alt="Image preview" />
+                                }
+                                else
+                                {
+                                    <img id="tcg-image-preview" class="tcg-image" src="" alt="Image preview" />
+                                }
                                 <div class="tcg-foil"></div>
                             </div>
                         </div>
@@ -306,6 +314,19 @@
             }
         }
 
+        function UpdateFetchURL(uID, collection) {
+            var url = '';
+
+            if (collection === "Magic the Gathering" || collection === "Grand Archive") {
+                url = '/portal/inventory/add?uid=' + uID + '&collectionGroup=' + collection;
+            }
+            else {
+                url = 'javascript:;'
+            }
+
+            $('#btn-fetch-card').attr("href", url);
+        }
+
         $(document).ready(function () {
             toggleFoil('@Model.FoilType');
 
@@ -313,6 +334,26 @@
 
             $('#FoilType').on('change', function () {
                 toggleFoil($(this).val());
+            });
+
+            $(document).on('change', '#ScryfallId, #Name', function (e) {
+                var collection = $('#CollectionGroup').val();
+                if (collection === "Magic the Gathering") {
+                    UpdateFetchURL($('#ScryfallId').val(), collection);
+                }
+                else if (collection === "Grand Archive") {
+                    UpdateFetchURL($('#Name').val(), collection);
+                }
+            });
+
+            $(document).on('change', '#CollectionGroup', function (e) {
+                var collection = $(this).val();
+                if (collection === "Magic the Gathering") {
+                    UpdateFetchURL($('#ScryfallId').val(), collection);
+                }
+                else if (collection === "Grand Archive") {
+                    UpdateFetchURL($('#Name').val(), collection);
+                }
             });
 
         })

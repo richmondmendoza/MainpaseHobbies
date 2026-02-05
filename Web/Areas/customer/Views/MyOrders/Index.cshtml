@@ -37,7 +37,7 @@
                                 <tr>
                                     <td>@item.OrderNumber</td>
                                     <td>@item.DateCreated.ToString("MMM-dd-yyyy")</td>
-                                    <td>@(item.IsPaid ? item.Status.ToString() : "Waiting for payment")</td>
+                                    <td>@(!item.IsPaid & (item.Status != Dto.Enums.OrderStatusEnum.Cancelled & item.Status != Dto.Enums.OrderStatusEnum.Refunded) ?  "Waiting for payment" : item.Status.ToString() )</td>
                                     <td class="text-right">@item.Currency @item.Total.ToString("n2")</td>
                                     <td style="text-align: center;">
                                         <a href="@Url.Action("Details", "MyOrders", new {area = "customer", id = item.Id})" class="btn btn-sm btn-secondary ml-2"><i class="fa fa-eye"></i></a>

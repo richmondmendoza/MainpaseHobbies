@@ -1,4 +1,7 @@
-﻿using Dto.Enums;
+﻿using Dto;
+using Dto.Enums;
+using Newtonsoft.Json;
+using Repository.Repo;
 using Repository.Repo.Order;
 using System;
 using System.Collections.Generic;
@@ -79,6 +82,19 @@ namespace Web.Areas.portal.Controllers
             return RedirectToAction("Details", new { id = id });
         }
 
+        [HttpPost]
+        public ActionResult Cancel(ConfirmDto dto)
+        {
+            var id = Convert.ToInt32(dto.Param1);
+            var result = _order.Cancel(id);
+            if (result.Success)
+            {
+                AuditLogRepo.CreateLog("Cancel Order", Identity.Id, Identity.Username, "Orders", JsonConvert.SerializeObject(result.Data));
+            }
+
+            ShowMessage(result.Message, result.Success);
+            return RedirectToAction("Details", new { id = id });
+        }
 
 
     }

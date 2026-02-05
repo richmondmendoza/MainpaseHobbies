@@ -233,10 +233,32 @@
                         Model.Status != Dto.Enums.OrderStatusEnum.Refunded &&
                         Model.Status != Dto.Enums.OrderStatusEnum.Processing)
                     {
-                        <a href="@Url.Action("Cancel", "MyOrders", new {area = "customer", id = Model.Id })" class="btn btn-danger float-right">Cancel Order</a>
+                        <a href="javascript:;" id="btn-cancel" class="btn btn-danger float-right">Cancel Order</a>
                     }
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+
+@section scripts{
+    <script>
+        function CancelOrder() {
+            $('#confirm-modal').modalConfirm({
+                url: '@Url.Action("Cancel", "MyOrders", new { area = "customer" })',
+                header: 'Cancel Order',
+                message: 'Do you want to cancel this order #@Model.OrderNumber',
+                param1: '@Model.Id'
+            });
+        }
+
+        $(document).ready(function () {
+
+            $('#btn-cancel').on('click', function () {
+                CancelOrder();
+            });
+
+        })
+    </script>
+}

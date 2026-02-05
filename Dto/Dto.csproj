@@ -77,6 +77,7 @@
     <Compile Include="BaseSettings\ConversionDto.cs" />
     <Compile Include="BaseSettings\SystemInfoDto.cs" />
     <Compile Include="ConfirmDto.cs" />
+    <Compile Include="DataTableRequestData.cs" />
     <Compile Include="Dto\CartDto.cs" />
     <Compile Include="Dto\EventDto.cs" />
     <Compile Include="Dto\InventoryCountDto.cs" />

@@ -87,6 +87,7 @@ namespace Repository.Repo
                 OwnerId = inventory.OwnerId,
                 Category = inventory.Category,
                 IsPhpDisplay = isPHPDisplay,
+                
             };
         }
 
@@ -344,6 +345,7 @@ namespace Repository.Repo
                 inventory.Category = dto.Category;
 
                 Db.SaveChanges(context, result, "Inventory updated successfully.");
+                result.Data = ToDetails(inventory, context.Users);
             }
 
             return result;
@@ -384,7 +386,7 @@ namespace Repository.Repo
 
 
 
-        private async Task<Tuple<byte[], ScryfallCard>> FetchCardDetailsAsync_Scryfall(string scryfallId, string cardfaceName)
+        public async Task<Tuple<byte[], ScryfallCard>> FetchCardDetailsAsync_Scryfall(string scryfallId)
         {
             _client = new HttpClient();
             var imageBytes = new byte[0];
@@ -423,7 +425,8 @@ namespace Repository.Repo
             _client.Dispose();
             return Tuple.Create(imageBytes, card);
         }
-        private async Task<Tuple<byte[], GrandArchiveCard>> FetchCardDetailsAsync_GrandArchive(string slugName)
+
+        public async Task<Tuple<byte[], GrandArchiveCard>> FetchCardDetailsAsync_GrandArchive(string slugName)
         {
             _client = new HttpClient();
             var imageBytes = new byte[0];
@@ -439,7 +442,7 @@ namespace Repository.Repo
 
                 if (cardFace != null)
                 {
-                    imageBytes = _client.GetByteArrayAsync($"https://api.gatcg.com/{cardFace.image}").Result;
+                    imageBytes = _client.GetByteArrayAsync($"https://api.gatcg.com{cardFace.image}").Result;
                 }
             }
 
@@ -447,7 +450,7 @@ namespace Repository.Repo
             return Tuple.Create(imageBytes, card);
         }
 
-        private string GetColorIdentityString(List<string> colorIdentity)
+        public string GetColorIdentityString(List<string> colorIdentity)
         {
             return string.Join("", colorIdentity.Select(a => "{" + a + "}"));
         }
@@ -464,7 +467,7 @@ namespace Repository.Repo
 
             if (existing != null)
             {
-                Tuple<byte[], ScryfallCard> cardDetails = FetchCardDetailsAsync_Scryfall(dto.ScryfallId, faceName).Result;
+                Tuple<byte[], ScryfallCard> cardDetails = FetchCardDetailsAsync_Scryfall(dto.ScryfallId).Result;
 
                 if (existing.Image == null || existing.Image.Length == 0)
                     existing.Image = cardDetails.Item1;
@@ -521,7 +524,7 @@ namespace Repository.Repo
             }
             else
             {
-                var cardDetails = FetchCardDetailsAsync_Scryfall(dto.ScryfallId, faceName).Result;
+                var cardDetails = FetchCardDetailsAsync_Scryfall(dto.ScryfallId).Result;
 
                 dto.Color = GetColorIdentityString(cardDetails.Item2.ColorIdentity);
 
@@ -642,12 +645,12 @@ namespace Repository.Repo
                 var inventory = new Inventory
                 {
                     Name = dto.Name,
-                    SetCode = dto.SetCode,
-                    SetName = dto.SetName,
-                    Collector = dto.Collector,
+                    SetCode = dto.SetCode?? "",
+                    SetName = dto.SetName ?? "",
+                    Collector = dto.Collector ?? "",
                     Language = dto.Language,
                     FoilType = dto.FoilType,
-                    Rarity = dto.Rarity,
+                    Rarity = dto.Rarity ?? "",
                     ManaboxId = dto.ManaboxId,
                     Price = dto.Price,
                     Misprint = dto.Misprint,
@@ -657,7 +660,7 @@ namespace Repository.Repo
                     DateCreated = dto.DateCreated,
                     CreatedBy = dto.CreatedBy,
                     IsDeleted = dto.IsDeleted,
-                    Color = dto.Color,
+                    Color = dto.Color ?? "",
                     OwnerId = dto.OwnerId,
                     CollectionGroup = dto.CollectionGroup,
                     Category = dto.Category,

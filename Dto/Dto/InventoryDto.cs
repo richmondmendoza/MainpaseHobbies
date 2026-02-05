@@ -76,6 +76,7 @@ namespace Dto.Dto
             OwnerId = inventory.OwnerId;
             Category = inventory.Category;
             IsPhpDisplay = inventory.IsPhpDisplay;
+            CollectionGroup = inventory.CollectionGroup;
         }
 
         public string ImageBase64
@@ -90,6 +91,7 @@ namespace Dto.Dto
 
         public decimal Count { get { return InventoryCounts.Sum(a => a.Quantity); } }
         public string OwnerName { get; set; }
+        public string PriceDisplay { get { return Price.ToString("n2"); } }
     }
 
     public class CardDetailsDto

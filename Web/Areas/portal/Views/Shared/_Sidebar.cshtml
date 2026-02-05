@@ -57,11 +57,16 @@
                                 <i class="far fa-circle nav-icon"></i><p>Upload</p>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a href="@Url.Action("Bulk", "Inventory", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Inventory", "Bulk", "active")">
+                                <i class="far fa-circle nav-icon"></i><p>Bulk Action</p>
+                            </a>
+                        </li>
                         @*<li class="nav-item">
-                                <a href="@Url.Action("Adjustments", "Inventory", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Inventory", "Adjustments", "active")">
-                                    <i class="far fa-circle nav-icon"></i><p>Adjust</p>
-                                </a>
-                            </li>*@
+            <a href="@Url.Action("Adjustments", "Inventory", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Inventory", "Adjustments", "active")">
+                <i class="far fa-circle nav-icon"></i><p>Adjust</p>
+            </a>
+        </li>*@
                     </ul>
                 </li>
 

@@ -33,6 +33,7 @@ namespace Web.Areas.customer.Controllers
                 (int)OrderStatusEnum.Processing,
                 (int)OrderStatusEnum.Completed,
                 (int)OrderStatusEnum.Refunded,
+                (int)OrderStatusEnum.Cancelled,
             });
             return View(_order.GetListByUser(Identity.Id, status));
         }
@@ -50,8 +51,9 @@ namespace Web.Areas.customer.Controllers
             return View(order);
         }
 
-        public ActionResult Cancel(int id)
+        public ActionResult Cancel(ConfirmDto dto)
         {
+            var id = Convert.ToInt32(dto.Param1);
             var result = _order.Cancel(id);
             if (result.Success)
             {

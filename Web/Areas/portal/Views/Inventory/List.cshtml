@@ -21,7 +21,7 @@
                 <div class="card-tools">
                     <ul class="nav nav-pills ml-auto">
                         <li class="nav-item">
-                            <a class="nav-link active" href="@Url.Action("Add", "Inventory", new {area = "portal"})">
+                            <a class="btn btn-primary btn-sm" href="@Url.Action("Add", "Inventory", new {area = "portal"})">
                                 <i class="fa fa-plus"></i> Add New
                             </a>
                         </li>
@@ -63,7 +63,7 @@
                                     <td>@item.OwnerName</td>
                                     <td style="text-align: center;">
                                         <a href="@Url.Action("Update", "Inventory", new {area = "portal", id = item.Id})" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>
-                                        <a href="@Url.Action("Details", "Inventory", new {area = "portal", id = item.Id})" class="btn btn-sm btn-secondary ml-2"><i class="fa fa-eye"></i></a>
+                                        @*<a href="@Url.Action("Details", "Inventory", new {area = "portal", id = item.Id})" class="btn btn-sm btn-secondary ml-2"><i class="fa fa-eye"></i></a>*@
                                     </td>
                                 </tr>
                             }
