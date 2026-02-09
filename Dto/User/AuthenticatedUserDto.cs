@@ -13,6 +13,7 @@ namespace Dto.User
         public string FirstName { get; set; } = string.Empty;
         public string LastName { get; set; } = string.Empty;
         public bool HasAdminAccess { get; set; } = false;
+        public bool HasProtalAdminAccess { get; set; } = false;
         public bool HasCustomerAccess { get; set; } = false;
         public string AccessToken { get; set; } = string.Empty;
         public string Role { get; set; } = string.Empty;

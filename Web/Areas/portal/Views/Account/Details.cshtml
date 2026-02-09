@@ -21,7 +21,11 @@
             <div class="card-header pt-4 pb-4">
                 <h3 class="card-title">Update User</h3>
                 <div class="card-tools">
-                    <button class="btn btn-sm btn-primary mr-2" id="btn-change-pass">Change Password</button>
+                    @if ((!Model.Roles.Any(a => a == Dto.Enums.UserRoleEnum.PortalAdmin.ToString()) & !user.HasProtalAdminAccess) |
+                         (user.HasProtalAdminAccess))
+                    {
+                        <button class="btn btn-sm btn-primary mr-2" id="btn-change-pass">Change Password</button>
+                    }
                 </div>
             </div>
 

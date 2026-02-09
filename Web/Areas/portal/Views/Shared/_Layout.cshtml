@@ -141,6 +141,11 @@
             $('.preloader').find('#spinner').show();
         }
 
+        function HideLoading() {
+            $('.preloader').css({ height: '0' });
+            $('.preloader').find('#spinner').hide();
+        }
+
         $(document).ready(function () {
 
             $(document).on('click', '.print', function () {

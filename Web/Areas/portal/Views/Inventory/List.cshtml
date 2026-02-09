@@ -3,7 +3,12 @@
 
 @{
     ViewBag.Title = "Inventories";
+    var owners = ViewBag.CardOwners as List<System.Web.Mvc.SelectListItem>;
+    var categories = ViewBag.Categories as List<System.Web.Mvc.SelectListItem>;
 }
+
+<link href="~/Content/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
+<link href="~/Content/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css" rel="stylesheet" />
 
 <style>
     .dataTables_wrapper {
@@ -12,6 +17,97 @@
 </style>
 
 <div class="row">
+
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header pt-4 pb-4">
+                <h3 class="card-title">
+                    <i class="fa fa-filter"></i> Filters
+                </h3>
+                <div class="card-tools">
+                    <ul class="nav nav-pills ml-auto">
+                        <li class="nav-item">
+                            <a class="btn btn-default btn-sm" id="btn-hide-filter" href="javascript:;">Hide Filters</a>
+                            <a class="btn btn-default btn-sm d-none" id="btn-show-filter" href="javascript:;">Show Filters</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card-body filter-container">
+                <div class="row">
+                    <div class="col-auto row mb-2">
+                        <input type="hidden" id="filter-collection" />
+                        <label class="col-12 col-form-label">Collection:</label>
+                        <div class="col-auto">
+                            <div class="icheck-primary">
+                                <input type="checkbox" id="chk-mtg" class="chk-filter" cont="filter-collection" link-val="magic the gathering" />
+                                <label for="chk-mtg">Magic the Gathering</label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icheck-primary">
+                                <input type="checkbox" id="chk-ga" class="chk-filter" cont="filter-collection" link-val="grand archive" />
+                                <label for="chk-ga">Grand Archive</label>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-auto row mb-2">
+                        <input type="hidden" id="filter-foil-type" />
+                        <label class="col-12 col-form-label">Foil Types:</label>
+                        <div class="col-auto">
+                            <div class="icheck-primary">
+                                <input type="checkbox" class="chk-filter" cont="filter-foil-type" link-val="non-foil|normal" id="chk-non-foil" />
+                                <label for="chk-non-foil">Non-Foil</label>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="icheck-primary">
+                                <input type="checkbox" id="chk-foil" class="chk-filter foil-type" cont="filter-foil-type" link-val="foil" />
+                                <label for="chk-foil">Foil</label>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="col-auto row mb-2">
+                        <label class="col-12 col-form-label">Card Owners:</label>
+                        <div class="col-auto">
+                            <select class="form-control select2" id="filter-owner">
+                                <option value="0">-- All Card Owners --</option>
+                                @foreach (var item in owners)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="col-auto row mb-2">
+                        <input type="hidden" id="filter-category" />
+                        <label class="col-12 col-form-label">Categories:</label>
+                        @foreach (var item in categories)
+                        {
+                            <div class="col-auto">
+                                <div class="icheck-primary">
+                                    <input type="checkbox" id="chk-@item.Text" link-val="@item.Text" class="chk-filter" cont="filter-category" />
+                                    <label for="chk-@item.Text">@item.Text</label>
+                                </div>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+            </div>
+            <div class="card-footer text-right filter-container">
+                <button type="button" class="btn btn-primary" id="btn-apply-filter">
+                    <i class="fa fa-filter"></i> Apply Filter
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div class="col-12">
         <div class="card">
             <div class="card-header pt-4 pb-4">
@@ -35,8 +131,6 @@
                             <th>Name</th>
                             <th>Set Code</th>
                             <th>Set Name</th>
-                            @*<th>Rarity</th>*@
-                            @*<th>Condition</th>*@
                             <th>Foil Type</th>
                             <th>Currency</th>
                             <th>Price</th>
@@ -46,28 +140,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @if (Model.Any())
-                        {
-                            foreach (var item in Model)
-                            {
-                                <tr>
-                                    <td>@item.Name</td>
-                                    <td>@item.SetCode</td>
-                                    <td>@item.SetName</td>
-                                    @*<td>@item.Rarity</td>*@
-                                    @*<td>@item.Condition</td>*@
-                                    <td>@item.FoilType</td>
-                                    <td class="text-right">@item.PurchaseCurrency</td>
-                                    <td class="text-right">@item.Price.ToString("n2")</td>
-                                    <td class="text-right">@item.Count.ToString("n0")</td>
-                                    <td>@item.OwnerName</td>
-                                    <td style="text-align: center;">
-                                        <a href="@Url.Action("Update", "Inventory", new {area = "portal", id = item.Id})" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>
-                                        @*<a href="@Url.Action("Details", "Inventory", new {area = "portal", id = item.Id})" class="btn btn-sm btn-secondary ml-2"><i class="fa fa-eye"></i></a>*@
-                                    </td>
-                                </tr>
-                            }
-                        }
                     </tbody>
                 </table>
             </div><!-- /.card-body -->
@@ -76,20 +148,95 @@
 </div>
 
 @section scripts{
+    <script src="~/Content/assets/plugins/select2/js/select2.min.js"></script>
     <script>
+        var dataTable = $('#data-table').DataTable({
+            "processing": true,
+            //"serverSide": true,
+            "stateSave": true,
+            "searching": true,
+            "dom": 'lBrtip',
+            "responsive": true,
+            "autoWidth": true,
+            "paging": true,
+            buttons: [],
+            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, 'All']],
+            "ajax": {
+                "url": '@Url.Action("LoadList")',
+                "type": "POST",
+                "datatype": "JSON",
+                "data": function (d) {
+                    d.collectionGroup = $('#filter-collection').val(),
+                    d.ownerId = $('#filter-owner').val(),
+                    d.foilType = $('#filter-foil-type').val(),
+                    d.category = $('#filter-category').val()
+                },
+                "beforeSend": function () {
+                    //$('.dataTables_length').hide();
+                },
+                "complete": function () {
+                    HideLoading();
+                }
+            },
+            "columns": [
+                { "data": "Name", "name": "Name", "autoWidth": true },
+                { "data": "SetCode", "name": "SetCode", "autoWidth": true },
+                { "data": "SetName", "name": "SetName", "autoWidth": true },
+                { "data": "FoilType", "name": "FoilType", "autoWidth": true },
+                { "data": "PurchaseCurrency", "name": "PurchaseCurrency", "autoWidth": true, sortable: false },
+                { "data": "PriceDisplay", "name": "PriceDisplay", "autoWidth": true },
+                { "data": "Count", "name": "Count", "autoWidth": true, sortable: false },
+                { "data": "OwnerName", "name": "OwnerName", "autoWidth": true, sortable: false },
+                {
+                    render: function (data, type, full, meta) {
+                        var action = '<a href="/portal/inventory/update/'+ full.Id +'" class="btn btn-sm btn-primary"><i class="fa fa-edit"></i></a>';
+                        return action;
+                    }, "data": null, "name": '', "autoWidth": true, sortable: false
+                }
+            ],
+            columnDefs: [
+                { "className": "text-center", "targets": 0 },
+                { "className": "text-right", "targets": 5 }
+            ],
+        });
+
         $(document).ready(function () {
-            var accountTable = $('#data-table').DataTable({
-                "processing": true,
-                //"serverSide": true,
-                "stateSave": true,
-                "searching": true,
-                //"bLengthChange": false,
-                "responsive": true,
-                "autoWidth": false,
-                "paging": true,
-                buttons: [],
-                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            $('.select2').select2({ "theme": "bootstrap4" });
+
+            $('#btn-hide-filter').on('click', function (e) {
+                $(this).addClass('d-none');
+                $('#btn-show-filter').removeClass('d-none');
+                $('.filter-container').addClass('d-none');
             });
+
+            $('#btn-show-filter').on('click', function (e) {
+                $(this).addClass('d-none');
+                $('#btn-hide-filter').removeClass('d-none');
+                $('.filter-container').removeClass('d-none');
+            });
+
+            $('#btn-apply-filter').on('click', function (e) {
+                ShowLoading();
+                dataTable.ajax.reload();
+            });
+
+            $(document).on('click', '.chk-filter', function (e) {
+                var selectedItems = $('#' + $(this).attr('cont')).val();
+                var val = $(this).attr('link-val');
+
+                if ($(this).is(':checked')) {
+                    if (selectedItems === "") {
+                        selectedItems += "|";
+                    }
+
+                    selectedItems += val + "|";
+                } else {
+                    selectedItems = selectedItems.replace("|" + val + "|", "|");
+                }
+
+                $('#' + $(this).attr('cont')).val(selectedItems);
+            });
+
 
         });
     </script>

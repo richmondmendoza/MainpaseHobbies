@@ -1,6 +1,10 @@
 ﻿
 @{
     ViewBag.Title = "Bulk Action";
+    var user = Web.Controllers.BaseController.Identity;
+    var owners = ViewBag.CardOwners as List<System.Web.Mvc.SelectListItem>;
+    var categories = ViewBag.Categories as List<System.Web.Mvc.SelectListItem>;
+    var setCodes = ViewBag.SetCodes as List<System.Web.Mvc.SelectListItem>;
 }
 
 <link href="~/Content/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
@@ -20,42 +24,87 @@
                 </h3>
                 <div class="card-tools">
                     <ul class="nav nav-pills ml-auto">
+                        <li class="nav-item mr-2 d-none" id="slct-move-to-owner-container">
+                            <select class="form-control select2" id="slct-move-to-owner">
+                                <option value="0">Transfer to this Owner</option>
+                                @foreach (var item in owners)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </li>
                         <li class="nav-item">
                             <select id="slct-action" class="form-control select2">
                                 <option value="">Select Action</option>
                                 <option value="price">Update Price</option>
                                 <option value="move">Move Ownership</option>
-                                <option value="delete">Delete</option>
+                                @if (user.HasProtalAdminAccess)
+                                {
+                                    <option value="delete">Delete</option>
+                                }
                             </select>
                         </li>
                     </ul>
                 </div>
             </div>
             <div class="card-body">
-                <input type="hidden" id="SelectedIds" />
+                <input type="hidden" class="w-100" id="SelectedIds" />
 
                 <div class="row">
                     <div class="col-md-3 mb-2">
                         <label class="form-label">Collection Group</label>
-                        <select class="form-control select2" id="slct-collection">
+                        <select class="form-control select2" id="filter-collection">
                             <option value="">Select Collection Group</option>
                             <option value="Magic the Gathering">Magic the Gathering</option>
                             <option value="Grand Archive">Grand Archive</option>
                         </select>
                     </div>
 
+                    @if (user.HasProtalAdminAccess)
+                    {
+                        <div class="col-md-3 mb-2">
+                            <label class="form-label">Card Owner</label>
+                            <select class="form-control select2" id="filter-owner">
+                                <option value="0">Select Owner</option>
+                                @foreach (var item in owners)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    }
+
                     <div class="col-md-3 mb-2">
-                        <label class="form-label">Card Owner</label>
-                        <select class="form-control select2" id="slct-owner">
-                            <option value="0">Select Owner</option>
+                        <label class="form-label">Set Code</label>
+                        <select class="form-control select2" id="filter-set">
+                            <option value="">All Set</option>
+                            @foreach (var item in setCodes)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
                         </select>
                     </div>
 
                     <div class="col-md-3 mb-2">
-                        <label class="form-label">Set Code</label>
-                        <select class="form-control select2" id="slct-set">
-                            <option value="0">Select Set</option>
+                        <label class="form-label">Category</label>
+                        <select class="form-control select2" id="filter-category">
+                            <option value="">All Category</option>
+                            @foreach (var item in categories)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
                         </select>
+                    </div>
+
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Search by Name</label>
+                        <input type="text" class="form-control" id="filter-name" />
+                    </div>
+
+                    <div class="col-md-12 mb-2 text-right">
+                        <button type="button" class="btn btn-primary" id="btn-apply-filter">
+                            <i class="fa fa-filter"></i> Apply Filter
+                        </button>
                     </div>
 
                 </div>
@@ -79,6 +128,10 @@
                     <tbody></tbody>
                 </table>
             </div><!-- /.card-body -->
+
+            <div class="card-footer text-right">
+                <button class="btn btn-primary" disabled id="btn-save"><i class="fa fa-save"></i> Confirm and Save</button>
+            </div>
         </div>
     </div>
 </div>
@@ -87,7 +140,7 @@
     <script src="~/Content/assets/plugins/select2/js/select2.min.js"></script>
     <script>
 
-        var accountTable = $('#data-table').DataTable({
+        var dataTable = $('#data-table').DataTable({
             "processing": true,
             "serverSide": true,
             "stateSave": true,
@@ -103,13 +156,11 @@
                 "type": "POST",
                 "datatype": "JSON",
                 "data": function (d) {
-            @*d.employeeId = '@Model.EmployeeId',
-                d.statusId = '@((int)HRIS.Repository.Utils.Enum.LeaveApplicationStatusEnum.ForApproval) | ' +
-                             '@((int)HRIS.Repository.Utils.Enum.LeaveApplicationStatusEnum.ForCancellationOfApproved) | ' +
-                             '@((int)HRIS.Repository.Utils.Enum.LeaveApplicationStatusEnum.ForCancellationOfRequest) | ' +
-                             '@((int)HRIS.Repository.Utils.Enum.LeaveApplicationStatusEnum.ApprovedForValidation) | ' +
-                             '@((int)HRIS.Repository.Utils.Enum.LeaveApplicationStatusEnum.ForValidationOfCancellation) | ' +
-                             '@((int)HRIS.Repository.Utils.Enum.LeaveApplicationStatusEnum.ForApprovalOfCeo)'*@
+                    d.collectionGroup = $('#filter-collection').val(),
+                    d.ownerId = $('#filter-owner').val(),
+                    d.setCode = $('#filter-set').val(),
+                    d.category = $('#filter-category').val(),
+                    d.searchParam = $('#filter-name').val()
                 },
                 "beforeSend": function () {
                     $('.dataTables_length').hide();
@@ -131,14 +182,26 @@
                 { "data": "SetName", "name": "SetName", "autoWidth": true },
                 { "data": "FoilType", "name": "FoilType", "autoWidth": true },
                 { "data": "PurchaseCurrency", "name": "PurchaseCurrency", "autoWidth": true, sortable: false },
-                { "data": "PriceDisplay", "name": "PriceDisplay", "autoWidth": true },
+                {
+                    render: function (data, type, full, meta) {
+                        var action = $('#slct-action').val();
+                        var input = "";
+                        if (action === "price") {
+                            input = '<input type="text" class="txt-price text-right" id="txt-price-' + full.Id + '" link-id="' + full.Id + '" value="' + data + '">';
+                            input += '<span class="not-price d-none">' + data + '</span>';
+                        } else {
+                            input = '<input type="text" class="txt-price text-right d-none" id="txt-price-' + full.Id + '" link-id="' + full.Id + '" value="' + data + '">';
+                            input += '<span class="not-price">' + data + '</span>';
+                        }
+                        return input;
+                    }, "data": "PriceDisplay", "name": "PriceDisplay", "autoWidth": true
+                },
                 { "data": "Count", "name": "Count", "autoWidth": true, sortable: false },
                 { "data": "OwnerName", "name": "OwnerName", "autoWidth": true, sortable: false }
             ],
             columnDefs: [
                 { "className": "text-center", "targets": 0 },
-                { "className": "text-right", "targets": 6 },
-                { sortable: false, targets: 0 }
+                { "className": "text-right", "targets": 6 }
             ],
         });
 
@@ -161,6 +224,109 @@
 
                 $('#SelectedIds').val(selectedIDs);
             });
+
+            $(document).on('change', '#slct-action', function (e) {
+                var val = $(this).val();
+                //$('#SelectedIds').val('');
+                //$('.chk-select-id').prop('checked', false);
+
+                $('#btn-save').prop('disabled', false);
+                $('.txt-price').addClass('d-none');
+                $('.not-price').removeClass('d-none');
+
+                switch (val) {
+                    case "move":
+                        $('#slct-move-to-owner-container').removeClass('d-none');
+                        break;
+                    case "price":
+                        $('.txt-price').removeClass('d-none');
+                        $('.not-price').addClass('d-none');
+                    default:
+                        $('#slct-move-to-owner-container').addClass('d-none');
+
+                        if (val === "") {
+                            $('#btn-save').prop('disabled', true);
+                        }
+                        break;
+                }
+
+            });
+
+            $(document).on('click', '#btn-save', function (e) {
+                ShowLoading();
+                e.preventDefault();
+                const isEmptyRows = $('#data-table tbody tr td.dataTables_empty').length;
+                var action = $('#slct-action').val();
+                var ids = $('#SelectedIds').val();
+                var ownerId = $('#slct-move-to-owner').val()
+
+                if (isEmptyRows <= 0 & ids !== "") {
+
+                    if (action === "price") {
+                        var idList = ids.split("|").map(s => s.trim()).filter(s => s !== "");
+                        $.each(idList, function (index, value) {
+                            // use value here
+                            var price = $('#txt-price-' + value).val();
+                            ids = ids.replace("|" + value + "|", "|" + value + ":" + price + "|");
+
+                        });
+                    }
+
+                    ConfirmAndSave(action, ids, ownerId);
+                } else {
+                    HideLoading();
+                    $('#message-modal').modalMessage({
+                        'message': 'There is no items selected to take actions.',
+                        'title':'Ooops!'
+                    });
+                }
+            });
+
+            $('#btn-apply-filter').on('click', function (e) {
+                dataTable.ajax.reload();
+            });
+
+            function ConfirmAndSave(action, ids, ownerId) {
+
+
+
+                $.ajax({
+                    url: '@Url.Action("SaveBulk")',
+                    type: 'post',
+                    data: {
+                        action: action,
+                        ids: ids,
+                        ownerId: ownerId
+                    },
+                    success: function (result) {
+                        if (result.Success) {
+                            HideLoading();
+                            $('#message-modal')
+                            .one('hidden.bs.modal', function () {
+                                window.location.reload();
+                            })
+                            .modalMessage({
+                                'message': 'Success',
+                                'title': result.Message
+                            });
+                        } else {
+                            $('#message-modal').modalMessage({
+                                'message': 'Ooops!',
+                                'title': result.Message
+                            });
+                        }
+                    },
+                    error: function (err) {
+                        $('#message-modal').modalMessage({
+                            'message': err,
+                            'title': 'Something went wrong!'
+                        });
+                    }
+                }).always(function () {
+                    HideLoading();
+                });
+            }
+
         });
     </script>
 }

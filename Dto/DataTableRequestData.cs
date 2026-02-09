@@ -13,7 +13,19 @@ namespace Dto
         public int SortIndex { get { return GetSortIndex(); } }
         public string SortColumnDirection { get { return GetSortColumnDirection(); } }
         public string SortColumn { get { return GetSortColumn(); } }
-        public string SortPattern { get { return string.Concat(GetSortColumn(), "_", GetSortColumnDirection()).ToUpper(); } }
+        public string SortPattern
+        {
+            get
+            {
+                var sortColumn = GetSortColumn();
+                var columnDirection = GetSortColumnDirection();
+
+                if (!string.IsNullOrEmpty(sortColumn) & !string.IsNullOrEmpty(columnDirection))
+                    return string.Concat(sortColumn, "_", columnDirection).ToUpper();
+
+                return null;
+            }
+        }
         public int Skip { get { return GetSkip(); } }
         public int PageSize { get { return GetPageSize(); } }
         public string Search { get { return GetSearch(); } }

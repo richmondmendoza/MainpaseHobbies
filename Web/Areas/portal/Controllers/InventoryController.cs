@@ -27,8 +27,48 @@ namespace Web.Areas.portal.Controllers
 
         public ActionResult List()
         {
-            var records = _repo.GetList();
+            var filters = _repo.GetFilters();
+
+            ViewBag.SetCodes = filters.Item1.Select(a => new SelectListItem() { Value = a, Text = a }).ToList();
+            ViewBag.Categories = filters.Item2.Select(a => new SelectListItem() { Value = a, Text = a }).ToList();
+            ViewBag.CardOwners = filters.Item3.Select(a => new SelectListItem() { Value = a.Item1.ToString(), Text = a.Item2 }).ToList();
+            var records = _repo.GetList("grand archive|magic the gathering", isPHPDisplay: true);
             return View(records);
+        }
+
+        public ActionResult LoadList()
+        {
+            var requestData = new DataTableRequestData();
+
+            var collectionGroup = requestData.GetCustomQuery("collectionGroup");
+            var cardOwnerId = Convert.ToInt32(requestData.GetCustomQuery("cardOwnerId"));
+            var foilType = requestData.GetCustomQuery("foilType");
+            var category = requestData.GetCustomQuery("category");
+            var searchParam = requestData.GetCustomQuery("searchParam");
+
+            var model = _repo.GetList(collectionGroup, cardOwnerId, "", category, searchParam, true, 0);
+
+            var sortPattern = "name_desc";
+            try
+            {
+                sortPattern = requestData?.SortPattern ?? "name_desc";
+            }
+            catch { }
+            string sort = sortPattern.Replace("_", " ");
+
+            if (model.Count() > 0)
+                model = model.OrderBy(sort);
+
+            var recordsTotal = model.Count();
+
+            var data = (requestData.PageSize <= 0) ? model.ToList() :
+                model.Skip(requestData.Skip).Take(requestData.PageSize).ToList();
+
+            var jResult = Json(new { draw = requestData.Draw, recordsFiltered = recordsTotal, recordsTotal = recordsTotal, data = data }, JsonRequestBehavior.AllowGet);
+
+            jResult.MaxJsonLength = int.MaxValue;
+
+            return jResult;
         }
 
         public ActionResult Add(string uID = "", string collectionGroup = "")
@@ -163,6 +203,12 @@ namespace Web.Areas.portal.Controllers
 
         public ActionResult Bulk()
         {
+            var filters = _repo.GetFilters();
+
+            ViewBag.SetCodes = filters.Item1.Select(a => new SelectListItem() { Value = a, Text = a }).ToList();
+            ViewBag.Categories = filters.Item2.Select(a => new SelectListItem() { Value = a, Text = a }).ToList();
+            ViewBag.CardOwners = filters.Item3.Select(a => new SelectListItem() { Value = a.Item1.ToString(), Text = a.Item2 }).ToList();
+
             return View();
         }
 
@@ -170,10 +216,13 @@ namespace Web.Areas.portal.Controllers
         {
             var requestData = new DataTableRequestData();
 
-            //var employeeId = Convert.ToInt32(requestData.GetCustomQuery("employeeId"));
-            //var status = requestData.GetCustomQuery("statusId");
+            var collectionGroup = requestData.GetCustomQuery("collectionGroup");
+            var cardOwnerId = Convert.ToInt32(requestData.GetCustomQuery("cardOwnerId"));
+            var setCode = requestData.GetCustomQuery("setCode");
+            var category = requestData.GetCustomQuery("category");
+            var searchParam = requestData.GetCustomQuery("searchParam");
 
-            var model = _repo.GetList().Take(5);
+            var model = _repo.GetList(collectionGroup, cardOwnerId, setCode, category, searchParam, true, Identity.HasProtalAdminAccess ? 0 : Identity.Id);
 
             var sortPattern = "name_desc";
             try
@@ -183,7 +232,8 @@ namespace Web.Areas.portal.Controllers
             catch { }
             string sort = sortPattern.Replace("_", " ");
 
-            model = model.OrderBy(sort);
+            if (model.Count() > 0)
+                model = model.OrderBy(sort);
 
             var recordsTotal = model.Count();
 
@@ -195,6 +245,13 @@ namespace Web.Areas.portal.Controllers
             jResult.MaxJsonLength = int.MaxValue;
 
             return jResult;
+        }
+
+        [HttpPost]
+        public ActionResult SaveBulk(string action, string ids, int ownerId)
+        {
+            var result = _repo.BulkUpdate(action, ids, ownerId);
+            return Json(new { Success = result.Success, Message = result.Message }, JsonRequestBehavior.AllowGet);
         }
 
         [HttpPost]

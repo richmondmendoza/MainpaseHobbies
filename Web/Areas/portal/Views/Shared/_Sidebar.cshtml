@@ -1,5 +1,10 @@
 ﻿@using Web.Utils
 
+@{
+    var user = Web.Controllers.BaseController.Identity;
+}
+
+
 <aside class="main-sidebar sidebar-dark-primary elevation-4">
     <!-- Brand Logo -->
     <a href="@Url.Action("index", "home", new {area = ""})" class="brand-link">
@@ -9,27 +14,6 @@
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <!-- Sidebar user (optional) -->
-        @*<div class="user-panel mt-3 pb-3 mb-3 d-flex">
-                <div class="image">
-                    <img src="~/Content/assets/img/user2-160x160.jpg" class="img-circle elevation-2" alt="User Image">
-                </div>
-                <div class="info">
-                    <a href="#" class="d-block">Alexander Pierce</a>
-                </div>
-            </div>*@
-
-        <!-- SidebarSearch Form -->
-        @*<div class="form-inline">
-                <div class="input-group" data-widget="sidebar-search">
-                    <input class="form-control form-control-sidebar" type="search" placeholder="Search" aria-label="Search">
-                    <div class="input-group-append">
-                        <button class="btn btn-sidebar">
-                            <i class="fas fa-search fa-fw"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>*@
 
         <!-- Sidebar Menu -->
         <nav class="mt-2">
@@ -62,11 +46,6 @@
                                 <i class="far fa-circle nav-icon"></i><p>Bulk Action</p>
                             </a>
                         </li>
-                        @*<li class="nav-item">
-            <a href="@Url.Action("Adjustments", "Inventory", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Inventory", "Adjustments", "active")">
-                <i class="far fa-circle nav-icon"></i><p>Adjust</p>
-            </a>
-        </li>*@
                     </ul>
                 </li>
 
@@ -88,27 +67,27 @@
                         </li>
                     </ul>
                 </li>
-                <li class="nav-item">
-                    <a href="@Url.Action("Index", "Events", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Events", "Index|Add|Update", "active")">
-                        <i class="nav-icon fas fa-calendar"></i><p>Events</p>
-                    </a>
-                </li>
+
+                @if (user.HasProtalAdminAccess)
+                {
+                    <li class="nav-item">
+                        <a href="@Url.Action("Index", "Events", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Events", "Index|Add|Update", "active")">
+                            <i class="nav-icon fas fa-calendar"></i><p>Events</p>
+                        </a>
+                    </li>
+                }
 
                 <li class="nav-header">SETTINGS</li>
 
-                <li class="nav-item">
-                    <a href="@Url.Action("Index", "Conversion", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Conversion", "Index", "active")">
-                        <i class="nav-icon fas fa-circle-dollar-to-slot"></i>
-                        <p>Conversion</p>
-                    </a>
-                </li>
-
-                @*<li class="nav-item">
-                        <a href="@Url.Action("Index", "Dashboard", new {area = "portal"})" class="nav-link">
-                            <i class="nav-icon fas fa-clipboard-list"></i>
-                            <p>Audit Logs</p>
+                @if (user.HasProtalAdminAccess)
+                {
+                    <li class="nav-item">
+                        <a href="@Url.Action("Index", "Conversion", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Conversion", "Index", "active")">
+                            <i class="nav-icon fas fa-circle-dollar-to-slot"></i>
+                            <p>Conversion</p>
                         </a>
-                    </li>*@
+                    </li>
+                }
 
                 <li class="nav-item">
                     <a href="@Url.Action("List", "Account", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Account", "List|Add|Details", "active")">
@@ -117,29 +96,6 @@
                     </a>
                 </li>
 
-                @*<li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon fas fa-sliders-h"></i>
-                            <p>
-                                System
-                                <i class="right fas fa-angle-left"></i>
-                            </p>
-                        </a>
-                        <ul class="nav nav-treeview">
-                            <li class="nav-item">
-                                <a href="../../index.html" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Items</p>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="../../index2.html" class="nav-link">
-                                    <i class="far fa-circle nav-icon"></i>
-                                    <p>Adjust</p>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>*@
 
             </ul>
         </nav>

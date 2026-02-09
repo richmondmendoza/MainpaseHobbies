@@ -87,7 +87,7 @@ namespace Repository.Repo
                 OwnerId = inventory.OwnerId,
                 Category = inventory.Category,
                 IsPhpDisplay = isPHPDisplay,
-                
+
             };
         }
 
@@ -145,13 +145,67 @@ namespace Repository.Repo
             }
         }
 
-        public IEnumerable<InventoryDetailsDto> GetList(bool isPHPDisplay = false)
+        public IEnumerable<InventoryDetailsDto> GetList(
+            string collectionGroup = "",
+            int cardOwnerId = 0,
+            string setCode = "",
+            string category = "",
+            string searchParam = "",
+            bool isPHPDisplay = false,
+            int userId = 0
+        )
         {
             using (IMSEntities context = new IMSEntities())
             {
                 var users = context.Users;
-                var records = context.Inventories.Where(i => !i.IsDeleted).Include(b => b.Inventory_Count).ToList();
-                return records.Select(r => ToDetails(r, users)).ToList();
+                var records = context.Inventories.Where(i => !i.IsDeleted).Include(b => b.Inventory_Count);
+
+                var collectionGroups = collectionGroup.Split('|').Where(a => !string.IsNullOrEmpty(a));
+                records = records.Where(i => collectionGroups.Any(b => i.CollectionGroup.ToLower() == b.ToLower()));
+
+                if (userId > 0)
+                {
+                    records = records.Where(i => i.OwnerId == userId);
+                }
+
+                if (cardOwnerId > 0)
+                {
+                    records = records.Where(i => i.OwnerId == cardOwnerId);
+                }
+
+                if (!string.IsNullOrEmpty(setCode))
+                {
+                    records = records.Where(i => i.SetCode.ToLower() == setCode.ToLower());
+                }
+
+                if (!string.IsNullOrEmpty(category))
+                {
+                    records = records.Where(i => i.Category.ToLower() == category.ToLower());
+                }
+
+                if (!string.IsNullOrEmpty(searchParam))
+                {
+                    records = records.Where(i => i.Name.ToLower().Contains(searchParam.ToLower()));
+                }
+
+                return records.ToList().Select(r => ToDetails(r, users, isPHPDisplay)).ToList();
+            }
+        }
+
+        public Tuple<List<string>, List<string>, List<Tuple<int, string>>> GetFilters()
+        {
+            using (IMSEntities context = new IMSEntities())
+            {
+                var records = context.Inventories.Where(i => !i.IsDeleted);
+
+                var rarities = records.Select(i => i.Rarity).Where(c => !string.IsNullOrEmpty(c)).Distinct().ToList();
+                var foilTypes = records.Select(i => i.FoilType).Where(c => !string.IsNullOrEmpty(c)).Distinct().ToList();
+                var cardTypes = records.Select(i => i.CardType).Where(c => !string.IsNullOrEmpty(c)).Distinct().ToList();
+                var setCodes = records.Select(i => i.SetCode).Where(c => !string.IsNullOrEmpty(c)).Distinct().ToList();
+                var categories = records.Select(i => i.Category).Where(c => !string.IsNullOrEmpty(c)).Distinct().ToList();
+                var cardOwnerIds = context.Users.Where(a => !a.IsDeleted & a.IsCardOwner).ToList().Select(i => Tuple.Create(i.Id, $"{i.Firstname} {i.LastName}")).Distinct().ToList();
+
+                return Tuple.Create(setCodes, categories, cardOwnerIds);
             }
         }
 
@@ -384,6 +438,59 @@ namespace Repository.Repo
         }
 
 
+        public ReturnValue BulkUpdate(string action, string ids, int ownerId)
+        {
+            var result = new ReturnValue("Unable to continue with your action");
+            using (var context = new IMSEntities())
+            {
+                string message = "";
+                var dataList = ids.Split('|').Where(a => !string.IsNullOrEmpty(a)).ToList();
+                switch (action)
+                {
+                    case "delete":
+                        foreach (var id in dataList.Select(a => int.Parse(a)))
+                        {
+                            var inventory = context.Inventories.FirstOrDefault(i => i.Id == id);
+                            if (inventory != null)
+                            {
+                                inventory.IsDeleted = true;
+                            }
+                        }
+                        message = "Selected inventory items have been deleted.";
+                        break;
+                    case "move":
+                        foreach (var id in dataList.Select(a => int.Parse(a)))
+                        {
+                            var inventory = context.Inventories.FirstOrDefault(i => i.Id == id);
+                            if (inventory != null)
+                            {
+                                inventory.OwnerId = ownerId;
+                            }
+                        }
+                        message = "Selected inventory items have been moved.";
+                        break;
+                    case "price":
+                        foreach (var data in dataList)
+                        {
+                            var splitData = data.Split(':');
+                            var id = int.Parse(splitData[0]);
+                            var price = decimal.Parse(splitData[1]);
+
+                            var inventory = context.Inventories.FirstOrDefault(i => i.Id == id);
+                            if (inventory != null)
+                            {
+                                inventory.Price = price;
+                            }
+                        }
+                        message = "Selected inventory item price have been updated.";
+                        break;
+                }
+
+                Db.SaveChanges(context, result, message);
+            }
+
+            return result;
+        }
 
 
         public async Task<Tuple<byte[], ScryfallCard>> FetchCardDetailsAsync_Scryfall(string scryfallId)
@@ -645,7 +752,7 @@ namespace Repository.Repo
                 var inventory = new Inventory
                 {
                     Name = dto.Name,
-                    SetCode = dto.SetCode?? "",
+                    SetCode = dto.SetCode ?? "",
                     SetName = dto.SetName ?? "",
                     Collector = dto.Collector ?? "",
                     Language = dto.Language,

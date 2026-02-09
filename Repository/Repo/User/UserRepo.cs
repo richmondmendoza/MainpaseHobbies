@@ -86,6 +86,7 @@ namespace Repository.Repo.User
                         FirstName = user.Firstname,
                         LastName = user.LastName,
                         HasAdminAccess = roles.Any(a => a == UserRoleEnum.PortalAdmin.ToString() || a == UserRoleEnum.PortalUser.ToString()),
+                        HasProtalAdminAccess = roles.Any(a => a == UserRoleEnum.PortalAdmin.ToString()),
                         HasCustomerAccess = roles.Any(a => a == UserRoleEnum.Customer.ToString()),
                         Role = user.Role,
                     };
