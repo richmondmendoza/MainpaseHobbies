@@ -152,7 +152,8 @@ namespace Repository.Repo
             string category = "",
             string searchParam = "",
             bool isPHPDisplay = false,
-            int userId = 0
+            int userId = 0,
+            string foilType = ""
         )
         {
             using (IMSEntities context = new IMSEntities())
@@ -178,9 +179,16 @@ namespace Repository.Repo
                     records = records.Where(i => i.SetCode.ToLower() == setCode.ToLower());
                 }
 
-                if (!string.IsNullOrEmpty(category))
+                var categories = category.Split('|').Where(a => !string.IsNullOrEmpty(a));
+                if (categories.Any())
                 {
-                    records = records.Where(i => i.Category.ToLower() == category.ToLower());
+                    records = records.Where(i => categories.Any(b => i.Category.ToLower() == b.ToLower()));
+                }
+
+                var foilTypes = foilType.Split('|').Where(a => !string.IsNullOrEmpty(a));
+                if (foilTypes.Any())
+                {
+                    records = records.Where(i => foilTypes.Any(b => i.FoilType.ToLower() == b.ToLower()));
                 }
 
                 if (!string.IsNullOrEmpty(searchParam))

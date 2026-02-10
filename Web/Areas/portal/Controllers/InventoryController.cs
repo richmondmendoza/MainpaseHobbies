@@ -46,7 +46,7 @@ namespace Web.Areas.portal.Controllers
             var category = requestData.GetCustomQuery("category");
             var searchParam = requestData.GetCustomQuery("searchParam");
 
-            var model = _repo.GetList(collectionGroup, cardOwnerId, "", category, searchParam, true, 0);
+            var model = _repo.GetList(collectionGroup, cardOwnerId, "", category, searchParam, true, 0, foilType);
 
             var sortPattern = "name_desc";
             try

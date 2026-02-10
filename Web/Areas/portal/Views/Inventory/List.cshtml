@@ -98,6 +98,11 @@
                         }
                     </div>
 
+                    <div class="col-auto row mb-2">
+                        <input type="hidden" id="filter-category" />
+                        <label class="col-12 col-form-label">Search:</label>
+                        <input type="text" class="form-control text-sm" id="filter-search" />
+                    </div>
                 </div>
             </div>
             <div class="card-footer text-right filter-container">
@@ -152,10 +157,10 @@
     <script>
         var dataTable = $('#data-table').DataTable({
             "processing": true,
-            //"serverSide": true,
+            "serverSide": true,
             "stateSave": true,
-            "searching": true,
-            "dom": 'lBrtip',
+            "searching": false,
+            //"dom": 'lBrtip',
             "responsive": true,
             "autoWidth": true,
             "paging": true,
@@ -163,13 +168,14 @@
             "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, 'All']],
             "ajax": {
                 "url": '@Url.Action("LoadList")',
-                "type": "POST",
+                "type": "get",
                 "datatype": "JSON",
                 "data": function (d) {
                     d.collectionGroup = $('#filter-collection').val(),
                     d.ownerId = $('#filter-owner').val(),
                     d.foilType = $('#filter-foil-type').val(),
-                    d.category = $('#filter-category').val()
+                    d.category = $('#filter-category').val(),
+                    d.searchParam = $('#filter-search').val()
                 },
                 "beforeSend": function () {
                     //$('.dataTables_length').hide();

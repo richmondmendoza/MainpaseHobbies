@@ -108,7 +108,7 @@ namespace Web.Controllers
 
                     payment = _payment.Add(new PaymentDto()
                     {
-                        Amount = model.Total + model.Shipping,
+                        Amount = model.Total + model.Shipping + model.Tax,
                         CreatedAt = DateTime.Now,
                         Currency = model.Currency,
                         CustomerDetailId = (int)customer.Data,
@@ -136,8 +136,7 @@ namespace Web.Controllers
                     var webhookUrl = Url.Action("CoinsWebhook", "Webhook", null, Request.Url.Scheme);
                     var orders = model.Items.Select(a => new ProductDetails()
                     {
-                        //amount = (a.Total).ToString("F2"),
-                        amount = "1.00", //testing only
+                        amount = (a.Total).ToString("F2"),
                         desc = a.Description,
                         name = a.ProductName,
                         quantity = a.Quantity.ToString(),
@@ -161,7 +160,6 @@ namespace Web.Controllers
                     });
 
                     var fee = 0.00m;
-                    model.Total = 1;
                     var coinRequest = new CoinsCreateCheckoutRequest()
                     {
                         amount = (model.Total + model.Shipping + model.Tax).ToString("F2"),

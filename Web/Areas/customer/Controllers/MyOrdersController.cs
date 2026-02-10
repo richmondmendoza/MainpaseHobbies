@@ -79,8 +79,7 @@ namespace Web.Areas.customer.Controllers
             var webhookUrl = Url.Action("CoinsWebhook", "Webhook", new { area = "" }, Request.Url.Scheme);
             var orders = order.Items.Select(a => new ProductDetails()
             {
-                //amount = (a.Total).ToString("F2"),
-                amount = "1.00", //testing only
+                amount = (a.Total).ToString("F2"),
                 desc = a.Description,
                 name = a.ProductName,
                 quantity = a.Quantity.ToString(),
@@ -104,7 +103,6 @@ namespace Web.Areas.customer.Controllers
             });
 
             var fee = 0.00m;
-            order.Total = 1;
             var coinRequest = new CoinsCreateCheckoutRequest()
             {
                 amount = (order.Total + order.Shipping + order.Tax).ToString("F2"),
