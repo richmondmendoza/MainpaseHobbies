@@ -70,6 +70,7 @@
     <Compile Include="Repo\Order\OrderRepo.cs" />
     <Compile Include="Repo\Order\PaymentRepo.cs" />
     <Compile Include="Repo\Services\PayoneerTokenService.cs" />
+    <Compile Include="Repo\Settings\BannerRepo.cs" />
     <Compile Include="Repo\Settings\ConversionRepo.cs" />
     <Compile Include="Repo\Settings\SystemInfoRepo.cs" />
     <Compile Include="Repo\Settings\Utilities.cs" />

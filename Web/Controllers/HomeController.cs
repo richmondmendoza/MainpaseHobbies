@@ -4,6 +4,7 @@ using Infrastructure;
 using Newtonsoft.Json;
 using Repository.Repo;
 using Repository.Repo.Order;
+using Repository.Repo.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,7 @@ namespace Web.Controllers
         {
             ViewBag.Inventories = new InventoryRepo().GetListRandom(11);
             ViewBag.Events = EventRepo.GetListFeatured();
+            ViewBag.Banners = new BannerRepo().GetList();
 
             return View();
             //return RedirectToAction("Index", "Dashboard", new { area = "portal" });

@@ -208,6 +208,7 @@
     <Compile Include="Areas\customer\Controllers\MyOrdersController.cs" />
     <Compile Include="Areas\customer\customerAreaRegistration.cs" />
     <Compile Include="Areas\portal\Controllers\AccountController.cs" />
+    <Compile Include="Areas\portal\Controllers\BannerController.cs" />
     <Compile Include="Areas\portal\Controllers\BaseAdminController.cs" />
     <Compile Include="Areas\portal\Controllers\ConversionController.cs" />
     <Compile Include="Areas\portal\Controllers\DashboardController.cs" />
@@ -223,6 +224,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\BannerViewModel.cs" />
     <Compile Include="Models\CardDetailsViewModel.cs" />
     <Compile Include="Models\CheckoutViewModel.cs" />
     <Compile Include="Models\ConversionViewModel.cs" />
@@ -2367,6 +2369,7 @@
     <Content Include="Areas\customer\Views\MyOrders\Details.cshtml" />
     <Content Include="Areas\portal\Views\Conversion\Index.cshtml" />
     <Content Include="Areas\portal\Views\Inventory\Bulk.cshtml" />
+    <Content Include="Areas\portal\Views\Banner\List.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\Cart.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />

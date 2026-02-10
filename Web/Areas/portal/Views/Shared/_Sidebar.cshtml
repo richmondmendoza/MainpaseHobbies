@@ -82,6 +82,16 @@
                 @if (user.HasProtalAdminAccess)
                 {
                     <li class="nav-item">
+                        <a href="@Url.Action("List", "Banner", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Banner", "List", "active")">
+                            <i class="nav-icon fas fa-image"></i>
+                            <p>Website Home Banners</p>
+                        </a>
+                    </li>
+                }
+
+                @if (user.HasProtalAdminAccess)
+                {
+                    <li class="nav-item">
                         <a href="@Url.Action("Index", "Conversion", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Conversion", "Index", "active")">
                             <i class="nav-icon fas fa-circle-dollar-to-slot"></i>
                             <p>Conversion</p>

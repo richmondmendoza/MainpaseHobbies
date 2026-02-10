@@ -145,12 +145,12 @@
             "serverSide": true,
             "stateSave": true,
             "searching": false,
-            "dom": 'lBrtip',
-            "responsive": false,
+            //"dom": 'lBrtip',
+            "responsive": true,
             "autoWidth": true,
-            "paging": false,
+            "paging": true,
             buttons: [],
-            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, 'All']],
+            "lengthMenu": [[20, 50, -1], [20, 50, 'All']],
             "ajax": {
                 "url": '@Url.Action("LoadBulkList")',
                 "type": "get",
@@ -165,7 +165,7 @@
                 "beforeSend": function () {
                     $('.dataTables_length').hide();
                 },
-                "complete": function () { }
+                "complete": function () { HideLoading(); }
             },
             "columns": [
                 {
@@ -283,6 +283,7 @@
             });
 
             $('#btn-apply-filter').on('click', function (e) {
+                ShowLoading();
                 dataTable.ajax.reload();
             });
 

@@ -165,7 +165,7 @@
             "autoWidth": true,
             "paging": true,
             buttons: [],
-            "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, 'All']],
+            "lengthMenu": [[20, 50, -1], [20, 50, 'All']],
             "ajax": {
                 "url": '@Url.Action("LoadList")',
                 "type": "get",
@@ -178,7 +178,7 @@
                     d.searchParam = $('#filter-search').val()
                 },
                 "beforeSend": function () {
-                    //$('.dataTables_length').hide();
+                    $('.dataTables_length').hide();
                 },
                 "complete": function () {
                     HideLoading();
