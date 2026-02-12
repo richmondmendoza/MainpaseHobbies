@@ -71,7 +71,7 @@ namespace Web.Areas.portal.Controllers
             return jResult;
         }
 
-        public ActionResult Add(string uID = "", string collectionGroup = "")
+        public ActionResult Add(string uID = "", string setCode = "", string collector = "", string collectionGroup = "")
         {
             var model = new InventoryViewModel();
 
@@ -80,7 +80,7 @@ namespace Web.Areas.portal.Controllers
                 switch (collectionGroup)
                 {
                     case "Magic the Gathering":
-                        var card_mtg = _repo.FetchCardDetailsAsync_Scryfall(uID).Result;
+                        var card_mtg = _repo.FetchCardDetailsAsync_Scryfall(uID, setCode, collector).Result;
 
                         if (card_mtg.Item2 != null)
                         {
@@ -108,7 +108,7 @@ namespace Web.Areas.portal.Controllers
                     case "Grand Archive":
                         var cardNameAfterSlash = uID.Contains("-") ? Regex.Replace(uID, "-.*$", "") : uID;
                         var slugName = cardNameAfterSlash.ToLower().Replace(" ", "-").Replace(",", "").Replace("'", "").Replace(":", "").Replace("ä", "a").Replace("ö", "o").Replace("ü", "u").Replace("ß", "ss");
-                        var card_ga = _repo.FetchCardDetailsAsync_GrandArchive(slugName).GetAwaiter().GetResult();
+                        var card_ga = _repo.FetchCardDetailsAsync_GrandArchive(slugName, "", "").GetAwaiter().GetResult();
 
                         if (card_ga.Item2 != null)
                         {

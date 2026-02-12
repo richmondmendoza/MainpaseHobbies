@@ -501,12 +501,99 @@ namespace Repository.Repo
         }
 
 
-        public async Task<Tuple<byte[], ScryfallCard>> FetchCardDetailsAsync_Scryfall(string scryfallId)
+
+        public void UpdatePricing(string collectionGroup = "")
+        {
+            using (IMSEntities context = new IMSEntities())
+            {
+                int index = 0;
+                var conversionRate = context.Conversions.FirstOrDefault(a => a.IsActive)?.Amount ?? 1;
+                var records = context.Inventories.Where(i => !i.IsDeleted);
+                var collectionGroups = collectionGroup.Split('|').Where(a => !string.IsNullOrEmpty(a));
+
+                Console.WriteLine($"Updating pricing for collection groups: {string.Join(", ", collectionGroups)} with conversion rate: {conversionRate}");
+
+                records = records.Where(i => collectionGroups.Any(b => i.CollectionGroup.ToLower() == b.ToLower()));
+                Console.WriteLine($"Total records before filtering: {records.Count()}");
+
+                foreach (var record in records)
+                {
+                    index++;
+                    Console.WriteLine($"{index}. {record.Name}");
+                    switch (record.CollectionGroup.ToLower().Replace(" ", ""))
+                    {
+                        case "magicthegathering":
+                            Console.WriteLine($"-> Getting record from Scryfall API");
+                            var details_mtg = FetchCardDetailsAsync_Scryfall(record.ScryfallId, record.SetCode, record.Collector).Result;
+                            if (details_mtg != null)
+                            {
+
+                                Console.WriteLine($"-> Updating.");
+                                var isFoiled = record.FoilType.ToLower() != "non-foil" & record.FoilType.ToLower() != "normal";
+                                if (isFoiled & details_mtg.Item2.Prices?.UsdFoil != null)
+                                {
+                                    record.Price = Convert.ToDecimal(details_mtg.Item2.Prices.UsdFoil) * conversionRate;
+                                }
+                                else if (details_mtg.Item2.Prices?.Usd != null)
+                                {
+                                    record.Price = Convert.ToDecimal(details_mtg.Item2.Prices.Usd) * conversionRate;
+                                }
+
+                                Console.WriteLine($"-> Update for {record.Name} has been completed.");
+                            }
+                            break;
+                        case "grandarchive":
+                            Console.WriteLine($"-> Getting record from Grand Archive API");
+                            record.ScryfallId = !string.IsNullOrEmpty(record.ScryfallId) ? record.ScryfallId : record.Name.Contains("-") ? Regex.Replace(record.Name, "-.*$", "").ToLower().Replace(" ", "-").Replace(",", "").Replace("'", "").Replace(":", "").Replace("ä", "a").Replace("ö", "o").Replace("ü", "u").Replace("ß", "ss") : record.Name.ToLower().Replace(" ", "-").Replace(",", "").Replace("'", "").Replace(":", "").Replace("ä", "a").Replace("ö", "o").Replace("ü", "u").Replace("ß", "ss");
+                            var details_ga = FetchCardDetailsAsync_GrandArchive(record.ScryfallId, record.SetCode, record.Collector).Result;
+                            if (details_ga != null)
+                            {
+                                Console.WriteLine($"-> Updating.");
+
+                                record.Description = details_ga.Item2.effect ?? "";
+                                record.ManaCost = $"{details_ga.Item2.cost.type}|{details_ga.Item2.cost.value}";
+                                record.Color = string.Join(", ", details_ga.Item2.elements).TrimEnd();
+                                record.CardType = string.Join(", ", details_ga.Item2.classes).TrimEnd();
+                                record.IllustratedBy = details_ga.Item2.editions.FirstOrDefault()?.illustrator ?? "";
+                                record.SetCode = !string.IsNullOrEmpty(record.SetCode) ? record.SetCode : (details_ga.Item2.editions.FirstOrDefault()?.set.prefix ?? "");
+                                record.SetName = !string.IsNullOrEmpty(record.SetName) ? record.SetName : (details_ga.Item2.editions.FirstOrDefault()?.set.name ?? "");
+                                record.Collector = !string.IsNullOrEmpty(record.Collector) ? record.Collector : (details_ga.Item2.editions.FirstOrDefault()?.collector_number ?? "");
+                                record.Rarity = !string.IsNullOrEmpty(record.Rarity) ? record.Rarity : (details_ga.Item2.editions.FirstOrDefault()?.rarity.ToString() ?? "");
+                                record.FoilType = !string.IsNullOrEmpty(record.FoilType) ? record.FoilType : "normal";
+                                record.Language = !string.IsNullOrEmpty(record.Language) ? record.Language : (details_ga.Item2.editions.FirstOrDefault()?.set.language.ToLower() ?? "");
+
+                                record.Image = details_ga.Item1;
+
+                                Console.WriteLine($"-> Update for {record.Name} has been completed.");
+                            }
+                            break;
+                        default: break;
+                    }
+                }
+
+                Console.WriteLine($"Pricing update completed for {index}/{records.Count()} records. Saving changes to database...");
+                var result = new ReturnValue();
+                Db.SaveChanges(context, result, "Pricing update completed.");
+                Console.WriteLine(result.Success ? "Database updated successfully." : $"Database update failed: {result.Message}");
+            }
+        }
+
+        public async Task<Tuple<byte[], ScryfallCard>> FetchCardDetailsAsync_Scryfall(string scryfallId, string setCode, string collectorNumber)
         {
             _client = new HttpClient();
             var imageBytes = new byte[0];
             var card = new ScryfallCard();
+
             string cardUrl = $"https://api.scryfall.com/cards/{scryfallId}";
+
+            if (!string.IsNullOrEmpty(scryfallId))
+            {
+                cardUrl = $"https://api.scryfall.com/cards/{scryfallId}";
+            }
+            else if (!string.IsNullOrEmpty(setCode) & !string.IsNullOrEmpty(collectorNumber))
+            {
+                cardUrl = $"https://api.gatcg.com/cards/{setCode}/{collectorNumber}";
+            }
 
             _client.DefaultRequestHeaders.UserAgent.ParseAdd($"MyApp{_attemptCount.ToString("n0")}/{_attemptCount}");
 
@@ -541,12 +628,22 @@ namespace Repository.Repo
             return Tuple.Create(imageBytes, card);
         }
 
-        public async Task<Tuple<byte[], GrandArchiveCard>> FetchCardDetailsAsync_GrandArchive(string slugName)
+        public async Task<Tuple<byte[], GrandArchiveCard>> FetchCardDetailsAsync_GrandArchive(string slugName, string setCode, string collectorNumber)
         {
             _client = new HttpClient();
             var imageBytes = new byte[0];
             var card = new GrandArchiveCard();
             string cardUrl = $"https://api.gatcg.com/cards/{slugName}";
+
+            if (!string.IsNullOrEmpty(setCode) & !string.IsNullOrEmpty(collectorNumber))
+            {
+                var isAlter = setCode.ToLower().Contains("alter");
+                var setCodeTrimmed = isAlter ? setCode.ToLower().Replace(" alter", "") : setCode;
+                setCodeTrimmed = setCodeTrimmed.Contains("1E") ? setCodeTrimmed.Replace("1E", "") : setCodeTrimmed;
+                setCodeTrimmed = isAlter ? setCodeTrimmed + " Alter" : setCodeTrimmed;
+
+                cardUrl = $"https://api.gatcg.com/cards/{setCodeTrimmed}/{collectorNumber}";
+            }
 
             var cardJson = _client.GetStringAsync(cardUrl).Result;
             card = JsonConvert.DeserializeObject<GrandArchiveCard>(cardJson);
@@ -580,9 +677,9 @@ namespace Repository.Repo
 
             var existing = context.Inventories.FirstOrDefault(i => i.ScryfallId == dto.ScryfallId && !i.IsDeleted);
 
+            Tuple<byte[], ScryfallCard> cardDetails = FetchCardDetailsAsync_Scryfall(dto.ScryfallId, dto.SetCode, dto.Collector).Result;
             if (existing != null)
             {
-                Tuple<byte[], ScryfallCard> cardDetails = FetchCardDetailsAsync_Scryfall(dto.ScryfallId).Result;
 
                 if (existing.Image == null || existing.Image.Length == 0)
                     existing.Image = cardDetails.Item1;
@@ -639,8 +736,6 @@ namespace Repository.Repo
             }
             else
             {
-                var cardDetails = FetchCardDetailsAsync_Scryfall(dto.ScryfallId).Result;
-
                 dto.Color = GetColorIdentityString(cardDetails.Item2.ColorIdentity);
 
                 var inventory = new Inventory
@@ -699,7 +794,7 @@ namespace Repository.Repo
             var existing = context.Inventories.FirstOrDefault(i => i.ScryfallId == dto.ScryfallId && !i.IsDeleted);
             var cardNameAfterSlash = dto.Name.Contains("-") ? Regex.Replace(dto.Name, "-.*$", "") : dto.Name;
             var slugName = cardNameAfterSlash.ToLower().Replace(" ", "-").Replace(",", "").Replace("'", "").Replace(":", "").Replace("ä", "a").Replace("ö", "o").Replace("ü", "u").Replace("ß", "ss");
-            Tuple<byte[], GrandArchiveCard> cardDetails = FetchCardDetailsAsync_GrandArchive(slugName).Result;
+            Tuple<byte[], GrandArchiveCard> cardDetails = FetchCardDetailsAsync_GrandArchive(slugName, dto.SetCode, dto.Collector).Result;
 
             if (existing != null)
             {
@@ -727,21 +822,17 @@ namespace Repository.Repo
                     existing.IllustratedBy = cardDetails.Item2.editions.FirstOrDefault()?.illustrator ?? "";
 
                 existing.Name = dto.Name;
-                existing.SetCode = dto.SetCode;
-                existing.SetName = dto.SetName;
-                existing.Collector = dto.Collector;
+                existing.SetCode = !string.IsNullOrEmpty(dto.SetCode) ? dto.SetCode : (cardDetails.Item2.editions.FirstOrDefault()?.set.prefix ?? "");
+                existing.SetName = !string.IsNullOrEmpty(dto.SetName) ? dto.SetName : (cardDetails.Item2.editions.FirstOrDefault()?.set.name ?? "");
+                existing.Collector = !string.IsNullOrEmpty(dto.Collector) ? dto.Collector : (cardDetails.Item2.editions.FirstOrDefault()?.collector_number ?? "");
                 existing.Language = dto.Language;
                 existing.FoilType = dto.FoilType;
-                existing.Rarity = dto.Rarity;
+                existing.Rarity = !string.IsNullOrEmpty(dto.Rarity) ? dto.Rarity : (cardDetails.Item2.editions.FirstOrDefault()?.rarity.ToString() ?? "");
                 existing.ManaboxId = dto.ManaboxId;
                 existing.Misprint = dto.Misprint;
                 existing.Tampered = dto.Tampered;
                 existing.Condition = dto.Condition;
                 existing.PurchaseCurrency = dto.PurchaseCurrency;
-                existing.Color = dto.Color;
-                existing.ManaCost = dto.ManaCost;
-                existing.CardType = dto.CardType;
-                existing.IllustratedBy = dto.IllustratedBy;
                 existing.CollectionGroup = dto.CollectionGroup;
                 existing.OwnerId = dto.OwnerId;
                 existing.Category = dto.Category;
@@ -788,6 +879,11 @@ namespace Repository.Repo
                 inventory.Color = string.Join(", ", cardDetails.Item2.elements).TrimEnd();
                 inventory.CardType = string.Join(", ", cardDetails.Item2.classes).TrimEnd();
                 inventory.IllustratedBy = cardDetails.Item2.editions.FirstOrDefault()?.illustrator ?? "";
+                inventory.SetCode = !string.IsNullOrEmpty(dto.SetCode) ? dto.SetCode : (cardDetails.Item2.editions.FirstOrDefault()?.set.prefix ?? "");
+                inventory.SetName = !string.IsNullOrEmpty(dto.SetName) ? dto.SetName : (cardDetails.Item2.editions.FirstOrDefault()?.set.name ?? "");
+                inventory.Collector = !string.IsNullOrEmpty(dto.Collector) ? dto.Collector : (cardDetails.Item2.editions.FirstOrDefault()?.collector_number ?? "");
+                inventory.Rarity = !string.IsNullOrEmpty(dto.Rarity) ? dto.Rarity : (cardDetails.Item2.editions.FirstOrDefault()?.rarity.ToString() ?? "");
+
 
                 if (dto.InventoryCounts.Any())
                 {

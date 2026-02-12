@@ -160,42 +160,55 @@ namespace Web.Controllers
                     });
 
                     var fee = 0.00m;
-                    var coinRequest = new CoinsCreateCheckoutRequest()
+                    //var coinRequest = new CoinsCreateCheckoutRequest()
+                    //{
+                    //    amount = (model.Total + model.Shipping + model.Tax).ToString("F2"),
+                    //    currency = "PHP",
+                    //    expireSeconds = "600",
+                    //    feeAmount = fee.ToString("F2"),
+                    //    merchantName = SystemInfo.LongName,
+                    //    productDetails = orders,
+                    //    redirectUrl = redirectUrls,
+                    //    requestId = requestId,
+                    //    totalAmount = (model.Total + model.Shipping + model.Tax + fee).ToString("F2"),
+                    //    remark = $"Order #{requestId}",
+                    //};
+                    var coinRequest = new 
                     {
+                        requestId = requestId,
                         amount = (model.Total + model.Shipping + model.Tax).ToString("F2"),
                         currency = "PHP",
                         expireSeconds = "600",
-                        feeAmount = fee.ToString("F2"),
                         merchantName = SystemInfo.LongName,
-                        productDetails = orders,
-                        redirectUrl = redirectUrls,
-                        requestId = requestId,
-                        totalAmount = (model.Total + model.Shipping + model.Tax + fee).ToString("F2"),
                         remark = $"Order #{requestId}",
+                        description = $"Payment for Order #{requestId}",
                     };
 
-                    var coinResult = new CoinsPH().CreatePayment(coinRequest);
+                    var qr = new CoinsPH().GenerateDynamicQR(coinRequest);
 
+                    //var coinResult = new CoinsPH().CreatePayment(coinRequest);
 
-                    if (coinResult?.status == 0 && coinResult.data?.checkoutUrl != null)
-                    {
-                        order = new OrderRepo().Add(model.ToDto());
-                        payment = _payment.Add(new PaymentDto()
-                        {
-                            Amount = model.Total + model.Shipping,
-                            CreatedAt = DateTime.Now,
-                            Currency = model.Currency,
-                            CustomerDetailId = (int)customer.Data,
-                            OrderId = (int)order.Data,
-                            PaymentId = PaymentMethodEnum.CoinsPH.ToString(),
-                            Status = PaymentStatus.Pending,
-                            PayoneerId = requestId,
-                        });
+                    //if (coinResult?.status == 0 && coinResult.data?.checkoutUrl != null)
+                    //{
+                    //    order = new OrderRepo().Add(model.ToDto());
+                    //    payment = _payment.Add(new PaymentDto()
+                    //    {
+                    //        Amount = model.Total + model.Shipping,
+                    //        CreatedAt = DateTime.Now,
+                    //        Currency = model.Currency,
+                    //        CustomerDetailId = (int)customer.Data,
+                    //        OrderId = (int)order.Data,
+                    //        PaymentId = PaymentMethodEnum.CoinsPH.ToString(),
+                    //        Status = PaymentStatus.Pending,
+                    //        PayoneerId = requestId,
+                    //    });
 
-                        return Redirect(coinResult.data.checkoutUrl);
-                    }
+                    //    return Redirect(coinResult.data.checkoutUrl);
+                    //}
 
-                    return Content("Error creating CoinsPH Order");
+                    //return Content("Error creating CoinsPH Order");
+
+                    return View("ShowQR", qr);
 
                 default:
                     break;

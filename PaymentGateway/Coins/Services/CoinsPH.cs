@@ -71,14 +71,62 @@ namespace PaymentGateway.Coins.Services
             return JsonConvert.DeserializeObject<CoinsCheckoutStatusResponse>(json);
         }
 
+        private QrModel GenerateQR(string path, object payload)
+        {
+            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            var jsonPayload = JsonConvert.SerializeObject(payload);
+            var signature = ComputeHmacSha256(jsonPayload);
 
-        public static string ComputeHmacSha256(string data)
+            _client.DefaultRequestHeaders.Add("Timestamp", timestamp.ToString());
+            _client.DefaultRequestHeaders.Add("Signature", signature);
+
+            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+            var response = _client.PostAsync(CoinModel.WebPayUrl + path, content).Result;
+            response.EnsureSuccessStatusCode();
+
+            var resultJson = response.Content.ReadAsStringAsync().Result;
+            dynamic result = JsonConvert.DeserializeObject(resultJson);
+
+            var model = new QrModel
+            {
+                RequestId = result.data.requestId,
+                QrId = (string)result.data?.qrId,
+                QrImageUrl = (string)result.data?.qrImageUrl,
+                QrContent = (string)result.data?.qrContent
+            };
+
+            return model;
+        }
+
+        public QrModel GenerateDynamicQR(object payload)
+        {
+            var path = "/openapi/fiat/v1/qr/generate-dynamic-qr";
+            return GenerateQR(path, payload);
+        }
+
+        public QrModel GenerateStaticQR(object payload)
+        {
+            var path = "/openapi/fiat/v1/generate_static_qr_code";
+            return GenerateQR(path, payload);
+        }
+
+
+        public static string ComputeHmacSha256(string data, bool isForQR = false)
         {
             using (var hmac = new HMACSHA256(Encoding.UTF8.GetBytes(CoinModel.SecretKey)))
             {
                 var hash = hmac.ComputeHash(Encoding.UTF8.GetBytes(data));
-                var computedSignature = BitConverter.ToString(hash).Replace("-", "").ToLower();
-                return computedSignature;
+                if (!isForQR)
+                {
+                    var computedSignature = BitConverter.ToString(hash).Replace("-", "").ToLower();
+                    return computedSignature;
+                }
+                else
+                {
+                    var sb = new System.Text.StringBuilder(hash.Length * 2);
+                    foreach (var b in hash) sb.Append(b.ToString("x2"));
+                    return sb.ToString();
+                }
             }
         }
     }

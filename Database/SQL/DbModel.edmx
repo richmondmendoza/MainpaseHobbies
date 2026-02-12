@@ -352,7 +352,6 @@
           <EntitySet Name="CustomerDetails" EntityType="IMSModel.CustomerDetail" />
           <EntitySet Name="Event_Image" EntityType="IMSModel.Event_Image" />
           <EntitySet Name="Events" EntityType="IMSModel.Event" />
-          <EntitySet Name="Inventories" EntityType="IMSModel.Inventory" />
           <EntitySet Name="Inventory_Count" EntityType="IMSModel.Inventory_Count" />
           <EntitySet Name="NewsLetters" EntityType="IMSModel.NewsLetter" />
           <EntitySet Name="Orders" EntityType="IMSModel.Order" />
@@ -362,23 +361,24 @@
           <EntitySet Name="System_WebsiteInfo" EntityType="IMSModel.System_WebsiteInfo" />
           <EntitySet Name="Users" EntityType="IMSModel.User" />
           <EntitySet Name="User_Session" EntityType="IMSModel.User_Session" />
-          <AssociationSet Name="FK_Cart_Inventory" Association="IMSModel.FK_Cart_Inventory">
-            <End Role="Inventory" EntitySet="Inventories" />
-            <End Role="Cart" EntitySet="Carts" />
-          </AssociationSet>
           <AssociationSet Name="FK_Event_Image_Events" Association="IMSModel.FK_Event_Image_Events">
             <End Role="Event" EntitySet="Events" />
             <End Role="Event_Image" EntitySet="Event_Image" />
-          </AssociationSet>
-          <AssociationSet Name="FK_Inventory_Count_Inventory" Association="IMSModel.FK_Inventory_Count_Inventory">
-            <End Role="Inventory" EntitySet="Inventories" />
-            <End Role="Inventory_Count" EntitySet="Inventory_Count" />
           </AssociationSet>
           <AssociationSet Name="FK_Order_Item_Order" Association="IMSModel.FK_Order_Item_Order">
             <End Role="Order" EntitySet="Orders" />
             <End Role="Order_Item" EntitySet="Order_Item" />
           </AssociationSet>
-        </EntityContainer>
+          <EntitySet Name="Inventories" EntityType="IMSModel.Inventory" />
+          <AssociationSet Name="FK_Cart_Inventory" Association="IMSModel.FK_Cart_Inventory">
+            <End Role="Inventory" EntitySet="Inventories" />
+            <End Role="Cart" EntitySet="Carts" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Inventory_Count_Inventory" Association="IMSModel.FK_Inventory_Count_Inventory">
+            <End Role="Inventory" EntitySet="Inventories" />
+            <End Role="Inventory_Count" EntitySet="Inventory_Count" />
+          </AssociationSet>
+          </EntityContainer>
         <EntityType Name="AuditLog">
           <Key>
             <PropertyRef Name="Id" />
@@ -462,40 +462,6 @@
           <Property Name="IsActive" Type="Boolean" Nullable="false" />
           <Property Name="IsFeatured" Type="Boolean" Nullable="false" />
           <NavigationProperty Name="Event_Image" Relationship="IMSModel.FK_Event_Image_Events" FromRole="Event" ToRole="Event_Image" />
-        </EntityType>
-        <EntityType Name="Inventory">
-          <Key>
-            <PropertyRef Name="Id" />
-          </Key>
-          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
-          <Property Name="Image" Type="Binary" MaxLength="Max" FixedLength="false" />
-          <Property Name="Name" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="SetCode" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="SetName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="Collector" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="FoilType" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="Rarity" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="ManaboxId" Type="Int32" Nullable="false" />
-          <Property Name="ScryfallId" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="Price" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
-          <Property Name="Misprint" Type="Boolean" Nullable="false" />
-          <Property Name="Tampered" Type="Boolean" Nullable="false" />
-          <Property Name="Condition" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="Language" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="PurchaseCurrency" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
-          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
-          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
-          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="Color" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
-          <Property Name="ManaCost" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
-          <Property Name="CardType" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="IllustratedBy" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
-          <Property Name="CollectionGroup" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
-          <Property Name="OwnerId" Type="Int32" Nullable="false" />
-          <Property Name="Category" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
-          <NavigationProperty Name="Carts" Relationship="IMSModel.FK_Cart_Inventory" FromRole="Inventory" ToRole="Cart" />
-          <NavigationProperty Name="Inventory_Count" Relationship="IMSModel.FK_Inventory_Count_Inventory" FromRole="Inventory" ToRole="Inventory_Count" />
         </EntityType>
         <EntityType Name="Inventory_Count">
           <Key>
@@ -641,18 +607,6 @@
           <Property Name="IPAddress" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
           <Property Name="FullName" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
         </EntityType>
-        <Association Name="FK_Cart_Inventory">
-          <End Type="IMSModel.Inventory" Role="Inventory" Multiplicity="1" />
-          <End Type="IMSModel.Cart" Role="Cart" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Inventory">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Cart">
-              <PropertyRef Name="InventoryId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Event_Image_Events">
           <End Type="IMSModel.Event" Role="Event" Multiplicity="1" />
           <End Type="IMSModel.Event_Image" Role="Event_Image" Multiplicity="*" />
@@ -665,18 +619,6 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
-        <Association Name="FK_Inventory_Count_Inventory">
-          <End Type="IMSModel.Inventory" Role="Inventory" Multiplicity="1" />
-          <End Type="IMSModel.Inventory_Count" Role="Inventory_Count" Multiplicity="*" />
-          <ReferentialConstraint>
-            <Principal Role="Inventory">
-              <PropertyRef Name="Id" />
-            </Principal>
-            <Dependent Role="Inventory_Count">
-              <PropertyRef Name="InventoryId" />
-            </Dependent>
-          </ReferentialConstraint>
-        </Association>
         <Association Name="FK_Order_Item_Order">
           <End Type="IMSModel.Order" Role="Order" Multiplicity="1" />
           <End Type="IMSModel.Order_Item" Role="Order_Item" Multiplicity="*" />
@@ -686,6 +628,64 @@
             </Principal>
             <Dependent Role="Order_Item">
               <PropertyRef Name="OrderId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityType Name="Inventory">
+          <Key>
+            <PropertyRef Name="Id" />
+          </Key>
+          <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Image" Type="Binary" MaxLength="Max" FixedLength="false" />
+          <Property Name="Name" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="SetCode" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="SetName" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Collector" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="FoilType" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="Rarity" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="ManaboxId" Type="Int32" Nullable="false" />
+          <Property Name="ScryfallId" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Price" Type="Decimal" Nullable="false" Precision="18" Scale="3" />
+          <Property Name="Misprint" Type="Boolean" Nullable="false" />
+          <Property Name="Tampered" Type="Boolean" Nullable="false" />
+          <Property Name="Condition" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Language" Type="String" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="PurchaseCurrency" Type="String" Nullable="false" MaxLength="50" FixedLength="false" Unicode="false" />
+          <Property Name="DateCreated" Type="DateTime" Nullable="false" Precision="3" />
+          <Property Name="CreatedBy" Type="String" Nullable="false" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="IsDeleted" Type="Boolean" Nullable="false" />
+          <Property Name="Description" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Color" Type="String" MaxLength="150" FixedLength="false" Unicode="false" />
+          <Property Name="ManaCost" Type="String" MaxLength="250" FixedLength="false" Unicode="false" />
+          <Property Name="CardType" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="IllustratedBy" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="CollectionGroup" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="OwnerId" Type="Int32" Nullable="false" />
+          <Property Name="Category" Type="String" MaxLength="250" FixedLength="false" Unicode="true" />
+          <NavigationProperty Name="Carts" Relationship="IMSModel.FK_Cart_Inventory" FromRole="Inventory" ToRole="Cart" />
+          <NavigationProperty Name="Inventory_Count" Relationship="IMSModel.FK_Inventory_Count_Inventory" FromRole="Inventory" ToRole="Inventory_Count" />
+        </EntityType>
+        <Association Name="FK_Cart_Inventory">
+          <End Type="IMSModel.Inventory" Role="Inventory" Multiplicity="1" />
+          <End Type="IMSModel.Cart" Role="Cart" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Inventory">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Cart">
+              <PropertyRef Name="InventoryId" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Inventory_Count_Inventory">
+          <End Type="IMSModel.Inventory" Role="Inventory" Multiplicity="1" />
+          <End Type="IMSModel.Inventory_Count" Role="Inventory_Count" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Inventory">
+              <PropertyRef Name="Id" />
+            </Principal>
+            <Dependent Role="Inventory_Count">
+              <PropertyRef Name="InventoryId" />
             </Dependent>
           </ReferentialConstraint>
         </Association>
@@ -778,39 +778,6 @@
                 <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
                 <ScalarProperty Name="DateOfEvent" ColumnName="DateOfEvent" />
                 <ScalarProperty Name="FeaturedImage" ColumnName="FeaturedImage" />
-                <ScalarProperty Name="Id" ColumnName="Id" />
-              </MappingFragment>
-            </EntityTypeMapping>
-          </EntitySetMapping>
-          <EntitySetMapping Name="Inventories">
-            <EntityTypeMapping TypeName="IMSModel.Inventory">
-              <MappingFragment StoreEntitySet="Inventory">
-                <ScalarProperty Name="Category" ColumnName="Category" />
-                <ScalarProperty Name="OwnerId" ColumnName="OwnerId" />
-                <ScalarProperty Name="CollectionGroup" ColumnName="CollectionGroup" />
-                <ScalarProperty Name="IllustratedBy" ColumnName="IllustratedBy" />
-                <ScalarProperty Name="CardType" ColumnName="CardType" />
-                <ScalarProperty Name="ManaCost" ColumnName="ManaCost" />
-                <ScalarProperty Name="Color" ColumnName="Color" />
-                <ScalarProperty Name="Description" ColumnName="Description" />
-                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-                <ScalarProperty Name="PurchaseCurrency" ColumnName="PurchaseCurrency" />
-                <ScalarProperty Name="Language" ColumnName="Language" />
-                <ScalarProperty Name="Condition" ColumnName="Condition" />
-                <ScalarProperty Name="Tampered" ColumnName="Tampered" />
-                <ScalarProperty Name="Misprint" ColumnName="Misprint" />
-                <ScalarProperty Name="Price" ColumnName="Price" />
-                <ScalarProperty Name="ScryfallId" ColumnName="ScryfallId" />
-                <ScalarProperty Name="ManaboxId" ColumnName="ManaboxId" />
-                <ScalarProperty Name="Rarity" ColumnName="Rarity" />
-                <ScalarProperty Name="FoilType" ColumnName="FoilType" />
-                <ScalarProperty Name="Collector" ColumnName="Collector" />
-                <ScalarProperty Name="SetName" ColumnName="SetName" />
-                <ScalarProperty Name="SetCode" ColumnName="SetCode" />
-                <ScalarProperty Name="Name" ColumnName="Name" />
-                <ScalarProperty Name="Image" ColumnName="Image" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>
@@ -961,6 +928,39 @@
                 <ScalarProperty Name="Date" ColumnName="Date" />
                 <ScalarProperty Name="Token" ColumnName="Token" />
                 <ScalarProperty Name="UserId" ColumnName="UserId" />
+                <ScalarProperty Name="Id" ColumnName="Id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Inventories">
+            <EntityTypeMapping TypeName="IMSModel.Inventory">
+              <MappingFragment StoreEntitySet="Inventory">
+                <ScalarProperty Name="Category" ColumnName="Category" />
+                <ScalarProperty Name="OwnerId" ColumnName="OwnerId" />
+                <ScalarProperty Name="CollectionGroup" ColumnName="CollectionGroup" />
+                <ScalarProperty Name="IllustratedBy" ColumnName="IllustratedBy" />
+                <ScalarProperty Name="CardType" ColumnName="CardType" />
+                <ScalarProperty Name="ManaCost" ColumnName="ManaCost" />
+                <ScalarProperty Name="Color" ColumnName="Color" />
+                <ScalarProperty Name="Description" ColumnName="Description" />
+                <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+                <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+                <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+                <ScalarProperty Name="PurchaseCurrency" ColumnName="PurchaseCurrency" />
+                <ScalarProperty Name="Language" ColumnName="Language" />
+                <ScalarProperty Name="Condition" ColumnName="Condition" />
+                <ScalarProperty Name="Tampered" ColumnName="Tampered" />
+                <ScalarProperty Name="Misprint" ColumnName="Misprint" />
+                <ScalarProperty Name="Price" ColumnName="Price" />
+                <ScalarProperty Name="ScryfallId" ColumnName="ScryfallId" />
+                <ScalarProperty Name="ManaboxId" ColumnName="ManaboxId" />
+                <ScalarProperty Name="Rarity" ColumnName="Rarity" />
+                <ScalarProperty Name="FoilType" ColumnName="FoilType" />
+                <ScalarProperty Name="Collector" ColumnName="Collector" />
+                <ScalarProperty Name="SetName" ColumnName="SetName" />
+                <ScalarProperty Name="SetCode" ColumnName="SetCode" />
+                <ScalarProperty Name="Name" ColumnName="Name" />
+                <ScalarProperty Name="Image" ColumnName="Image" />
                 <ScalarProperty Name="Id" ColumnName="Id" />
               </MappingFragment>
             </EntityTypeMapping>

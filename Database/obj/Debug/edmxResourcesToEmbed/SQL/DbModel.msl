@@ -88,39 +88,6 @@
         </MappingFragment>
       </EntityTypeMapping>
     </EntitySetMapping>
-    <EntitySetMapping Name="Inventories">
-      <EntityTypeMapping TypeName="IMSModel.Inventory">
-        <MappingFragment StoreEntitySet="Inventory">
-          <ScalarProperty Name="Category" ColumnName="Category" />
-          <ScalarProperty Name="OwnerId" ColumnName="OwnerId" />
-          <ScalarProperty Name="CollectionGroup" ColumnName="CollectionGroup" />
-          <ScalarProperty Name="IllustratedBy" ColumnName="IllustratedBy" />
-          <ScalarProperty Name="CardType" ColumnName="CardType" />
-          <ScalarProperty Name="ManaCost" ColumnName="ManaCost" />
-          <ScalarProperty Name="Color" ColumnName="Color" />
-          <ScalarProperty Name="Description" ColumnName="Description" />
-          <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
-          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
-          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
-          <ScalarProperty Name="PurchaseCurrency" ColumnName="PurchaseCurrency" />
-          <ScalarProperty Name="Language" ColumnName="Language" />
-          <ScalarProperty Name="Condition" ColumnName="Condition" />
-          <ScalarProperty Name="Tampered" ColumnName="Tampered" />
-          <ScalarProperty Name="Misprint" ColumnName="Misprint" />
-          <ScalarProperty Name="Price" ColumnName="Price" />
-          <ScalarProperty Name="ScryfallId" ColumnName="ScryfallId" />
-          <ScalarProperty Name="ManaboxId" ColumnName="ManaboxId" />
-          <ScalarProperty Name="Rarity" ColumnName="Rarity" />
-          <ScalarProperty Name="FoilType" ColumnName="FoilType" />
-          <ScalarProperty Name="Collector" ColumnName="Collector" />
-          <ScalarProperty Name="SetName" ColumnName="SetName" />
-          <ScalarProperty Name="SetCode" ColumnName="SetCode" />
-          <ScalarProperty Name="Name" ColumnName="Name" />
-          <ScalarProperty Name="Image" ColumnName="Image" />
-          <ScalarProperty Name="Id" ColumnName="Id" />
-        </MappingFragment>
-      </EntityTypeMapping>
-    </EntitySetMapping>
     <EntitySetMapping Name="Inventory_Count">
       <EntityTypeMapping TypeName="IMSModel.Inventory_Count">
         <MappingFragment StoreEntitySet="Inventory_Count">
@@ -267,6 +234,39 @@
           <ScalarProperty Name="Date" ColumnName="Date" />
           <ScalarProperty Name="Token" ColumnName="Token" />
           <ScalarProperty Name="UserId" ColumnName="UserId" />
+          <ScalarProperty Name="Id" ColumnName="Id" />
+        </MappingFragment>
+      </EntityTypeMapping>
+    </EntitySetMapping>
+    <EntitySetMapping Name="Inventories">
+      <EntityTypeMapping TypeName="IMSModel.Inventory">
+        <MappingFragment StoreEntitySet="Inventory">
+          <ScalarProperty Name="Category" ColumnName="Category" />
+          <ScalarProperty Name="OwnerId" ColumnName="OwnerId" />
+          <ScalarProperty Name="CollectionGroup" ColumnName="CollectionGroup" />
+          <ScalarProperty Name="IllustratedBy" ColumnName="IllustratedBy" />
+          <ScalarProperty Name="CardType" ColumnName="CardType" />
+          <ScalarProperty Name="ManaCost" ColumnName="ManaCost" />
+          <ScalarProperty Name="Color" ColumnName="Color" />
+          <ScalarProperty Name="Description" ColumnName="Description" />
+          <ScalarProperty Name="IsDeleted" ColumnName="IsDeleted" />
+          <ScalarProperty Name="CreatedBy" ColumnName="CreatedBy" />
+          <ScalarProperty Name="DateCreated" ColumnName="DateCreated" />
+          <ScalarProperty Name="PurchaseCurrency" ColumnName="PurchaseCurrency" />
+          <ScalarProperty Name="Language" ColumnName="Language" />
+          <ScalarProperty Name="Condition" ColumnName="Condition" />
+          <ScalarProperty Name="Tampered" ColumnName="Tampered" />
+          <ScalarProperty Name="Misprint" ColumnName="Misprint" />
+          <ScalarProperty Name="Price" ColumnName="Price" />
+          <ScalarProperty Name="ScryfallId" ColumnName="ScryfallId" />
+          <ScalarProperty Name="ManaboxId" ColumnName="ManaboxId" />
+          <ScalarProperty Name="Rarity" ColumnName="Rarity" />
+          <ScalarProperty Name="FoilType" ColumnName="FoilType" />
+          <ScalarProperty Name="Collector" ColumnName="Collector" />
+          <ScalarProperty Name="SetName" ColumnName="SetName" />
+          <ScalarProperty Name="SetCode" ColumnName="SetCode" />
+          <ScalarProperty Name="Name" ColumnName="Name" />
+          <ScalarProperty Name="Image" ColumnName="Image" />
           <ScalarProperty Name="Id" ColumnName="Id" />
         </MappingFragment>
       </EntityTypeMapping>

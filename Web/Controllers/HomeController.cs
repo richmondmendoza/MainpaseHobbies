@@ -95,7 +95,7 @@ namespace Web.Controllers
             var conversionRate = ConversionInfo.Amount;
             var currentPrice = model.Details.Price / conversionRate;
             var isFoiled = model.Details.FoilType.ToLower() != "non-foil" & model.Details.FoilType.ToLower() != "normal";
-            var scryfallPrice = Convert.ToDecimal(isFoiled ? (model.ScryfallCard.Prices?.UsdFoil ?? model.Details.Price.ToString()) : (model.ScryfallCard.Prices?.Usd ?? model.Details.Price.ToString()));
+            var scryfallPrice = Convert.ToDecimal(isFoiled ? (model.ScryfallCard.Prices?.UsdFoil ?? currentPrice.ToString()) : (model.ScryfallCard.Prices?.Usd ?? currentPrice.ToString()));
             if (currentPrice != scryfallPrice)
             {
                 model.Details.Price = scryfallPrice * conversionRate;

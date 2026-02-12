@@ -76,6 +76,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Coins\CoinModel.cs" />
+    <Compile Include="Coins\QrModel.cs" />
     <Compile Include="Coins\Services\CoinsPH.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

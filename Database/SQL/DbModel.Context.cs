@@ -31,7 +31,6 @@ namespace Database.SQL
         public virtual DbSet<CustomerDetail> CustomerDetails { get; set; }
         public virtual DbSet<Event_Image> Event_Image { get; set; }
         public virtual DbSet<Event> Events { get; set; }
-        public virtual DbSet<Inventory> Inventories { get; set; }
         public virtual DbSet<Inventory_Count> Inventory_Count { get; set; }
         public virtual DbSet<NewsLetter> NewsLetters { get; set; }
         public virtual DbSet<Order> Orders { get; set; }
@@ -41,5 +40,6 @@ namespace Database.SQL
         public virtual DbSet<System_WebsiteInfo> System_WebsiteInfo { get; set; }
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<User_Session> User_Session { get; set; }
+        public virtual DbSet<Inventory> Inventories { get; set; }
     }
 }

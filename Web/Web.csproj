@@ -2417,6 +2417,7 @@
     <Content Include="Views\Checkout\CoinsCancel.cshtml" />
     <Content Include="Views\Checkout\CoinsFailure.cshtml" />
     <Content Include="Views\Checkout\CoinsReturn.cshtml" />
+    <Content Include="Views\Checkout\ShowQR.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

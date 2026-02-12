@@ -28,6 +28,7 @@ namespace PaymentGateway.Coins
         public List<ProductDetails> productDetails { get; set; }
         public string expireSeconds { get; set; }       // 300–1800, default 1800
         public string remark { get; set; }              // optional
+        public string description { get; set; }              // optional
     }
 
     public sealed class RedirectUrls

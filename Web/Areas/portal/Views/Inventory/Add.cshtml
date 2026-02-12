@@ -77,6 +77,14 @@
                         </div>
 
                         <div class="form-group row">
+                            <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">Card Number</label>
+                            <div class="col-lg-9 col-md-7 col-sm-12">
+                                @Html.TextBoxFor(a => a.Collector, new { @class = "form-control", autocomplete = "off" })
+                                @Html.ValidationMessageFor(a => a.Collector)
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
                             <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">Set Code</label>
                             <div class="col-lg-9 col-md-7 col-sm-12">
                                 @Html.TextBoxFor(a => a.SetCode, new { @class = "form-control", autocomplete = "off" })
@@ -314,11 +322,11 @@
             }
         }
 
-        function UpdateFetchURL(uID, collection) {
+        function UpdateFetchURL(uID, setcode, collector, collection) {
             var url = '';
 
             if (collection === "Magic the Gathering" || collection === "Grand Archive") {
-                url = '/portal/inventory/add?uid=' + uID + '&collectionGroup=' + collection;
+                url = '/portal/inventory/add?uid=' + uID + '&setCode=' + setcode + '&collector=' + collector + '&collectionGroup=' + collection;
             }
             else {
                 url = 'javascript:;'
@@ -336,23 +344,23 @@
                 toggleFoil($(this).val());
             });
 
-            $(document).on('change', '#ScryfallId, #Name', function (e) {
+            $(document).on('change', '#ScryfallId, #Name, #SetCode, #Collector', function (e) {
                 var collection = $('#CollectionGroup').val();
                 if (collection === "Magic the Gathering") {
-                    UpdateFetchURL($('#ScryfallId').val(), collection);
+                    UpdateFetchURL($('#ScryfallId').val(), $('#SetCode').val(), $('#Collector').val(), collection);
                 }
                 else if (collection === "Grand Archive") {
-                    UpdateFetchURL($('#Name').val(), collection);
+                    UpdateFetchURL($('#Name').val(), $('#SetCode').val(), $('#Collector').val(), collection);
                 }
             });
 
             $(document).on('change', '#CollectionGroup', function (e) {
                 var collection = $(this).val();
                 if (collection === "Magic the Gathering") {
-                    UpdateFetchURL($('#ScryfallId').val(), collection);
+                    UpdateFetchURL($('#ScryfallId').val(), $('#SetCode').val(), $('#Collector').val(), collection);
                 }
                 else if (collection === "Grand Archive") {
-                    UpdateFetchURL($('#Name').val(), collection);
+                    UpdateFetchURL($('#Name').val(), $('#SetCode').val(), $('#Collector').val(), collection);
                 }
             });
 
