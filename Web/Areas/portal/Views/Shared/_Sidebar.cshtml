@@ -81,11 +81,28 @@
 
                 @if (user.HasProtalAdminAccess)
                 {
-                    <li class="nav-item">
-                        <a href="@Url.Action("List", "Banner", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Banner", "List", "active")">
-                            <i class="nav-icon fas fa-image"></i>
-                            <p>Website Home Banners</p>
+                    <li class="nav-item @Html.RouteIf("portal", "Banner|Category|FoilTypes", "List", "menu-open")">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon fas fa-cogs"></i>
+                            <p>Website Settings <i class="right fas fa-angle-left"></i></p>
                         </a>
+                        <ul class="nav nav-treeview">
+                            <li class="nav-item">
+                                <a href="@Url.Action("List", "Banner", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Banner", "List", "active")">
+                                    <i class="far fa-circle nav-icon"></i><p>Banner</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("List", "Category", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "Category", "List", "active")">
+                                    <i class="far fa-circle nav-icon"></i><p>Category</p>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="@Url.Action("List", "FoilType", new {area = "portal"})" class="nav-link @Html.RouteIf("portal", "FoilType", "List", "active")">
+                                    <i class="far fa-circle nav-icon"></i><p>Foil Type</p>
+                                </a>
+                            </li>
+                        </ul>
                     </li>
                 }
 

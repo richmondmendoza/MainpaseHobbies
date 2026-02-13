@@ -14,13 +14,29 @@
     .hero .carousel-item::before {
         background-color: transparent;
     }
+
+    .header-search {
+        display: none !important;
+    }
 </style>
 
 <!-- Hero Section -->
 @if (banners.Any())
 {
     int carIndex = 0;
-    <section id="hero" class="hero section dark-background">
+    <section id="hero" class="hero section bg-white">
+
+        <div class="container section-title pt-2 pb-2">
+            @using (Html.BeginForm("Search", "Home", FormMethod.Post, new { @class = "d-flex", role = "search" }))
+            {
+                <select class="form-control input-sm" name="collection" style="max-width: 250px;">
+                    <option value="magic the gathering">Magic the Gathering</option>
+                    <option value="grand archive">Grand Archive</option>
+                </select>
+                <input class="form-control input-sm" type="search" name="param" placeholder="Search..." aria-label="Search">
+                <button class="btn btn-primary btn-sm ms-1" type="submit">Search</button>
+            }
+        </div>
 
         <div id="hero-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
 

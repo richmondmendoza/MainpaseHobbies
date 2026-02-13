@@ -194,7 +194,7 @@
                                     <td class="text-right">@Model.Currency @Model.SubTotal.ToString("n2")</td>
                                 </tr>
                                 <tr>
-                                    <th>Tax (9.3%)</th>
+                                    <th>Tax (0%)</th>
                                     <td class="text-right">@Model.Currency @Model.Tax.ToString("n2")</td>
                                 </tr>
                                 <tr>
@@ -215,10 +215,8 @@
             <div class="row no-print">
                 <div class="col-12">
                     <a href="javascript:;" class="btn btn-default print" print-data="#print-data"><i class="fas fa-print"></i> Print</a>
-                    @if ((Model.Status != Dto.Enums.OrderStatusEnum.Completed &
-                        Model.DeliveryStatus != Dto.Enums.DeliveryStatusEnum.Completed) &
-                        Model.Status != Dto.Enums.OrderStatusEnum.Cancelled &
-                        Model.Status != Dto.Enums.OrderStatusEnum.Refunded)
+                    @if (Model.Status != Dto.Enums.OrderStatusEnum.Cancelled &
+                         Model.Status != Dto.Enums.OrderStatusEnum.Refunded)
                     {
                         <a href="javascript:;" id="btn-cancel" class="btn btn-danger ml-2"><i class="fas fa-times"></i> Cancel Order</a>
                     }

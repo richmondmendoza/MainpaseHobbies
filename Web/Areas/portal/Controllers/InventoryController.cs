@@ -88,7 +88,7 @@ namespace Web.Areas.portal.Controllers
                             model.Name = card_mtg.Item2.CardFaces.Any() ? card_mtg.Item2.CardFaces.FirstOrDefault()?.Name : card_mtg.Item2.Name;
                             model.SetCode = card_mtg.Item2.Set;
                             model.SetName = card_mtg.Item2.SetName;
-                            model.ScryfallId = uID;
+                            model.ScryfallId = card_mtg.Item2.Id.ToString();
                             model.Rarity = card_mtg.Item2.Rarity;
                             model.FoilType = card_mtg.Item2.Foil ? "Foil" : "Non-Foil";
 

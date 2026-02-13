@@ -1,10 +1,11 @@
 ﻿
 @using Repository.Extensions;
 
-@model Web.Models.CardDetailsViewModel
+@model Web.Models.GaCardDetailsViewModel
 
 @{
     ViewBag.Title = "Card Details";
+    var cost = Model.Details.ManaCost.Split('|');
 }
 
 <style>
@@ -46,7 +47,6 @@
                         }
                     </div>
                 </div>
-
                 @*<h4>@Model.Details.PurchaseCurrency @Model.Details.Price.ToString("n2")</h4>*@@*<p>Nam voluptatem quasi numquam quas fugiat ex temporibus quo est. Quia aut quam quod facere ut non occaecati ut aut. Nesciunt mollitia illum tempore corrupti sed eum reiciendis. Maxime modi rerum.</p>*@
             </div>
 
@@ -55,50 +55,22 @@
                 <img src="assets/img/services.jpg" alt="" class="img-fluid services-img">
                 <h3>@Model.Details.Name</h3>
                 <p class="text-bold">[@Model.Details.SetCode] - @Model.Details.Collector</p>
-                <p>@Model.Details.CardType</p>
+                <p>@Model.Details.SetName</p>
 
-                @if (!string.IsNullOrEmpty(Model.Details.ManaCost) |
-                     !string.IsNullOrEmpty(Model.Details.Rarity) |
-                     !string.IsNullOrEmpty(Model.Details.SetName) |
-                     !string.IsNullOrEmpty(Model.Details.IllustratedBy) |
-                     !string.IsNullOrEmpty(Model.Details.Color))
-                {
-                    <p>
-                        @if (!string.IsNullOrEmpty(Model.Details.ManaCost))
-                        {
-                            <span>
-                                Mana Cost: @Html.Raw(Model.Details.ManaCost.TransformToCardSymbols()) <br />
-                            </span>
-                        }
-                        @if (!string.IsNullOrEmpty(Model.Details.Rarity))
-                        {
-                            <span>
-                                Rarity: @Model.Details.Rarity.ToUpper() <br />
-                            </span>
-                        }
-                        @if (!string.IsNullOrEmpty(Model.Details.SetName))
-                        {
-                            <span>
-                                Set Name: @Model.Details.SetName <br />
-                            </span>
-                        }
-                        @if (!string.IsNullOrEmpty(Model.Details.IllustratedBy))
-                        {
-                            <span>
-                                Artist: @Model.Details.IllustratedBy <br />
-                            </span>
-                        }
-                        @if (!string.IsNullOrEmpty(Model.Details.Color))
-                        {
-                            <span>
-                                Color: @Html.Raw(!string.IsNullOrEmpty(Model.Details.Color) ? Model.Details.Color.TransformToCardSymbols() : "Colorless")
-                            </span>
-                        }
+                <p class="text-bold mb-0">Details</p>
+                <p>@Html.Raw(Model.GrandArchiveCard.effect_raw)</p>
 
-                    </p>
-                })
-
-                <p>@Html.Raw(Model.Details.Description.TransformToCardSymbols())</p>
+                <p>
+                    Rarity: @Model.GrandArchiveCard.editions.FirstOrDefault().rarity.ToString() <br />
+                    Number: @Model.Details.Collector <br />
+                    Card Type: @string.Join(",", Model.GrandArchiveCard.types) <br />
+                    Card Subtype: @string.Join(",", Model.GrandArchiveCard.subtypes) <br />
+                    Element: @string.Join(",", Model.GrandArchiveCard.elements) <br />
+                    Class: @string.Join(",", Model.GrandArchiveCard.classes) <br />
+                    @cost[0] Cost: @cost[1] <br />
+                    Power: @Model.GrandArchiveCard.power <br />
+                    Life: @Model.GrandArchiveCard.life <br />
+                </p>
 
                 <p>
                     Condition: @Model.Details.Condition.Replace("_", " ").ToUpper() <br />

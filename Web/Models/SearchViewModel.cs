@@ -7,6 +7,7 @@ namespace Web.Models
 {
     public class SearchViewModel
     {
+        public string Collection { get; set; } = string.Empty;
         public string SearchTerm { get; set; } = string.Empty;
         public IEnumerable<string> Results { get; set; } = new List<string>();
     }

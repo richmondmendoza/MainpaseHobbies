@@ -25,6 +25,8 @@
         <EntityTypeShape EntityType="IMSModel.Inventory" Width="1.5" PointX="0.75" PointY="1.125" />
         <AssociationConnector Association="IMSModel.FK_Cart_Inventory" />
         <AssociationConnector Association="IMSModel.FK_Inventory_Count_Inventory" />
+        <EntityTypeShape EntityType="IMSModel.Category" Width="1.5" PointX="9.375" PointY="12.75" />
+        <EntityTypeShape EntityType="IMSModel.FoilType" Width="1.5" PointX="11.375" PointY="12.75" />
         </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

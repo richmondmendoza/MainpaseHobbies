@@ -29,6 +29,13 @@
     <Property Name="Quantity" Type="int" Nullable="false" />
     <Property Name="UserSessionId" Type="nvarchar(max)" />
   </EntityType>
+  <EntityType Name="Category">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
+  </EntityType>
   <EntityType Name="Conversion">
     <Key>
       <PropertyRef Name="Id" />
@@ -80,6 +87,13 @@
     <Property Name="SubTitle" Type="varchar(max)" />
     <Property Name="IsActive" Type="bit" Nullable="false" />
     <Property Name="IsFeatured" Type="bit" Nullable="false" />
+  </EntityType>
+  <EntityType Name="FoilType">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+    <Property Name="Name" Type="nvarchar(max)" Nullable="false" />
   </EntityType>
   <EntityType Name="Inventory">
     <Key>
@@ -305,10 +319,12 @@
   <EntityContainer Name="IMSModelStoreContainer">
     <EntitySet Name="AuditLog" EntityType="Self.AuditLog" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Cart" EntityType="Self.Cart" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="Category" EntityType="Self.Category" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Conversion" EntityType="Self.Conversion" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="CustomerDetails" EntityType="Self.CustomerDetails" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Event_Image" EntityType="Self.Event_Image" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Events" EntityType="Self.Events" Schema="dbo" store:Type="Tables" />
+    <EntitySet Name="FoilType" EntityType="Self.FoilType" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Inventory" EntityType="Self.Inventory" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="Inventory_Count" EntityType="Self.Inventory_Count" Schema="dbo" store:Type="Tables" />
     <EntitySet Name="NewsLetter" EntityType="Self.NewsLetter" Schema="dbo" store:Type="Tables" />

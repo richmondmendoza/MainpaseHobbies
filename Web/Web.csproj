@@ -210,6 +210,8 @@
     <Compile Include="Areas\portal\Controllers\AccountController.cs" />
     <Compile Include="Areas\portal\Controllers\BannerController.cs" />
     <Compile Include="Areas\portal\Controllers\BaseAdminController.cs" />
+    <Compile Include="Areas\portal\Controllers\FoilTypeController.cs" />
+    <Compile Include="Areas\portal\Controllers\CategoryController.cs" />
     <Compile Include="Areas\portal\Controllers\ConversionController.cs" />
     <Compile Include="Areas\portal\Controllers\DashboardController.cs" />
     <Compile Include="Areas\portal\Controllers\EventsController.cs" />
@@ -2370,6 +2372,8 @@
     <Content Include="Areas\portal\Views\Conversion\Index.cshtml" />
     <Content Include="Areas\portal\Views\Inventory\Bulk.cshtml" />
     <Content Include="Areas\portal\Views\Banner\List.cshtml" />
+    <Content Include="Areas\portal\Views\Category\List.cshtml" />
+    <Content Include="Areas\portal\Views\FoilType\List.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\Cart.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />
@@ -2418,6 +2422,8 @@
     <Content Include="Views\Checkout\CoinsFailure.cshtml" />
     <Content Include="Views\Checkout\CoinsReturn.cshtml" />
     <Content Include="Views\Checkout\ShowQR.cshtml" />
+    <Content Include="Views\Home\CardDetails_GA.cshtml" />
+    <Content Include="Views\Home\CardDetails_MTG.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -71,6 +71,8 @@
     <Compile Include="Repo\Order\PaymentRepo.cs" />
     <Compile Include="Repo\Services\PayoneerTokenService.cs" />
     <Compile Include="Repo\Settings\BannerRepo.cs" />
+    <Compile Include="Repo\Settings\FoilTypeRepo.cs" />
+    <Compile Include="Repo\Settings\CategoryRepo.cs" />
     <Compile Include="Repo\Settings\ConversionRepo.cs" />
     <Compile Include="Repo\Settings\SystemInfoRepo.cs" />
     <Compile Include="Repo\Settings\Utilities.cs" />

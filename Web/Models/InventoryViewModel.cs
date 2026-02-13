@@ -115,13 +115,7 @@ namespace Web.Models
         {
             get
             {
-                var items = new List<SelectListItem>()
-                {
-                    new SelectListItem { Value = "Normal", Text = "Normal", Selected = this.FoilType.ToLower() == "normal" },
-                    new SelectListItem { Value = "Non-Foil", Text = "Non-Foil", Selected = this.FoilType.ToLower() == "non-foil" },
-                    new SelectListItem { Value = "Foil", Text = "Foil", Selected = this.FoilType.ToLower() == "foil" },
-                    new SelectListItem { Value = "Etched Foil", Text = "Etched Foil", Selected = this.FoilType.ToLower() == "etched foil" }
-                };
+                var items = new FoilTypeRepo().GetList().Select(a => new SelectListItem() { Value = a.Name, Text = a.Name, Selected = (this.Category != null && this.Category.ToLower() == a.Name.ToLower()) });
                 return items;
             }
         }
@@ -182,13 +176,7 @@ namespace Web.Models
         {
             get
             {
-                var items = new List<SelectListItem>()
-                {
-                    new SelectListItem { Value = "Single", Text = "Single", Selected = this.Category.ToLower() == "single" },
-                    new SelectListItem { Value = "Bundle", Text = "Pack / Bundle", Selected = this.Category.ToLower() == "bundle" },
-                    new SelectListItem { Value = "Accessory", Text = "Accessory", Selected = this.Category.ToLower() == "accessory" },
-                };
-
+                var items = new CategoryRepo().GetCategories().Select(a => new SelectListItem() { Value = a.Name, Text = a.Name, Selected = (this.Category != null && this.Category.ToLower() == a.Name.ToLower()) });
                 return items;
             }
         }

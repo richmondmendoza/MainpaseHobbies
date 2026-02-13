@@ -47,6 +47,10 @@
 <section class="pt-3">
 
     <div class="container mb-4 d-flex">
+        <select class="form-control input-sm" name="Collection" style="max-width: 250px;">
+            <option value="magic the gathering" @(Model.Collection.ToLower() == "magic the gathering" ? "Selected" : "")>Magic the Gathering</option>
+            <option value="grand archive" @(Model.Collection.ToLower() == "grand archive" ? "Selected" : "")>Grand Archive</option>
+        </select>
         <input class="form-control input-sm" type="search" id="searchParam" name="SearchTerm" value="@Model.SearchTerm" placeholder="Search Card Name, Set Name, or Set Code." aria-label="Search">
         <button class="btn btn-primary btn-sm ms-1" id="btn-search">Search</button>
     </div>
@@ -252,7 +256,8 @@
                     colors: colors,
                     foils: foils,
                     rarities: rarities,
-                    cardTypes: cardTypes
+                    cardTypes: cardTypes,
+                    collection: $('select[name="Collection"]').val(),
                 },
                 success: function (results) {
                     $('#data-container').html(results);

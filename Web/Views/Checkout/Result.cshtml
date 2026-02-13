@@ -5,7 +5,7 @@
 
 }
 
-<section style="text-align:center; padding:60px 20px; font-family:Arial, sans-serif;">
+<section class="container" style="text-align:center; padding:60px 20px; font-family:Arial, sans-serif;">
     @*<img src="https://via.placeholder.com/600x300"
         alt="Thank you for your order"
         style="max-width:100%; border-radius:12px; margin-bottom:30px;" />*@
@@ -20,19 +20,21 @@
         You’ll receive a confirmation email shortly with your order details.
     </p>
 
-    @if (user!= null && (user.Id > 0 & user.HasCustomerAccess))
+    @if (user != null && (user.Id > 0 & user.HasCustomerAccess))
     {
-    <p class="text-muted">
-        You can review the status anytime in <strong>My Orders</strong>.
-    </p>
-    <a href="@Url.Action("Index", "MyOrders", new { area = "customer" })" class="btn btn-primary">
-        Go to My Orders
-    </a>
+        <p class="text-muted">
+            You can review the status anytime in <strong>My Orders</strong>.
+        </p>
+        <a href="@Url.Action("Index", "MyOrders", new { area = "customer" })" class="btn btn-primary">
+            Go to My Orders
+        </a>
     }
     else
     {
-    <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn btn-primary">
-        Return to Home
-    </a>
+        <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn btn-primary">
+            Return to Home
+        </a>
     }
+
+    <div class="pt-3 text-muted font-italic"><b>Disclaimer:</b> Once your payment is completed, your order is confirmed and cannot be canceled or refunded. Make sure all information is correct before checking out. If you have any questions, please contact us prior to making payment.</div>
 </section>

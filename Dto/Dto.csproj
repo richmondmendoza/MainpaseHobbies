@@ -76,6 +76,7 @@
   <ItemGroup>
     <Compile Include="BaseSettings\BannerDto.cs" />
     <Compile Include="BaseSettings\ConversionDto.cs" />
+    <Compile Include="BaseSettings\NameDto.cs" />
     <Compile Include="BaseSettings\SystemInfoDto.cs" />
     <Compile Include="ConfirmDto.cs" />
     <Compile Include="DataTableRequestData.cs" />

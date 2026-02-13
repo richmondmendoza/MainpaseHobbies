@@ -33,6 +33,8 @@
       <End Role="Inventory" EntitySet="Inventories" />
       <End Role="Inventory_Count" EntitySet="Inventory_Count" />
     </AssociationSet>
+    <EntitySet Name="Categories" EntityType="IMSModel.Category" />
+    <EntitySet Name="FoilTypes" EntityType="IMSModel.FoilType" />
   </EntityContainer>
   <EntityType Name="AuditLog">
     <Key>
@@ -344,4 +346,18 @@
       </Dependent>
     </ReferentialConstraint>
   </Association>
+  <EntityType Name="Category">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+  </EntityType>
+  <EntityType Name="FoilType">
+    <Key>
+      <PropertyRef Name="Id" />
+    </Key>
+    <Property Name="Id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+    <Property Name="Name" Type="String" Nullable="false" MaxLength="Max" FixedLength="false" Unicode="true" />
+  </EntityType>
 </Schema>

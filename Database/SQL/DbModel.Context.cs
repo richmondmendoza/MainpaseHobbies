@@ -41,5 +41,7 @@ namespace Database.SQL
         public virtual DbSet<User> Users { get; set; }
         public virtual DbSet<User_Session> User_Session { get; set; }
         public virtual DbSet<Inventory> Inventories { get; set; }
+        public virtual DbSet<Category> Categories { get; set; }
+        public virtual DbSet<FoilType> FoilTypes { get; set; }
     }
 }

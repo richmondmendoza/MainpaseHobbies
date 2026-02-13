@@ -64,11 +64,12 @@ namespace Web.Controllers
         }
 
         [HttpPost]
-        public ActionResult Search(string param)
+        public ActionResult Search(string param, string collection)
         {
             var model = new SearchViewModel
             {
-                SearchTerm = param
+                SearchTerm = param,
+                Collection = collection
             };
 
             return View(model);
@@ -76,33 +77,53 @@ namespace Web.Controllers
 
         public ActionResult CardDetails(string cardId)
         {
-            var model = new CardDetailsViewModel();
+            var details = new InventoryDetailsDto();
 
             var currentUrl = (TempData["PreviousUrl"]?.ToString() ?? "") as string;
-            model.Details = new InventoryRepo().GetById(cardId, true);
-            if (model.Details == null)
+            details = new InventoryRepo().GetById(cardId, true);
+
+            if (details != null)
             {
-                ShowErrorMessage("Card not found.");
+                switch (details.CollectionGroup.ToLower())
+                {
+                    case "grand archive":
+                        var gaModel = new GaCardDetailsViewModel();
+                        gaModel.Details = details;
 
-                if (!string.IsNullOrEmpty(currentUrl))
-                    return Redirect(currentUrl);
+                        gaModel.GrandArchiveCard = GetGrandArchiveCard(gaModel.Details.ScryfallId, gaModel.Details.SetCode, gaModel.Details.Collector);
+                        return View("CardDetails_GA", gaModel);
 
-                return RedirectToAction("Index");
+                    case "magic the gathering":
+                        var scryfallModel = new MtgCardDetailsViewModel();
+                        scryfallModel.Details = details;
+
+                        scryfallModel.ScryfallCard = GetScryfallCard(scryfallModel.Details.ScryfallId);
+
+                        var conversionRate = ConversionInfo.Amount;
+                        var currentPrice = scryfallModel.Details.Price / conversionRate;
+                        var isFoiled = scryfallModel.Details.FoilType.ToLower() != "non-foil" & scryfallModel.Details.FoilType.ToLower() != "normal";
+                        var scryfallPrice = Convert.ToDecimal(isFoiled ? (scryfallModel.ScryfallCard.Prices?.UsdFoil ?? currentPrice.ToString()) : (scryfallModel.ScryfallCard.Prices?.Usd ?? currentPrice.ToString()));
+                        if (currentPrice != scryfallPrice)
+                        {
+                            scryfallModel.Details.Price = scryfallPrice * conversionRate;
+                            InventoryRepo.UpdatePrice(scryfallModel.Details.Id, scryfallModel.Details.Price);
+                        }
+
+                        return View("CardDetails_MTG", scryfallModel);
+                    default:
+
+                        ShowErrorMessage("Unable to access details");
+                        return RedirectToAction("Index");
+                }
             }
 
-            model.ScryfallCard = GetScryfallCard(model.Details.ScryfallId);
+            ShowErrorMessage("Card not found.");
 
-            var conversionRate = ConversionInfo.Amount;
-            var currentPrice = model.Details.Price / conversionRate;
-            var isFoiled = model.Details.FoilType.ToLower() != "non-foil" & model.Details.FoilType.ToLower() != "normal";
-            var scryfallPrice = Convert.ToDecimal(isFoiled ? (model.ScryfallCard.Prices?.UsdFoil ?? currentPrice.ToString()) : (model.ScryfallCard.Prices?.Usd ?? currentPrice.ToString()));
-            if (currentPrice != scryfallPrice)
-            {
-                model.Details.Price = scryfallPrice * conversionRate;
-                InventoryRepo.UpdatePrice(model.Details.Id, model.Details.Price);
-            }
+            if (!string.IsNullOrEmpty(currentUrl))
+                return Redirect(currentUrl);
 
-            return View(model);
+            return RedirectToAction("Index");
+
         }
 
         private ScryfallCard GetScryfallCard(string scryfallId)
@@ -137,9 +158,15 @@ namespace Web.Controllers
             }
         }
 
-        public ActionResult GetResults(string search, string colors, string foils, string rarities, string cardTypes)
+        private GrandArchiveCard GetGrandArchiveCard(string scryfallId, string code, string collector)
         {
-            var items = new InventoryRepo().GetSearchResult(searchParam: search, colors: colors, rarities: rarities, foilTypes: foils, cardTypes: cardTypes);
+            var details = new InventoryRepo().FetchCardDetailsAsync_GrandArchive(scryfallId, code, collector).Result.Item2;
+            return details;
+        }
+
+        public ActionResult GetResults(string search, string colors, string foils, string rarities, string cardTypes, string collection)
+        {
+            var items = new InventoryRepo().GetSearchResult(searchParam: search, colors: colors, rarities: rarities, foilTypes: foils, cardTypes: cardTypes, collection: collection);
             return PartialView("_SearchResults", items);
         }
 

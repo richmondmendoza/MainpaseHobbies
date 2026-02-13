@@ -235,24 +235,29 @@ namespace Repository.Repo
         }
 
         public IEnumerable<CardDetailsDto> GetSearchResult(string searchParam = "", string colors = "",
-            string rarities = "", string foilTypes = "", string cardTypes = "", string setName = "", int take = -1)
+            string rarities = "", string foilTypes = "", string cardTypes = "", string setName = "", string collection = "", int take = -1)
         {
             using (IMSEntities context = new IMSEntities())
             {
                 var records = context.Inventories.Where(i => !i.IsDeleted);
+
+                if (!string.IsNullOrEmpty(collection))
+                {
+                    records = records.Where(i => i.CollectionGroup.ToLower().Replace(" ", "") == collection.ToLower().Replace(" ", ""));
+                }
 
                 if (!string.IsNullOrEmpty(searchParam))
                 {
                     records = records.Where(i => i.Name.ToLower().Contains(searchParam.ToLower()) || i.SetName.ToLower().Contains(searchParam.ToLower()) || i.SetCode.ToLower().Contains(searchParam.ToLower()));
                 }
 
-                if (!string.IsNullOrEmpty(colors))
+                if (!string.IsNullOrEmpty(colors) & collection == "magic the gathering")
                 {
                     var colorList = colors.Split('|').Where(a => !string.IsNullOrEmpty(a)).ToList();
                     records = records.Where(i => colorList.Any(c => i.Color.ToLower().Contains(c.ToLower())));
                 }
 
-                if (!string.IsNullOrEmpty(rarities))
+                if (!string.IsNullOrEmpty(rarities) & collection == "magic the gathering")
                 {
                     var rarityList = rarities.Split('|').Where(a => !string.IsNullOrEmpty(a)).ToList();
                     records = records.Where(i => rarityList.Any(r => i.Rarity.ToLower().Replace(" ", "") == r.ToLower().Replace(" ", "")));
