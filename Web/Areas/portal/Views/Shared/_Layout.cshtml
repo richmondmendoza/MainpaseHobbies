@@ -107,6 +107,7 @@
     <script src="~/Content/assets/plugins/pdfmake/vfs_fonts.js"></script>
     <script src="~/Scripts/jquery.PrintArea.js"></script>
     <script src="~/Scripts/modal-extender.js"></script>
+    <script src="~/Content/assets/forceNumericInput.js"></script>
 
     @Scripts.Render("~/plugin/adminLte")
     @RenderSection("scripts", required: false)
@@ -147,6 +148,8 @@
         }
 
         $(document).ready(function () {
+
+            $('.forceNumeric').forceNumeric();
 
             $(document).on('click', '.print', function () {
                 var printArea = $(this).attr('print-data');

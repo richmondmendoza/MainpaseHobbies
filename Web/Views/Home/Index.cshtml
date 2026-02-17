@@ -30,6 +30,7 @@
             @using (Html.BeginForm("Search", "Home", FormMethod.Post, new { @class = "d-flex", role = "search" }))
             {
                 <select class="form-control input-sm" name="collection" style="max-width: 250px;">
+                    <option value="all">All</option>
                     <option value="magic the gathering">Magic the Gathering</option>
                     <option value="grand archive">Grand Archive</option>
                 </select>

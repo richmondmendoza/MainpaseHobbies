@@ -87,6 +87,7 @@
     <Compile Include="Dto\OrderDto.cs" />
     <Compile Include="Dto\OrderItemDto.cs" />
     <Compile Include="Dto\PaymentDto.cs" />
+    <Compile Include="Dto\SalesDisplayDto.cs" />
     <Compile Include="Enums\InventoryCountTypeEnum.cs" />
     <Compile Include="Enums\OrderStatusEnum.cs" />
     <Compile Include="Enums\UserRoleEnum.cs" />

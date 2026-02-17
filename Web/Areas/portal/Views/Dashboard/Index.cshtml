@@ -2,15 +2,174 @@
 @{
     ViewBag.Title = "Dashboard";
     var info = Web.Controllers.BaseController.SystemInfo;
+
+    var orders = ViewBag.Orders as List<Dto.Dto.OrderDto>;
+    var sales = ViewBag.Sales as List<Dto.Dto.SalesDisplayDto>;
+
+    var dateFrom = new DateTime(DateTime.Now.Year, 1, 1);
+    var dateTo = DateTime.Now.AddDays(1).AddSeconds(-1);
+    var monthlySales = sales.Where(a => a.PaymentDate >= dateFrom & a.PaymentDate <= dateTo);
 }
+<link href="~/Content/assets/plugins/daterangepicker/daterangepicker.css" rel="stylesheet" />
+<link href="~/Content/assets/plugins/datatables-buttons/css/buttons.bootstrap4.css" rel="stylesheet" />
 
 <div class="row">
-    <div class="col-lg-12 text-center">
-        <h4>Welcome to @info.LongName's Admin Portal</h4>
+    @*<div class="col-lg-12 text-center">
+            <h4>Welcome to @info.LongName's Admin Portal</h4>
+        </div>*@
+
+
+    <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>@orders.Where(a => a.Status == Dto.Enums.OrderStatusEnum.Pending | a.Status == Dto.Enums.OrderStatusEnum.Processing).Count().ToString("n0")</h3>
+
+                <p>Pending Orders</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-bag"></i>
+            </div>
+            <a href="@Url.Action("List_Pending", "OrderManagement", new {area = "portal"})" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
     </div>
+    <!-- ./col -->
+    <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-success">
+            <div class="inner">
+                <h3>@orders.Where(a => a.Status == Dto.Enums.OrderStatusEnum.Completed).Count().ToString("n0")</h3>
+
+                <p>Orders Completed</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-stats-bars"></i>
+            </div>
+            <a href="@Url.Action("List_Completed", "OrderManagement", new {area = "portal"})" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-warning">
+            <div class="inner">
+                <h3>PHP @monthlySales.Sum(a => a.IsRefund ? -a.Amount : a.Amount).ToString("F2")</h3>
+
+                <p>Current Month Sales</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-person-add"></i>
+            </div>
+            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-3 col-6">
+        <!-- small box -->
+        <div class="small-box bg-danger">
+            <div class="inner">
+                <h3>PHP @sales.Sum(a => a.IsRefund ? -a.Amount : a.Amount).ToString("F2")</h3>
+
+                <p>Current Year Sales</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-pie-graph"></i>
+            </div>
+            <a href="#" class="small-box-footer">More info <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+
+
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">
+                    Sales Overview
+                </h3>
+                <div class="card-tools">
+                    <ul class="nav nav-pills ml-auto">
+                        <li class="nav-item">
+                            <button type="button" class="btn btn-primary btn-sm" id="btn-refresh"><i class="fa fa-refresh"></i> Refresh List</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body row">
+                <div class="col-auto mb-2">
+                    <div class="form-group">
+                        <input type="text" id="dateRange" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="col-12" id="data-container"></div>
+            </div>
+        </div>
+    </div>
+
+
 
 </div>
 
 @section scripts{
+    <script src="~/Content/assets/plugins/daterangepicker/daterangepicker.js"></script>
+    <script src="~/Content/assets/plugins/datatables-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/Content/assets/plugins/datatables-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/Content/assets/plugins/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
+    <script src="~/Content/assets/plugins/jszip/jszip.min.js"></script>
+    <script>
+        function LoadSales(dateFrom, dateTo) {
+            ShowLoading();
+            $.ajax({
+                "url": '@Url.Action("LoadSales")',
+                "type": "get",
+                "data": {
+                    dateFrom: dateFrom,
+                    dateTo: dateTo
+                },
+                success: function (result) {
+                    $('#data-container').html(result);
+                    $('#data-table').DataTable({
+                        "processing": true,
+                        "serverSide": false,
+                        "stateSave": false,
+                        "searching": false,
+                        "dom": 'lBrtip',
+                        "responsive": true,
+                        "autoWidth": true,
+                        "paging": true,
+                        buttons: [
+                            {
+                                extend: 'csvHtml5',
+                                text: 'Export CSV',
+                                title: 'My_Data_Export'
+                            }
+                        ],
+                        "lengthMenu": [[20, 50, -1], [20, 50, 'All']]
+                    });
+                },
+                "complete": function () {
+                    HideLoading();
+                }
+            });
+        }
 
+
+        $(document).ready(function () {
+
+            LoadSales('01/01/' + '@DateTime.Now.Year', '@DateTime.Now.ToString("MM/dd/yyyy")');
+            $('#dateRange').val('01/01/' + '@DateTime.Now.Year' + ' - ' + '@DateTime.Now.ToString("MM/dd/yyyy")');
+            $('#dateRange').daterangepicker();
+            $('#dateRange').on('apply.daterangepicker', function (ev, picker) {
+                var startDate = picker.startDate.format('MM/DD/YYYY');
+                var endDate = picker.endDate.format('MM/DD/YYYY');
+                LoadSales(startDate, endDate);
+            });
+
+            $('#btn-refresh').on('click', function (e) {
+                LoadSales();
+            });
+
+        })
+
+    </script>
 }

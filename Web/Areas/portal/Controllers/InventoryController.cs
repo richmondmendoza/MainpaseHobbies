@@ -32,8 +32,9 @@ namespace Web.Areas.portal.Controllers
             ViewBag.SetCodes = filters.Item1.Select(a => new SelectListItem() { Value = a, Text = a }).ToList();
             ViewBag.Categories = filters.Item2.Select(a => new SelectListItem() { Value = a, Text = a }).ToList();
             ViewBag.CardOwners = filters.Item3.Select(a => new SelectListItem() { Value = a.Item1.ToString(), Text = a.Item2 }).ToList();
-            var records = _repo.GetList("grand archive|magic the gathering", isPHPDisplay: true);
-            return View(records);
+            //var records = _repo.GetList("grand archive|magic the gathering", isPHPDisplay: true);
+            //return View(records);
+            return View();
         }
 
         public ActionResult LoadList()
@@ -69,6 +70,18 @@ namespace Web.Areas.portal.Controllers
             jResult.MaxJsonLength = int.MaxValue;
 
             return jResult;
+        }
+
+        public ActionResult LoadListPartial(string collectionGroup, int cardOwnerId, string category, string searchParam, string foilType)
+        {
+            var model = _repo.GetList(collectionGroup, cardOwnerId, "", category, searchParam, true, 0, foilType);
+            return PartialView("_InventoryList", model);
+        }
+
+        public ActionResult LoadBulkListPartial(string collectionGroup, int cardOwnerId, string category, string searchParam, string foilType)
+        {
+            var model = _repo.GetList(collectionGroup, cardOwnerId, "", category, searchParam, true, 0, foilType);
+            return PartialView("_BulkList", model);
         }
 
         public ActionResult Add(string uID = "", string setCode = "", string collector = "", string collectionGroup = "")

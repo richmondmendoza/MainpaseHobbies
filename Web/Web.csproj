@@ -260,6 +260,7 @@
     <Content Include="Content\assets\css\alt\adminlte.plugins.css" />
     <Content Include="Content\assets\css\alt\adminlte.plugins.min.css" />
     <Content Include="Content\assets\css\Custom.css" />
+    <Content Include="Content\assets\forceNumericInput.js" />
     <Content Include="Content\assets\img\AdminLTELogo.png" />
     <Content Include="Content\assets\img\avatar.png" />
     <Content Include="Content\assets\img\avatar2.png" />
@@ -2374,6 +2375,10 @@
     <Content Include="Areas\portal\Views\Banner\List.cshtml" />
     <Content Include="Areas\portal\Views\Category\List.cshtml" />
     <Content Include="Areas\portal\Views\FoilType\List.cshtml" />
+    <Content Include="Areas\portal\Views\Inventory\_InventoryList.cshtml" />
+    <Content Include="Areas\portal\Views\Inventory\_BulkList.cshtml" />
+    <Content Include="Areas\portal\Views\Dashboard\_ListSales.cshtml" />
+    <Content Include="Areas\portal\Views\Dashboard\Details.cshtml" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\Cart.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />

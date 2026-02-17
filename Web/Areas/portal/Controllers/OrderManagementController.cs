@@ -39,6 +39,7 @@ namespace Web.Areas.portal.Controllers
         public ActionResult Details(int id)
         {
             var record = _order.Get(id);
+            ViewBag.RefundedAmount = _order.GetRefundedAmount(id);
             return View(record);
         }
 
@@ -66,13 +67,13 @@ namespace Web.Areas.portal.Controllers
             return RedirectToAction("Details", new { id = id });
         }
 
-        public ActionResult Refunded(int id)
-        {
-            var result = _order.Refunded(id);
+        //public ActionResult Refunded(int id)
+        //{
+        //    var result = _order.Refunded(id);
 
-            ShowMessage(result.Message, result.Success);
-            return RedirectToAction("Details", new { id = id });
-        }
+        //    ShowMessage(result.Message, result.Success);
+        //    return RedirectToAction("Details", new { id = id });
+        //}
 
         public ActionResult Delivered(int id)
         {

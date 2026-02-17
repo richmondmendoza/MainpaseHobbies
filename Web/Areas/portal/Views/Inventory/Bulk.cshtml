@@ -110,25 +110,9 @@
                 </div>
 
             </div>
-            <div class="card-body">
-                <table id="data-table" class="table table-sm table-bordered w-100">
-                    <thead>
-                        <tr>
-                            <th>&nbsp;</th>
-                            <th>Name</th>
-                            <th>Card #</th>
-                            <th>Set Code</th>
-                            <th>Set Name</th>
-                            <th>Foil Type</th>
-                            <th>Currency</th>
-                            <th>Price</th>
-                            <th>Available</th>
-                            <th>Owner</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div><!-- /.card-body -->
+            <div class="card-body" id="data-container">
+                @Html.Partial("_BulkList", new List<Dto.Dto.InventoryDetailsDto>())
+            </div>
 
             <div class="card-footer text-right">
                 <button class="btn btn-primary" disabled id="btn-save"><i class="fa fa-save"></i> Confirm and Save</button>
@@ -141,7 +125,7 @@
     <script src="~/Content/assets/plugins/select2/js/select2.min.js"></script>
     <script>
 
-        var dataTable = $('#data-table').DataTable({
+        @*var dataTable = $('#data-table').DataTable({
             "processing": true,
             "serverSide": true,
             "stateSave": true,
@@ -205,9 +189,62 @@
                 { "className": "text-center", "targets": 0 },
                 { "className": "text-right", "targets": 6 }
             ],
-        });
+        });*@
+
+        function LoadList() {
+            ShowLoading();
+            $.ajax({
+                "url": '@Url.Action("LoadBulkListPartial")',
+                "type": "get",
+                "data": {
+                    collectionGroup: $('#filter-collection').val(),
+                    cardOwnerId: $('#filter-owner').val(),
+                    setCode: $('#filter-set').val(),
+                    category: $('#filter-category').val(),
+                    searchParam: $('#filter-name').val(),
+                    foilType: "",
+                },
+                success: function (result) {
+                    $('#data-container').html(result);
+                    $('#data-table').DataTable({
+                        "processing": true,
+                        "serverSide": false,
+                        "stateSave": false,
+                        "searching": false,
+                        //"dom": 'lBrtip',
+                        "responsive": true,
+                        "autoWidth": true,
+                        "paging": true,
+                        buttons: [],
+                        "lengthMenu": [[20, 50, -1], [20, 50, 'All']]
+                    });
+
+                    switch ($('#slct-action').val()) {
+                        case "move":
+                            $('#slct-move-to-owner-container').removeClass('d-none');
+                            break;
+                        case "price":
+                            $('.txt-price').removeClass('d-none');
+                            $('.not-price').addClass('d-none');
+                        default:
+                            $('#slct-move-to-owner-container').addClass('d-none');
+
+                            if ($('#slct-action').val() === "") {
+                                $('#btn-save').prop('disabled', true);
+                            }
+                            break;
+                    }
+
+                },
+                "complete": function () {
+                    HideLoading();
+                }
+            });
+        }
 
         $(document).ready(function () {
+
+
             $('.select2').select2({ "theme": "bootstrap4" });
 
             $(document).on('click', '.chk-select-id', function (e) {
@@ -251,10 +288,10 @@
                         }
                         break;
                 }
-
             });
 
             $(document).on('click', '#btn-save', function (e) {
+                $('.select2').select2({ "theme": "bootstrap4" });
                 ShowLoading();
                 e.preventDefault();
                 const isEmptyRows = $('#data-table tbody tr td.dataTables_empty').length;
@@ -279,14 +316,15 @@
                     HideLoading();
                     $('#message-modal').modalMessage({
                         'message': 'There is no items selected to take actions.',
-                        'title':'Ooops!'
+                        'title': 'Ooops!'
                     });
                 }
             });
 
             $('#btn-apply-filter').on('click', function (e) {
-                ShowLoading();
-                dataTable.ajax.reload();
+                LoadList();
+                //ShowLoading();
+                //dataTable.ajax.reload();
             });
 
             function ConfirmAndSave(action, ids, ownerId) {
@@ -305,13 +343,13 @@
                         if (result.Success) {
                             HideLoading();
                             $('#message-modal')
-                            .one('hidden.bs.modal', function () {
-                                window.location.reload();
-                            })
-                            .modalMessage({
-                                'message': 'Success',
-                                'title': result.Message
-                            });
+                                .one('hidden.bs.modal', function () {
+                                    window.location.reload();
+                                })
+                                .modalMessage({
+                                    'message': 'Success',
+                                    'title': result.Message
+                                });
                         } else {
                             $('#message-modal').modalMessage({
                                 'message': 'Ooops!',
@@ -329,6 +367,7 @@
                     HideLoading();
                 });
             }
+
 
         });
     </script>

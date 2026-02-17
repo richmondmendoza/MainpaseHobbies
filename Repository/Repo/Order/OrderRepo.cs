@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Dynamic;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
@@ -105,6 +106,15 @@ namespace Repository.Repo.Order
             }
         }
 
+        public decimal GetRefundedAmount(int id)
+        {
+            using (IMSEntities context = new IMSEntities())
+            {
+                var items = context.Payments.Where(a => a.OrderId == id & a.Status == (int)PaymentStatus.Refunded).ToList();
+                return items.ToList().Sum(a => a.Amount);
+            }
+        }
+
         public OrderDetailsDto GetByOrderNumber(string orderNumber)
         {
             using (IMSEntities context = new IMSEntities())
@@ -183,7 +193,7 @@ namespace Repository.Repo.Order
                 {
                     if (record.IsPaid)
                     {
-                        foreach(var item in record.Order_Item)
+                        foreach (var item in record.Order_Item)
                         {
                             var inventoryCount = context.Inventory_Count.Where(a => a.Remarks == $"Order #{record.OrderNumber}");
                             foreach (var inv in inventoryCount)
@@ -376,9 +386,33 @@ namespace Repository.Repo.Order
             return result;
         }
 
+        public IEnumerable<SalesDisplayDto> GetSalesDisplay(DateTime dateFrom, DateTime dateTo)
+        {
+            using (IMSEntities context = new IMSEntities())
+            {
+                dateFrom = dateFrom.Date;
+                dateTo = dateTo.Date.AddDays(1).AddSeconds(-1);
 
+                var records = context.Payments.Where(a => a.Status == (int)PaymentStatus.Paid | a.Status == (int)PaymentStatus.Refunded);
+                records = records.Where(a => a.CreatedAt >= dateFrom && a.CreatedAt <= dateTo);
 
+                var list = from p in records
+                           join o in context.Orders on p.OrderId equals o.Id
+                           select new SalesDisplayDto
+                           {
+                               OrderId = o.Id,
+                               OrderNumber = o.OrderNumber,
+                               PaymentDate = p.CreatedAt,
+                               Amount = p.Amount,
+                               Currency = o.Currency,
+                               Remarks = p.PayoneerId,
+                               IsRefund = p.Status == (int)PaymentStatus.Refunded
+                           };
 
+                return list.ToList();
+            }
+
+        }
 
 
     }

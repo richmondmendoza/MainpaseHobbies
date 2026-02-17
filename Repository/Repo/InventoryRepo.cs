@@ -162,7 +162,8 @@ namespace Repository.Repo
                 var records = context.Inventories.Where(i => !i.IsDeleted).Include(b => b.Inventory_Count);
 
                 var collectionGroups = collectionGroup.Split('|').Where(a => !string.IsNullOrEmpty(a));
-                records = records.Where(i => collectionGroups.Any(b => i.CollectionGroup.ToLower() == b.ToLower()));
+                if (!collectionGroups.Any(a => a == "all"))
+                    records = records.Where(i => collectionGroups.Any(b => i.CollectionGroup.ToLower() == b.ToLower()));
 
                 if (userId > 0)
                 {
@@ -243,7 +244,8 @@ namespace Repository.Repo
 
                 if (!string.IsNullOrEmpty(collection))
                 {
-                    records = records.Where(i => i.CollectionGroup.ToLower().Replace(" ", "") == collection.ToLower().Replace(" ", ""));
+                    if (collection != "all")
+                        records = records.Where(i => i.CollectionGroup.ToLower().Replace(" ", "") == collection.ToLower().Replace(" ", ""));
                 }
 
                 if (!string.IsNullOrEmpty(searchParam))

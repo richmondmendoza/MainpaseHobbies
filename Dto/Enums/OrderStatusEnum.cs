@@ -46,7 +46,8 @@ namespace Dto.Enums
         Paid,           // Payment successful
         Failed,         // Payment failed
         Cancelled,      // User cancelled
-        Expired         // Payment not completed in time
+        Expired,         // Payment not completed in time
+        Refunded
     }
 
 

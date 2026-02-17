@@ -1,6 +1,4 @@
 ﻿
-@model IEnumerable<Dto.Dto.InventoryDetailsDto>
-
 @{
     ViewBag.Title = "Inventories";
     var owners = ViewBag.CardOwners as List<System.Web.Mvc.SelectListItem>;
@@ -39,6 +37,12 @@
                     <div class="col-auto row mb-2">
                         <input type="hidden" id="filter-collection" />
                         <label class="col-12 col-form-label">Collection:</label>
+                        <div class="col-auto">
+                            <div class="icheck-primary">
+                                <input type="checkbox" id="chk-collection" class="chk-filter" cont="filter-collection" link-val="all" />
+                                <label for="chk-collection">All</label>
+                            </div>
+                        </div>
                         <div class="col-auto">
                             <div class="icheck-primary">
                                 <input type="checkbox" id="chk-mtg" class="chk-filter" cont="filter-collection" link-val="magic the gathering" />
@@ -129,26 +133,9 @@
                     </ul>
                 </div>
             </div>
-            <div class="card-body">
-                <table id="data-table" class="table table-sm table-bordered w-100">
-                    <thead>
-                        <tr>
-                            <th>Name</th>
-                            <th>Card #</th>
-                            <th>Set Code</th>
-                            <th>Set Name</th>
-                            <th>Foil Type</th>
-                            <th>Currency</th>
-                            <th>Price</th>
-                            <th>Available</th>
-                            <th>Owner</th>
-                            <th>&nbsp;</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-            </div><!-- /.card-body -->
+            <div class="card-body" id="data-container">
+                @Html.Partial("_InventoryList", new List<Dto.Dto.InventoryDetailsDto>())
+            </div>
         </div>
     </div>
 </div>
@@ -156,7 +143,7 @@
 @section scripts{
     <script src="~/Content/assets/plugins/select2/js/select2.min.js"></script>
     <script>
-        var dataTable = $('#data-table').DataTable({
+        @*var dataTable = $('#data-table').DataTable({
             "processing": true,
             "serverSide": true,
             "stateSave": true,
@@ -206,7 +193,40 @@
                 { "className": "text-center", "targets": 0 },
                 { "className": "text-right", "targets": 5 }
             ],
-        });
+        });*@
+
+        function LoadList() {
+            ShowLoading();
+            $.ajax({
+                "url": '@Url.Action("LoadListPartial")',
+                "type": "get",
+                "data": {
+                    collectionGroup: $('#filter-collection').val(),
+                    cardOwnerId: $('#filter-owner').val(),
+                    foilType: $('#filter-foil-type').val(),
+                    category: $('#filter-category').val(),
+                    searchParam: $('#filter-search').val()
+                },
+                success: function (result) {
+                    $('#data-container').html(result);
+                    $('#data-table').DataTable({
+                        "processing": true,
+                        "serverSide": false,
+                        "stateSave": false,
+                        "searching": false,
+                        //"dom": 'lBrtip',
+                        "responsive": true,
+                        "autoWidth": true,
+                        "paging": true,
+                        buttons: [],
+                        "lengthMenu": [[20, 50, -1], [20, 50, 'All']]
+                    });
+                },
+                "complete": function () {
+                    HideLoading();
+                }
+            });
+        }
 
         $(document).ready(function () {
             $('.select2').select2({ "theme": "bootstrap4" });
@@ -224,8 +244,9 @@
             });
 
             $('#btn-apply-filter').on('click', function (e) {
-                ShowLoading();
-                dataTable.ajax.reload();
+                LoadList();
+                //ShowLoading();
+                //dataTable.ajax.reload();
             });
 
             $(document).on('click', '.chk-filter', function (e) {

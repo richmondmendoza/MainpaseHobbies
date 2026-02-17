@@ -48,6 +48,7 @@
 
     <div class="container mb-4 d-flex">
         <select class="form-control input-sm" name="Collection" style="max-width: 250px;">
+            <option value="all" @(Model.Collection.ToLower() == "all" ? "Selected" : "")>All</option>
             <option value="magic the gathering" @(Model.Collection.ToLower() == "magic the gathering" ? "Selected" : "")>Magic the Gathering</option>
             <option value="grand archive" @(Model.Collection.ToLower() == "grand archive" ? "Selected" : "")>Grand Archive</option>
         </select>
