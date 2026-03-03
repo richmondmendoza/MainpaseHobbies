@@ -100,13 +100,13 @@ namespace PaymentGateway.Coins.Services
 
         public QrModel GenerateDynamicQR(object payload)
         {
-            var path = "/openapi/fiat/v1/qr/generate-dynamic-qr";
+            var path = "/openapi/fiat/v1/generate_qr_code";
             return GenerateQR(path, payload);
         }
 
         public QrModel GenerateStaticQR(object payload)
         {
-            var path = "/openapi/fiat/v1/generate_static_qr_code";
+            var path = "/openapi/fiat/v1/generate/static/qr_code";
             return GenerateQR(path, payload);
         }
 
