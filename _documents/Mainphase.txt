@@ -12,6 +12,7 @@ Payoneer - payoneer@N3WMA1NPHAS3
 
 developer0126@gmail.com
 J@nuary26@mon
+1224 - coins.ph (sandbox)
 
 
 
@@ -22,3 +23,11 @@ secret: 5Z04tOP8droGmF8WzhiTc5uCOrVgjfW0OnVb0cxxnaYRIYlxLvhyrZu2fceyHHFb
 Prod
 api key: JJ2WtMbDjcyv4F3V1JL8pmwbvqy3NurSzWuAb6fk1oj6RSfrvLDFIbWAuOhPbz56
 secret: bZ2dEsRd5CnlkjOWaKLN1L8Tbu5jOV13SgOGDbR23qBUXQNwwiwZwuEXyhv97mAF
+
+35.79.71.180;13.115.18.154;52.194.29.150;103.60.171.202;2001:fd8:d220:d100:49ba:634e:6aa0:6c43
+
+
+
+
+api key: jbyKTIHMbd1Bxvng0XCWCkXajjJLg3jKDZP1i2OtDRSPD1Z6Q5kmlhNjeVj3VZu6
+secret: dFae5q69GIqvws6HEQyT9FJLNEtr26RsZOLqLMNteufH9smIwX1Tp61HYbHst5Mv

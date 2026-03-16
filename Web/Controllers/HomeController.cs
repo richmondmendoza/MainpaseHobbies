@@ -102,7 +102,17 @@ namespace Web.Controllers
                         var conversionRate = ConversionInfo.Amount;
                         var currentPrice = scryfallModel.Details.Price / conversionRate;
                         var isFoiled = scryfallModel.Details.FoilType.ToLower() != "non-foil" & scryfallModel.Details.FoilType.ToLower() != "normal";
+
                         var scryfallPrice = Convert.ToDecimal(isFoiled ? (scryfallModel.ScryfallCard.Prices?.UsdFoil ?? currentPrice.ToString()) : (scryfallModel.ScryfallCard.Prices?.Usd ?? currentPrice.ToString()));
+                        if (scryfallModel.ScryfallCard.Prices?.UsdFoil == null & scryfallModel.ScryfallCard.Prices?.Usd == null & scryfallModel.ScryfallCard.Prices?.UsdEtched != null)
+                        {
+                            scryfallPrice = Convert.ToDecimal(scryfallModel.ScryfallCard.Prices?.UsdEtched ?? currentPrice.ToString());
+                        }
+                        else
+                        {
+                            scryfallPrice = Convert.ToDecimal(isFoiled ? (scryfallModel.ScryfallCard.Prices?.UsdFoil ?? currentPrice.ToString()) : (scryfallModel.ScryfallCard.Prices?.Usd ?? currentPrice.ToString()));
+                        }
+
                         if (currentPrice != scryfallPrice)
                         {
                             scryfallModel.Details.Price = scryfallPrice * conversionRate;
@@ -135,9 +145,14 @@ namespace Web.Controllers
                 using (HttpClient client = new HttpClient())
                 {
                     var version = $"{new Random().Next()}.{new Random().Next()}";
-                    client.DefaultRequestHeaders.UserAgent.ParseAdd($"MyApp/{version}");
+                    client.DefaultRequestHeaders.Clear();
+                    client.DefaultRequestHeaders.Add("User-Agent", $"MyMTGApp{version:n0}/{version} (example@email.com)");
+                    client.DefaultRequestHeaders.Add("Accept", "application/json");
 
-                    var cardJson = client.GetStringAsync(cardUrl).Result;
+                    var response = client.GetAsync(cardUrl).Result;
+                    response.EnsureSuccessStatusCode();
+
+                    var cardJson = response.Content.ReadAsStringAsync().Result;
                     card = JsonConvert.DeserializeObject<ScryfallCard>(cardJson);
 
                     if (card.CardFaces != null & card.CardFaces.Any())

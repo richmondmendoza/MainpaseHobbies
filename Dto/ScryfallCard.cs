@@ -278,6 +278,9 @@ namespace Dto
         [JsonProperty("usd_foil")]
         public string UsdFoil { get; set; }
 
+        [JsonProperty("usd_etched")]
+        public string UsdEtched { get; set; }
+
         [JsonProperty("eur")]
         public string Eur { get; set; }
 

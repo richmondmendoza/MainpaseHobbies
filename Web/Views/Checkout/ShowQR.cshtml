@@ -3,10 +3,12 @@
 @{
     ViewBag.Title = "Scan QR";
     var user = Web.Controllers.BaseController.Identity;
+    var sysInfo = Web.Controllers.BaseController.SystemInfo;
 
     // Optional context you can pass from controller or query
     var checkoutId = ViewBag.CheckoutId as string ?? Request["checkoutId"];
     var requestId = ViewBag.RequestId as string ?? Request["requestId"];
+    var amount = ViewBag.Amount as string ?? Request["amount"];
     var deeplink = ViewBag.CheckoutDeeplinkUrl as string; // e.g., coins://webpay/fiat?checkoutId=...
 }
 <section class="container py-5 text-center">
@@ -14,8 +16,9 @@
         <div class="col-lg-8">
             <div class="card shadow-sm">
                 <div class="card-body p-4">
-                    <div class="mb-3">
-                        <span class="badge bg-success px-3 py-2 fs-6">Scan to Pay (QR PH via Coins)</span>
+                    <div class="mb-3 h3">
+                        @*<span class="badge bg-success px-3 py-2 fs-6">Scan to Pay (QR PH via Coins)</span>*@
+                        Scan <img src="~/Content/website_img/qrph.png" height="30" /> code to pay
                     </div>
 
 
@@ -25,17 +28,39 @@
                     }
                     else if (!string.IsNullOrEmpty(Model.QrContent))
                     {
-                        <div id="qrcode"></div>
+                        <div class="d-flex align-content-center justify-content-center">
+                            <div id="qrcode"></div>
+                        </div>
                         <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-                        <script> new QRCode(document.getElementById('qrcode'), "@Model.QrContent"); </script>
+                        <script>
+
+                            new QRCode(document.getElementById('qrcode'), "@Model.QrContent");
+
+                            setInterval(function () {
+
+                                fetch("/checkout/CheckQrStatus")
+                                    .then(res => res.json())
+                                    .then(data => {
+
+                                        if (data.status == "PAID") {
+                                            window.location = "/checkout/CoinsSuccess?requestId=" + requestId;
+                                        }
+
+                                    });
+
+                            }, 5000);
+
+                        </script>
                     }
 
                     <p class="text-muted mt-3">Order Ref: <strong>@Model.RequestId</strong></p>
+                    <p class="text-muted mt-3 h3 text-center">PHP <strong>@amount</strong></p>
+                    <p class="text-muted mt-3">@sysInfo.LongName</p>
 
-                    <div class="mt-4">
-                        <a class="btn btn-outline-secondary" href="@Url.Action("CheckStatus","QrCheckout", new { qrId = Model.QrId })">Refresh Status</a>
-                        <a class="btn btn-outline-danger" href="@Url.Action("Cancel","QrCheckout", new { qrId = Model.QrId })">Cancel</a>
-                    </div>
+                    @*<div class="mt-4">
+                            <a class="btn btn-outline-secondary" href="@Url.Action("CheckStatus","QrCheckout", new { qrId = Model.QrId })">Refresh Status</a>
+                            <a class="btn btn-outline-danger" href="@Url.Action("Cancel","QrCheckout", new { qrId = Model.QrId })">Cancel</a>
+                        </div>*@
 
                 </div>
             </div>

@@ -19,25 +19,32 @@ namespace PaymentGateway.Coins.Services
 
         public CoinsPH()
         {
+        }
+
+        private void AddHeaders(string payload)
+        {
             _client = new HttpClient();
 
             _client.DefaultRequestHeaders.Remove("X-COINS-APIKEY");
             _client.DefaultRequestHeaders.Remove("Timestamp");
             _client.DefaultRequestHeaders.Remove("Signature");
+            _client.DefaultRequestHeaders.Clear();
 
             _client.DefaultRequestHeaders.Add("X-COINS-APIKEY", CoinModel.ApiKey);
             _client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             _client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", CoinModel.ApiKey);
+
+            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString();
+            var signature = ComputeHmacSha256(payload);
+            _client.DefaultRequestHeaders.Add("Timestamp", timestamp);
+            _client.DefaultRequestHeaders.Add("Signature", signature);
         }
 
         public CoinsCreateCheckoutResponse CreatePayment(CoinsCreateCheckoutRequest payload)
         {
             var jsonPayload = JsonConvert.SerializeObject(payload);
+            AddHeaders(jsonPayload);
             var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
-            var signature = ComputeHmacSha256(jsonPayload);
-
-            _client.DefaultRequestHeaders.Add("Timestamp", DateTimeOffset.UtcNow.ToUnixTimeMilliseconds().ToString());
-            _client.DefaultRequestHeaders.Add("Signature", signature);
             var response = _client.PostAsync(CoinModel.WebPayUrl + "/openapi/fiat/v1/checkout/create-checkout", content).Result;
 
             response.EnsureSuccessStatusCode();
@@ -73,13 +80,8 @@ namespace PaymentGateway.Coins.Services
 
         private QrModel GenerateQR(string path, object payload)
         {
-            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
             var jsonPayload = JsonConvert.SerializeObject(payload);
-            var signature = ComputeHmacSha256(jsonPayload);
-
-            _client.DefaultRequestHeaders.Add("Timestamp", timestamp.ToString());
-            _client.DefaultRequestHeaders.Add("Signature", signature);
-
+            AddHeaders(jsonPayload);
             var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
             var response = _client.PostAsync(CoinModel.WebPayUrl + path, content).Result;
             response.EnsureSuccessStatusCode();
@@ -87,14 +89,18 @@ namespace PaymentGateway.Coins.Services
             var resultJson = response.Content.ReadAsStringAsync().Result;
             dynamic result = JsonConvert.DeserializeObject(resultJson);
 
+            dynamic test = JsonConvert.DeserializeObject(jsonPayload);
+
             var model = new QrModel
             {
                 RequestId = result.data.requestId,
                 QrId = (string)result.data?.qrId,
                 QrImageUrl = (string)result.data?.qrImageUrl,
-                QrContent = (string)result.data?.qrContent
+                QrContent = (string)result.data?.qrCode,
+                Expiry = DateTime.Now.AddSeconds(Convert.ToDouble(test.expiredSeconds))
             };
 
+            _client.Dispose();
             return model;
         }
 

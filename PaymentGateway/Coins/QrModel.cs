@@ -12,5 +12,6 @@ namespace PaymentGateway.Coins
         public string QrId { get; set; } = string.Empty;
         public string QrImageUrl { get; set; } = string.Empty;
         public string QrContent { get; set; } = string.Empty;
+        public DateTime Expiry { get; set; } = DateTime.UtcNow.AddSeconds(900); // Default expiry time, adjust as needed
     }
 }

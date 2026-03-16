@@ -23,7 +23,7 @@ namespace Repository.Repo
 {
     public class InventoryRepo
     {
-        HttpClient _client;
+        private static readonly HttpClient _client = new HttpClient();
         private decimal _attemptCount = 1.0M;
 
         public InventoryDetailsDto ToDetails(Inventory inventory, DbSet<Database.SQL.User> users, bool isPHPDisplay = false)
@@ -525,6 +525,7 @@ namespace Repository.Repo
 
                 foreach (var record in records)
                 {
+                    _attemptCount++;
                     index++;
                     Console.WriteLine($"{index}. {record.Name}");
                     switch (record.CollectionGroup.ToLower().Replace(" ", ""))
@@ -544,6 +545,10 @@ namespace Repository.Repo
                                 else if (details_mtg.Item2.Prices?.Usd != null)
                                 {
                                     record.Price = Convert.ToDecimal(details_mtg.Item2.Prices.Usd) * conversionRate;
+                                }
+                                else if (details_mtg.Item2.Prices?.Usd == null & details_mtg.Item2.Prices?.UsdFoil == null & details_mtg.Item2.Prices?.UsdEtched != null)
+                                {
+                                    record.Price = Convert.ToDecimal(details_mtg.Item2.Prices.UsdEtched) * conversionRate;
                                 }
 
                                 Console.WriteLine($"-> Update for {record.Name} has been completed.");
@@ -587,7 +592,6 @@ namespace Repository.Repo
 
         public async Task<Tuple<byte[], ScryfallCard>> FetchCardDetailsAsync_Scryfall(string scryfallId, string setCode, string collectorNumber)
         {
-            _client = new HttpClient();
             var imageBytes = new byte[0];
             var card = new ScryfallCard();
 
@@ -602,9 +606,14 @@ namespace Repository.Repo
                 cardUrl = $"https://api.gatcg.com/cards/{setCode}/{collectorNumber}";
             }
 
-            _client.DefaultRequestHeaders.UserAgent.ParseAdd($"MyApp{_attemptCount.ToString("n0")}/{_attemptCount}");
+            _client.DefaultRequestHeaders.Clear();
+            _client.DefaultRequestHeaders.Add("User-Agent", $"MyMTGApp{_attemptCount:n0}/{_attemptCount} (example@email.com)");
+            _client.DefaultRequestHeaders.Add("Accept", "application/json");
 
-            var cardJson = _client.GetStringAsync(cardUrl).Result;
+            var response = _client.GetAsync(cardUrl).Result;
+            response.EnsureSuccessStatusCode();
+
+            var cardJson = response.Content.ReadAsStringAsync().Result;
             card = JsonConvert.DeserializeObject<ScryfallCard>(cardJson);
 
 
@@ -631,13 +640,12 @@ namespace Repository.Repo
                     imageBytes = _client.GetByteArrayAsync(card.ImageUris.Png).Result;
             }
 
-            _client.Dispose();
+            //_client.Dispose();
             return Tuple.Create(imageBytes, card);
         }
 
         public async Task<Tuple<byte[], GrandArchiveCard>> FetchCardDetailsAsync_GrandArchive(string slugName, string setCode, string collectorNumber)
         {
-            _client = new HttpClient();
             var imageBytes = new byte[0];
             var card = new GrandArchiveCard();
             string cardUrl = $"https://api.gatcg.com/cards/{slugName}";
@@ -665,7 +673,7 @@ namespace Repository.Repo
                 }
             }
 
-            _client.Dispose();
+            //_client.Dispose();
             return Tuple.Create(imageBytes, card);
         }
 

@@ -34,7 +34,7 @@ namespace Web.Controllers
             {
                 UserId = Identity?.Id ?? 0,
                 DateCreated = DateTime.Now,
-                PaymentMethod = PaymentMethodEnum.Cash,
+                PaymentMethod = PaymentMethodEnum.CoinsPH,
                 Status = OrderStatusEnum.Pending,
                 DeliveryStatus = DeliveryStatusEnum.Pending,
                 DeliveryMethod = DeliveryMethodEnum.StorePickup,
@@ -81,8 +81,20 @@ namespace Web.Controllers
         public ActionResult Index(CheckoutViewModel model)
         {
             var order = new ReturnValue();
-            var requestId = $"ORD{DateTime.UtcNow:yyyyMMddHHmmssfff}".Substring(0, 19);
+            var requestId = "";
+            var exisitingOrderNumber = Session["OrderNumber"] as string;
+
+            if (!string.IsNullOrEmpty(exisitingOrderNumber))
+            {
+                requestId = exisitingOrderNumber;
+            }
+            else
+            {
+                requestId = $"ORD{DateTime.UtcNow:yyyyMMddHHmmssfff}".Substring(0, 19);
+                Session["OrderNumber"] = requestId;
+            }
             model.OrderNumber = requestId;
+
             var customer = _customer.Add(new CustomerDetailDto()
             {
                 Address1 = model.Address1,
@@ -173,18 +185,41 @@ namespace Web.Controllers
                     //    totalAmount = (model.Total + model.Shipping + model.Tax + fee).ToString("F2"),
                     //    remark = $"Order #{requestId}",
                     //};
-                    var coinRequest = new 
+                    model.Total = 1;
+                    var coinRequest = new
                     {
                         requestId = requestId,
+                        type = "DYNAMIC",
+                        source = SystemInfo.Name,
                         amount = (model.Total + model.Shipping + model.Tax).ToString("F2"),
                         currency = "PHP",
-                        expireSeconds = "600",
-                        merchantName = SystemInfo.LongName,
                         remark = $"Order #{requestId}",
-                        description = $"Payment for Order #{requestId}",
+                        expiredSeconds = 900
                     };
 
+                    ViewBag.Amount = coinRequest.amount;
+
+                    //        {
+                    //            requestId = requestId,
+                    //            amount = ,
+                    //            currency = "PHP",
+                    //            expireSeconds = "600",
+                    //            merchantName = SystemInfo.LongName,
+                    //            remark = $"Order #{requestId}",
+                    //            description = $"Payment for Order #{requestId}",
+                    //        }
+                    //;
+
+                    var existingQR = Session[$"CoinsPH_QR_{requestId}"] as QrModel;
+
+                    if (existingQR != null && existingQR.Expiry > DateTime.Now)
+                    {
+                        return View("ShowQR", existingQR);
+                    }
+
                     var qr = new CoinsPH().GenerateDynamicQR(coinRequest);
+                    Session[$"CoinsPH_QR_{requestId}"] = qr;
+                    Session["PaymentStatus"] = "PENDING";
 
                     //var coinResult = new CoinsPH().CreatePayment(coinRequest);
 
@@ -328,6 +363,31 @@ namespace Web.Controllers
                 ViewBag.LatestStatus = status;
             }
             return View();
+        }
+
+        public ActionResult CheckQrStatus()
+        {
+            string body;
+
+            using (var reader = new StreamReader(Request.InputStream))
+            {
+                body = reader.ReadToEnd();
+            }
+
+            try
+            {
+                dynamic data = JsonConvert.DeserializeObject(body);
+
+                var status = (string)data.data.status;
+
+                if (status == "SUCCESS")
+                {
+                    Session["PaymentStatus"] = "PAID";
+                }
+            }
+            catch (Exception ex) { }
+
+            return new HttpStatusCodeResult(200);
         }
 
 
