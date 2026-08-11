@@ -12,3 +12,10 @@ C:\Projects\_Test Projects\Mon2\IMS\Infrastructure\obj\Debug\Infrastructure.cspr
 C:\Projects\_Test Projects\Mon2\IMS\Infrastructure\obj\Debug\Infrastructure.csproj.CoreCompileInputs.cache
 C:\Projects\_Test Projects\Mon2\IMS\Infrastructure\obj\Debug\Infrastructure.dll
 C:\Projects\_Test Projects\Mon2\IMS\Infrastructure\obj\Debug\Infrastructure.pdb
+C:\Projects\_Test Projects\Mon2\Mainphase\Infrastructure\bin\Debug\Infrastructure.dll.config
+C:\Projects\_Test Projects\Mon2\Mainphase\Infrastructure\bin\Debug\Infrastructure.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Infrastructure\bin\Debug\Infrastructure.pdb
+C:\Projects\_Test Projects\Mon2\Mainphase\Infrastructure\obj\Debug\Infrastructure.csproj.AssemblyReference.cache
+C:\Projects\_Test Projects\Mon2\Mainphase\Infrastructure\obj\Debug\Infrastructure.csproj.CoreCompileInputs.cache
+C:\Projects\_Test Projects\Mon2\Mainphase\Infrastructure\obj\Debug\Infrastructure.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Infrastructure\obj\Debug\Infrastructure.pdb

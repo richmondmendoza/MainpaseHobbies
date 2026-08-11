@@ -3,6 +3,7 @@
 
 @{
     ViewBag.title = "Update Inventory Item";
+    var imagePath = Url.Content($"~/Content/website_img/card_img/{Model.Id.ToString()}.png");
 }
 <link href="~/Content/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
 <link href="~/Content/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css" rel="stylesheet" />
@@ -190,7 +191,7 @@
                         <div>
                             <div class="tcg-image-container">
                                 @Html.HiddenFor(a => a.Image)
-                                <img id="tcg-image-preview" class="tcg-image" src="data:image/@Model.ImageExtension;base64,@Model.ImageBase64" alt="Image preview" />
+                                <img id="tcg-image-preview" class="tcg-image" src="@imagePath" alt="Image preview" />
                                 <div class="tcg-foil"></div>
                             </div>
                         </div>

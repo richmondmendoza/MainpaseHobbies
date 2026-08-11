@@ -44,8 +44,10 @@
             @foreach (var item in banners)
             {
                 carIndex++;
+                var imagePath = Url.Content("~/Content/website_img/banner_img/" + item.Id.ToString() + ".png");
+
                 <div class="carousel-item @(carIndex == 1 ? "active" : "")">
-                    <img src="data:image/@item.Image.GetImageExtension().Replace(".", "");base64,@item.ImageBase64" alt="">
+                    <img src="@imagePath" alt="">
                 </div>
             }
 
@@ -79,12 +81,14 @@
             {
                 foreach (var item in inventories)
                 {
+                    var path = "~/Content/website_img/card_img/";
+                    var imagePath = Url.Content(path + item.Id.ToString() + ".png");
 
                     <div class="col-xl-3 col-md-4 d-flex" data-aos="zoom-in" data-aos-delay="100">
                         <a href="@Url.Action("CardDetails", "Home", new {area = "", cardId = item.EncId})">
                             <div class="team-member">
                                 <div class="member-img tcg-image-container">
-                                    <img id="tcg-image-preview" src="data:image/@item.MimeType;base64,@item.ImageBase64" class="img-fluid" alt="">
+                                    <img id="tcg-image-preview" src="@imagePath" class="img-fluid" alt="">
                                     @if (item.FoilType.ToLower().Replace(" ", "") == "foil" ||
                                          item.FoilType.ToLower().Replace(" ", "") == "etchedfoil")
                                     {
@@ -132,11 +136,12 @@
             int index = 0;
             foreach (var item in events.OrderByDescending(a => a.DateOfEvent))
             {
+                var imagePath = Url.Content($"~/Content/website_img/event_img/{item.Id.ToString()}.png");
                 if (index % 2 == 0)
                 {
                     <div class="row gy-4">
                         <div class="col-lg-6">
-                            <img src="data:image/@item.MimeType;base64,@item.FeaturedImageBase64" class="img-fluid rounded-4 mb-4" alt="">
+                            <img src="@imagePath" class="img-fluid rounded-4 mb-4" alt="">
                         </div>
                         <div class="col-lg-6 d-flex align-items-center">
                             <div class="content ps-0 ps-lg-5">

@@ -6,6 +6,8 @@
 @{
     ViewBag.Title = "Card Details";
     var cost = Model.Details.ManaCost.Split('|');
+
+    var imagePath = Url.Content("~/Content/website_img/card_img/" + Model.Details.Id.ToString() + ".png");
 }
 
 <style>
@@ -39,7 +41,7 @@
             <div class="col-lg-5" data-aos="fade-up" data-aos-delay="100">
                 <div class="services-list">
                     <div class="tcg-image-container">
-                        <img id="tcg-image-preview" src="data:image/@Model.Details.Image.GetImageExtension().Replace(".", "");base64,@Model.Details.ImageBase64" class="img-fluid" alt="">
+                        <img id="tcg-image-preview" src="@imagePath" class="img-fluid" alt="">
                         @if (Model.Details.FoilType.ToLower().Replace(" ", "") == "foil" ||
                              Model.Details.FoilType.ToLower().Replace(" ", "") == "etchedfoil")
                         {

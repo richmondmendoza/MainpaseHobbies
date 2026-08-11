@@ -195,7 +195,8 @@ namespace Repository.Repo.Order
                     {
                         foreach (var item in record.Order_Item)
                         {
-                            var inventoryCount = context.Inventory_Count.Where(a => a.Remarks == $"Order #{record.OrderNumber}");
+                            var remarks = $"Order #{record.OrderNumber}".ToString();
+                            var inventoryCount = context.Inventory_Count.Where(a => a.Remarks != null).AsEnumerable().Where(a => a.Remarks.Equals(remarks)).ToList();
                             foreach (var inv in inventoryCount)
                             {
                                 context.Inventory_Count.Remove(inv);
@@ -321,7 +322,8 @@ namespace Repository.Repo.Order
                     {
                         foreach (var item in record.Order_Item)
                         {
-                            var inventoryCount = context.Inventory_Count.Where(a => a.Remarks == $"Order #{record.OrderNumber}");
+                            var remarks = $"Order #{record.OrderNumber}";
+                            var inventoryCount = context.Inventory_Count.Where(a => a.Remarks != null).AsEnumerable().Where(a => a.Remarks.Equals(remarks)).ToList();
                             foreach (var inv in inventoryCount)
                             {
                                 context.Inventory_Count.Remove(inv);

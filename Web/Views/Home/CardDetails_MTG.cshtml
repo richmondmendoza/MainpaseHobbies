@@ -42,8 +42,26 @@
                         int index = 0;
                         foreach (var item in Model.ScryfallCard.CardFaces)
                         {
+                            var path = Dto.BaseSettings.StoragePath.CardImageStoragePath;
+                            if (!Directory.Exists(path))
+                            {
+                                Directory.CreateDirectory(path);
+                            }
+
+                            var image = Path.Combine(path, $"{Model.Details.Id.ToString()}_{(index > 0 ? "back" : "front")}.png");
+
+                            if (File.Exists(image))
+                            {
+                                File.Delete(image);
+                            }
+
+                            File.WriteAllBytes(image, Convert.FromBase64String(item.ImageData));
+
+
+                            var imagePath = Url.Content($"~/Content/website_img/card_img/{Model.Details.Id.ToString()}_{(index > 0 ? "back" : "front")}.png");
+
                             <div class="tcg-image-container @(index == 1 ? "hidden" : "")" id="@(index == 0 ? "image-front": "image-back")">
-                                <img id="tcg-image-preview" src="data:image/png;base64,@item.ImageData" class="img-fluid" alt="">
+                                <img id="tcg-image-preview" src="@imagePath" class="img-fluid" alt="">
                                 @if (Model.Details.FoilType.ToLower().Replace(" ", "") == "foil" ||
                                      Model.Details.FoilType.ToLower().Replace(" ", "") == "etchedfoil")
                                 {
@@ -56,8 +74,11 @@
                     }
                     else
                     {
+                        var path = "~/Content/website_img/card_img/";
+                        var imagePath = Url.Content(path + Model.Details.Id.ToString() + ".png");
+
                         <div class="tcg-image-container">
-                            <img id="tcg-image-preview" src="data:image/@Model.Details.Image.GetImageExtension().Replace(".", "");base64,@Model.Details.ImageBase64" class="img-fluid" alt="">
+                            <img id="tcg-image-preview" src="@imagePath" class="img-fluid" alt="">
                             @if (Model.Details.FoilType.ToLower().Replace(" ", "") == "foil" ||
                                  Model.Details.FoilType.ToLower().Replace(" ", "") == "etchedfoil")
                             {

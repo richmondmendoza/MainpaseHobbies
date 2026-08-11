@@ -223,10 +223,10 @@
                 <div class="col-12">
                     <a href="javascript:;" class="btn btn-default print" print-data="#print-data"><i class="fas fa-print"></i> Print</a>
 
-                    @if (!Model.IsPaid)
+                    @*@if (!Model.IsPaid)
                     {
                         <a href="@Url.Action("PayWithCoins", "MyOrders", new {area = "customer", id = Model.Id })" class="btn btn-primary ml-3 float-right">Pay with CoinsPH</a>
-                    }
+                    }*@
 
                     @if (Model.Status != Dto.Enums.OrderStatusEnum.Completed &&
                         Model.Status != Dto.Enums.OrderStatusEnum.Cancelled &&

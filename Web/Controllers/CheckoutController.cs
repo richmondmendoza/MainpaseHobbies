@@ -34,7 +34,7 @@ namespace Web.Controllers
             {
                 UserId = Identity?.Id ?? 0,
                 DateCreated = DateTime.Now,
-                PaymentMethod = PaymentMethodEnum.CoinsPH,
+                PaymentMethod = PaymentMethodEnum.Cash,
                 Status = OrderStatusEnum.Pending,
                 DeliveryStatus = DeliveryStatusEnum.Pending,
                 DeliveryMethod = DeliveryMethodEnum.StorePickup,

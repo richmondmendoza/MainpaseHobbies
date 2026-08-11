@@ -10,3 +10,15 @@ C:\Projects\_Test Projects\Mon2\IMS\Database\obj\Debug\Database.csproj.CoreCompi
 C:\Projects\_Test Projects\Mon2\IMS\Database\obj\Debug\Database.csproj.Up2Date
 C:\Projects\_Test Projects\Mon2\IMS\Database\obj\Debug\Database.dll
 C:\Projects\_Test Projects\Mon2\IMS\Database\obj\Debug\Database.pdb
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\bin\Debug\Database.dll.config
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\bin\Debug\Database.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\bin\Debug\Database.pdb
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\bin\Debug\EntityFramework.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\bin\Debug\EntityFramework.SqlServer.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\bin\Debug\EntityFramework.xml
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\bin\Debug\EntityFramework.SqlServer.xml
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\obj\Debug\Database.csproj.AssemblyReference.cache
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\obj\Debug\Database.csproj.CoreCompileInputs.cache
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\obj\Debug\Database.csproj.Up2Date
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\obj\Debug\Database.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\obj\Debug\Database.pdb

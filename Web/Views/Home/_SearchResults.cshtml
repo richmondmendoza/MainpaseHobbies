@@ -16,6 +16,13 @@
     foreach (var item in Model)
     {
         var url = Url.Action("CardDetails", "Home", new { area = "", cardId = item.EncId });
+        var path = Path.Combine(Dto.BaseSettings.StoragePath.CardImageStoragePath, $"{item.Id.ToString()}.png");
+        var imagePath = Url.Content("~/Content/website_img/card_img/" + item.Id.ToString() + ".png");
+
+        if (!File.Exists(path))
+        {
+            File.WriteAllBytes(path, item.Image);
+        }
 
         <div class="col-lg-4 col-md-6">
             <div class="card" style="border-radius: 10px;">
@@ -24,7 +31,7 @@
                         <div class="col-7">
                             <a href="@url">
                                 <div class="tcg-image-container">
-                                    <img id="tcg-image-preview" src="data:image/png;base64,@item.ImageBase64" class="img-fluid" alt="">
+                                    <img id="tcg-image-preview" src="@imagePath" class="img-fluid" alt="">
                                     @if (item.FoilType.ToLower().Replace(" ", "") == "foil" || item.FoilType.ToLower().Replace(" ", "") == "etchedfoil")
                                     {
                                         <div class="tcg-foil"></div>
