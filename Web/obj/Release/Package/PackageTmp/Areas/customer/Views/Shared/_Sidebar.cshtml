@@ -1,0 +1,55 @@
+﻿@using Web.Utils
+
+@{
+    var user = Web.Controllers.BaseController.Identity;
+}
+
+
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <!-- Brand Logo -->
+    <a href="@Url.Action("index", "home", new {area = ""})" class="brand-link">
+        <img src="~/Content/website_img/logo.jpg" alt="AdminLTE Logo" class="brand-image img-circle elevation-3" style="opacity: .8">
+        <span class="brand-text font-weight-light">Mainphase Hobbies</span>
+    </a>
+
+    <div class="sidebar">
+        <!-- Sidebar Menu -->
+        <nav class="mt-2">
+            <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+
+                <li class="nav-item">
+                    <a href="@Url.Action("Index", "myorders", new {area = "customer"})" class="nav-link @Html.RouteIf("customer", "myorders", "Index|Details", "active")">
+                        <i class="nav-icon fas fa-calendar"></i><p>My Orders</p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="@Url.Action("cart", "home", new {area = ""})" class="nav-link">
+                        <i class="nav-icon fa fa-cart-shopping"></i><p>My Shopping Cart</p>
+                    </a>
+                </li>
+
+                <li class="nav-header">SETTINGS</li>
+
+                <li class="nav-item">
+                    <a href="@Url.Action("ChangePassword", "myaccount", new {area = "customer"})" class="nav-link @Html.RouteIf("customer", "myaccount", "ChangePassword", "active")">
+                        <i class="nav-icon fas fa-users-cog"></i>
+                        <p>Change Password</p>
+                    </a>
+                </li>
+
+                @if (user.HasAdminAccess)
+                {
+                    <li class="nav-item">
+                        <a href="@Url.Action("Index", "Dashboard", new { area = "portal" })" class="nav-link">
+                            <i class="nav-icon fas fa-lock"></i>
+                            <p>Admin Portal</p>
+                        </a>
+                    </li>
+                }
+
+            </ul>
+        </nav>
+        <!-- /.sidebar-menu -->
+    </div>
+    <!-- /.sidebar -->
+</aside>

@@ -1,4 +1,7 @@
 
+remote desktop
+217.15.165.236
+HhASy6vzcG
 
 mainphasegh@gmail.com
 
@@ -25,6 +28,7 @@ api key: JJ2WtMbDjcyv4F3V1JL8pmwbvqy3NurSzWuAb6fk1oj6RSfrvLDFIbWAuOhPbz56
 secret: bZ2dEsRd5CnlkjOWaKLN1L8Tbu5jOV13SgOGDbR23qBUXQNwwiwZwuEXyhv97mAF
 
 35.79.71.180;13.115.18.154;52.194.29.150;103.60.171.202;2001:fd8:d220:d100:49ba:634e:6aa0:6c43
+
 
 
 

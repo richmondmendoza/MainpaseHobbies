@@ -1,0 +1,54 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mainphase | @ViewBag.Title</title>
+    <link href="~/favicon.ico" rel="icon">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&amp;display=fallback">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
+    @*<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">*@
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+
+    @Styles.Render("~/bundles/DataTables")
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+        }
+    </style>
+</head>
+<body class="sidebar-mini" style="height: auto;">
+    <div class="wrapper">
+        @Html.Partial("_Header")
+        @Html.Partial("_Sidebar")
+
+        <div class="content-wrapper">
+            @Html.Partial("_ContentHeader")
+            
+            <div class="content">
+                <div class="container-fluid">
+                    @RenderBody()
+                </div>
+            </div>
+        </div>
+
+        @Html.Partial("_ControlSidebar")
+        @Html.Partial("_Footer")
+
+        <div id="sidebar-overlay"></div>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+
+    @Scripts.Render("~/plugin/DataTables")
+    @Scripts.Render("~/plugin/adminLte")
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

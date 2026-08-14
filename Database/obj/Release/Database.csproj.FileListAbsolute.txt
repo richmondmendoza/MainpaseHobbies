@@ -1,0 +1,12 @@
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\bin\Release\Database.dll.config
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\bin\Release\Database.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\bin\Release\Database.pdb
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\bin\Release\EntityFramework.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\bin\Release\EntityFramework.SqlServer.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\bin\Release\EntityFramework.xml
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\bin\Release\EntityFramework.SqlServer.xml
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\obj\Release\Database.csproj.AssemblyReference.cache
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\obj\Release\Database.csproj.CoreCompileInputs.cache
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\obj\Release\Database.csproj.Up2Date
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\obj\Release\Database.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Database\obj\Release\Database.pdb

@@ -220,6 +220,7 @@
     <Compile Include="Areas\portal\portalAreaRegistration.cs" />
     <Compile Include="Controllers\BaseController.cs" />
     <Compile Include="Controllers\CheckoutController.cs" />
+    <Compile Include="Controllers\HeartbeatController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MainSiteController.cs" />
     <Compile Include="Controllers\WebhookController.cs" />
@@ -2279,8 +2280,6 @@
     <Content Include="Content\website_img\card_img\17.png" />
     <Content Include="Content\website_img\card_img\18.png" />
     <Content Include="Content\website_img\card_img\19.png" />
-    <Content Include="Content\website_img\card_img\1_back.png" />
-    <Content Include="Content\website_img\card_img\1_front.png" />
     <Content Include="Content\website_img\card_img\2.png" />
     <Content Include="Content\website_img\card_img\20.png" />
     <Content Include="Content\website_img\card_img\21.png" />
@@ -2516,7 +2515,6 @@
     <Content Include="Areas\customer\Views\Shared\_Sidebar.cshtml" />
     <Content Include="Areas\customer\Views\_ViewStart.cshtml" />
     <Content Include="Areas\customer\Views\MyAccount\Index.cshtml" />
-    <Content Include="Content\website_img\5.webp" />
     <Content Include="Areas\portal\Views\Inventory\Upload.cshtml" />
     <Content Include="Areas\portal\Views\Inventory\Update.cshtml" />
     <Content Include="Areas\portal\Views\Account\Login.cshtml" />

@@ -1,0 +1,60 @@
+﻿@using Repository.Extensions;
+@using Infrastructure;
+
+@model IEnumerable<Dto.Dto.CardDetailsDto>
+
+@{
+    ViewBag.Title = "Shop";
+}
+
+
+<style>
+    #data-loader {
+        height: 150px !important;
+        position: relative !important;
+        background-color: transparent !important;
+    }
+
+        #data-loader .spinner {
+            color: black;
+        }
+
+    .card-containers {
+    }
+</style>
+
+<section id="team" class="team section">
+    <div class="container">
+
+        <div id="data-loader" class="preloader flex-column justify-content-center align-items-center w-100">
+            <span class="spinner"></span>
+        </div>
+
+        <div class="row" id="data-container"></div>
+    </div>
+
+</section>
+
+
+@section scripts{
+
+    <script>
+
+        $(document).ready(function () {
+
+            $.ajax({
+                url: '@Url.Action("GetResults")',
+                type: 'get',
+                data: {},
+                success: function (results) {
+                    $('#data-container').html(results);
+                    $('#data-loader').hide();
+                }
+            })
+
+
+        });
+
+    </script>
+
+}

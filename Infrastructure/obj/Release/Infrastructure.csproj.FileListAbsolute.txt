@@ -1,0 +1,7 @@
+C:\Projects\_Test Projects\Mon2\Mainphase\Infrastructure\bin\Release\Infrastructure.dll.config
+C:\Projects\_Test Projects\Mon2\Mainphase\Infrastructure\bin\Release\Infrastructure.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Infrastructure\bin\Release\Infrastructure.pdb
+C:\Projects\_Test Projects\Mon2\Mainphase\Infrastructure\obj\Release\Infrastructure.csproj.AssemblyReference.cache
+C:\Projects\_Test Projects\Mon2\Mainphase\Infrastructure\obj\Release\Infrastructure.csproj.CoreCompileInputs.cache
+C:\Projects\_Test Projects\Mon2\Mainphase\Infrastructure\obj\Release\Infrastructure.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Infrastructure\obj\Release\Infrastructure.pdb

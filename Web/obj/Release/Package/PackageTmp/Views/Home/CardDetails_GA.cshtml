@@ -1,0 +1,139 @@
+﻿
+@using Repository.Extensions;
+
+@model Web.Models.GaCardDetailsViewModel
+
+@{
+    ViewBag.Title = "Card Details";
+    var cost = Model.Details.ManaCost.Split('|');
+
+    var imagePath = Url.Content("~/Content/website_img/card_img/" + Model.Details.Id.ToString() + ".png");
+}
+
+<style>
+    .badge {
+        width: 80px;
+    }
+
+    .hidden {
+        display: none !important;
+    }
+</style>
+
+<div class="page-title" data-aos="fade">
+    <nav class="breadcrumbs">
+        <div class="container">
+            <ol>
+                <li><a href="@Url.Action("Index", "Home", new { area ="" })">Home</a></li>
+                <li>Details</li>
+                <li class="current">@Model.Details.Name</li>
+            </ol>
+        </div>
+    </nav>
+</div>
+
+<section id="service-details" class="service-details section">
+
+    <div class="container">
+
+        <div class="row gy-4">
+
+            <div class="col-lg-5" data-aos="fade-up" data-aos-delay="100">
+                <div class="services-list">
+                    <div class="tcg-image-container">
+                        <img id="tcg-image-preview" src="@imagePath" class="img-fluid" alt="">
+                        @if (Model.Details.FoilType.ToLower().Replace(" ", "") == "foil" ||
+                             Model.Details.FoilType.ToLower().Replace(" ", "") == "etchedfoil")
+                        {
+                            <div class="tcg-foil"></div>
+                        }
+                    </div>
+                </div>
+                @*<h4>@Model.Details.PurchaseCurrency @Model.Details.Price.ToString("n2")</h4>*@@*<p>Nam voluptatem quasi numquam quas fugiat ex temporibus quo est. Quia aut quam quod facere ut non occaecati ut aut. Nesciunt mollitia illum tempore corrupti sed eum reiciendis. Maxime modi rerum.</p>*@
+            </div>
+
+            <div class="col-lg-7" data-aos="fade-up" data-aos-delay="200">
+
+                <img src="assets/img/services.jpg" alt="" class="img-fluid services-img">
+                <h3>@Model.Details.Name</h3>
+                <p class="text-bold">[@Model.Details.SetCode] - @Model.Details.Collector</p>
+                <p>@Model.Details.SetName</p>
+
+                <p class="text-bold mb-0">Details</p>
+                <p>@Html.Raw(Model.GrandArchiveCard.effect_raw)</p>
+
+                <p>
+                    Rarity: @Model.GrandArchiveCard.editions.FirstOrDefault().rarity.ToString() <br />
+                    Number: @Model.Details.Collector <br />
+                    Card Type: @string.Join(",", Model.GrandArchiveCard.types) <br />
+                    Card Subtype: @string.Join(",", Model.GrandArchiveCard.subtypes) <br />
+                    Element: @string.Join(",", Model.GrandArchiveCard.elements) <br />
+                    Class: @string.Join(",", Model.GrandArchiveCard.classes) <br />
+                    @cost[0] Cost: @cost[1] <br />
+                    Power: @Model.GrandArchiveCard.power <br />
+                    Life: @Model.GrandArchiveCard.life <br />
+                </p>
+
+                <p>
+                    Condition: @Model.Details.Condition.Replace("_", " ").ToUpper() <br />
+                    Type: @Model.Details.FoilType.ToUpper() <br />
+                </p>
+
+                <p class="h4">
+                    Stock: @Model.Details.InventoryCounts.Sum(a => a.Quantity).ToString("n0")
+                </p>
+                <p>
+                    <h3>@Model.Details.PurchaseCurrency.ToUpper() @Model.Details.Price.ToString("n2")</h3>
+                </p>
+                <div class="row">
+                    <div class="col-auto pr-0 ml-0">
+                        <input type="number" min="1" max="@Model.Details.Count" value="1" class="form-control text-sm" id="quantity" name="quantity" />
+                    </div>
+                    <div class="col-5 pl-0 ml-0">
+                        <btn id="btn-add-to-cart" class="btn btn-primary">Add to cart</btn>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+@section scripts{
+    <script>
+
+        function rotate(id) {
+            angle += 45;
+            $(id).css({ 'transform': 'rotate(' + angle + 'deg)' });
+        }
+
+        $(document).ready(function () {
+
+            $('#btn-add-to-cart').on('click', function (e) {
+                AddToCart({
+                    limit: @((int)Model.Details.Count),
+                    value: $('#quantity').val(),
+                    cardId: "@Infrastructure.Fletcher.Encrypt(Model.Details.Id.ToString())",
+                });
+            });
+
+            $(document).on('click', '#btn-rotate', function () {
+
+                if ($("#image-back").hasClass("hidden")) {
+                    $("#image-front").addClass("hidden");
+                    $("#image-back").removeClass("hidden");
+                } else {
+                    $("#image-front").removeClass("hidden");
+                    $("#image-back").addClass("hidden");
+                }
+
+            });
+
+
+        });
+
+    </script>
+
+}

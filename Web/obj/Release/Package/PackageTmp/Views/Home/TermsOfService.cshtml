@@ -1,0 +1,93 @@
+﻿
+@{
+    ViewBag.Title = "Terms and Conditions";
+    var info = Web.Controllers.BaseController.SystemInfo;
+}
+
+<div class="page-title" data-aos="fade">
+    <nav class="breadcrumbs">
+        <div class="container">
+            <ol>
+                <li><a href="@Url.Action("Index", "Home", new { area ="" })">Home</a></li>
+                <li class="current">Terms and Conditions</li>
+            </ol>
+        </div>
+    </nav>
+</div>
+
+<section id="contact" class="contact section">
+
+    <div class="container section-title aos-init aos-animate" data-aos="fade-up">
+        <h2>Terms and Conditions</h2>
+    </div>
+
+    <div class="container" data-aos="fade-up" data-aos-delay="100">
+        <div class="row gy-4">
+            <div class="col-12 mb-3">
+                <p class="text-bold">Last updated; January 1, 2026</p>
+                <h4 class="mb-3">1. Acceptance of Terms</h4>
+                <p class="mb-3">
+                    By accessing our website, creating an account, or placing an order, you agree to
+                    these Terms and Conditions.
+                </p>
+
+                <h4 class="mb-3">2. Customer Accounts</h4>
+                <ul class="mb-3">
+                    <li>Account registration may be required to place orders</li>
+                    <li>You must provide accurate and complete information</li>
+                    <li>You are responsible for securing your login credentials</li>
+                </ul>
+
+                <h4 class="mb-3">3. Orders and Payments</h4>
+                <p class="mb-3">
+                    All orders are subject to availability and confirmation. Accepted payment methods
+                    include Pay in Store and Card Payment.
+                </p>
+
+                <h4 class="mb-3">4. Shipping and Delivery</h4>
+                <ul class="mb-3">
+                    <li>Pickup at Store</li>
+                    <li>Book Your Own Rider</li>
+                    <li>Ship via LBC</li>
+                </ul>
+                <p>Delivery times may vary and are not guaranteed.</p>
+
+                <h4 class="mb-3">5. Order Notes</h4>
+                <p class="mb-3">
+                    Any special instructions provided by the customer are subject to feasibility.
+                </p>
+
+                <h4 class="mb-3">6. Cancellations and Refunds</h4>
+                <p class="mb-3">
+                    Cancellation and refund policies (if applicable) will be communicated separately
+                    or displayed on the website.
+                </p>
+
+                <h4 class="mb-3">7. Limitation of Liability</h4>
+                <p class="mb-3">
+                    We are not responsible for delays, losses, or damages caused by third-party
+                    couriers, incorrect customer information, or unauthorized account access.
+                </p>
+
+                <h4 class="mb-3">8. Intellectual Property</h4>
+                <p class="mb-3">
+                    All content on this website is the property of <strong>@info.LongName</strong>
+                    and may not be used without permission.
+                </p>
+
+                <h4 class="mb-3">9. Changes to Terms</h4>
+                <p class="mb-3">
+                    We reserve the right to modify these Terms and Conditions at any time.
+                </p>
+
+                <h4 class="mb-3">10. Agreement</h4>
+                <p class="mb-3">
+                    By placing an order, you acknowledge that you have read and understood our
+                    <a href="@Url.Action("PrivacyPolicy", "Home", new {area = ""})">Privacy Policy</a> and agree to these <a href="@Url.Action("TermsofService", "Home", new {area = ""})">Terms and Conditions</a>.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+</section>
