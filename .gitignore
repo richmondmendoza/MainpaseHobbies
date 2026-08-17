@@ -4,3 +4,19 @@
 
 /.vs/IMS/FileContentIndex
 /.vs
+/Web/bin
+/Dto/bin
+/Database/bin
+/DetailsUpdater/bin
+/Infrastructure/bin
+/PaymentGateway/bin
+/Paypal/bin
+/Repository/bin
+/Web/obj
+/Dto/obj
+/Database/obj
+/DetailsUpdater/obj
+/Infrastructure/obj
+/PaymentGateway/obj
+/Paypal/obj
+/Repository/obj
