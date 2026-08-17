@@ -1,10 +1,12 @@
 ﻿using Database.SQL;
 using Dto;
+using Dto.BaseSettings;
 using Dto.Dto;
 using Repository.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
@@ -105,6 +107,24 @@ namespace Repository.Repo
                 context.Events.Add(newItem);
                 Db.SaveChanges(context, result, "Event successfully created!");
                 result.Data = ToDto(newItem);
+
+                if (result.Success)
+                {
+                    if (!Directory.Exists(StoragePath.EventImageStoragePath))
+                    {
+                        Directory.CreateDirectory(StoragePath.EventImageStoragePath);
+                    }
+
+                    if (dto.FeaturedImage != null && dto.FeaturedImage.Length > 0)
+                    {
+                        var path = Path.Combine(StoragePath.EventImageStoragePath, $"{newItem.Id.ToString()}.png");
+                        if (File.Exists(path))
+                        {
+                            File.Delete(path);
+                        }
+                        File.WriteAllBytes(path, dto.FeaturedImage);
+                    }
+                }
             }
 
             return result;
@@ -132,6 +152,25 @@ namespace Repository.Repo
 
                 Db.SaveChanges(context, result, "Event successfully updated!");
                 result.Data = ToDto(record);
+
+                if (result.Success)
+                {
+                    if (!Directory.Exists(StoragePath.EventImageStoragePath))
+                    {
+                        Directory.CreateDirectory(StoragePath.EventImageStoragePath);
+                    }
+
+
+                    if (record.FeaturedImage != null && record.FeaturedImage.Length > 0)
+                    {
+                        var path = Path.Combine(StoragePath.EventImageStoragePath, $"{record.Id.ToString()}.png");
+                        if (File.Exists(path))
+                        {
+                            File.Delete(path);
+                        }
+                        File.WriteAllBytes(path, record.FeaturedImage);
+                    }
+                }
             }
 
             return result;

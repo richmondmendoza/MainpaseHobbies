@@ -3,6 +3,7 @@ using Dto;
 using Dto.BaseSettings;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net.Http.Headers;
 using System.Text;
@@ -44,6 +45,24 @@ namespace Repository.Repo.Settings
                 context.System_Banner.Add(item);
 
                 Db.SaveChanges(context, result, "Banner successfully added");
+
+                if (result.Success)
+                {
+                    if (!Directory.Exists(StoragePath.BannerImageStoragePath))
+                    {
+                        Directory.CreateDirectory(StoragePath.BannerImageStoragePath);
+                    }
+
+                    if (dto.Image != null && dto.Image.Length > 0)
+                    {
+                        var path = Path.Combine(StoragePath.BannerImageStoragePath, $"{item.Id.ToString()}.png");
+                        if (File.Exists(path))
+                        {
+                            File.Delete(path);
+                        }
+                        File.WriteAllBytes(path, dto.Image);
+                    }
+                }
             }
             return result;
 
@@ -65,6 +84,15 @@ namespace Repository.Repo.Settings
                 {
                     context.System_Banner.Remove(item);
                     Db.SaveChanges(context, result, "Banner successfully removed");
+
+                    if (result.Success)
+                    {
+                        var path = Path.Combine(StoragePath.BannerImageStoragePath, $"{item.Id.ToString()}.png");
+                        if (File.Exists(path))
+                        {
+                            File.Delete(path);
+                        }
+                    }
                 }
             }
             return result;

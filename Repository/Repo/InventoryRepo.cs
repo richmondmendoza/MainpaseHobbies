@@ -1,5 +1,6 @@
 ﻿using Database.SQL;
 using Dto;
+using Dto.BaseSettings;
 using Dto.Dto;
 using Dto.Enums;
 using Infrastructure;
@@ -8,8 +9,10 @@ using Repository.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Configuration;
 using System.Data.Entity;
 using System.Diagnostics;
+using System.IO;
 using System.IO.Ports;
 using System.Linq;
 using System.Net.Http;
@@ -25,6 +28,7 @@ namespace Repository.Repo
     {
         private static readonly HttpClient _client = new HttpClient();
         private decimal _attemptCount = 1.0M;
+        private int failCounter = 0;
 
         public InventoryDetailsDto ToDetails(Inventory inventory, DbSet<Database.SQL.User> users, bool isPHPDisplay = false)
         {
@@ -342,6 +346,21 @@ namespace Repository.Repo
                 context.Inventories.Add(inventory);
 
                 Db.SaveChanges(context, result, "Inventory created successfully.");
+
+                if (result.Success)
+                {
+                    if (!Directory.Exists(StoragePath.CardImageStoragePath))
+                    {
+                        Directory.CreateDirectory(StoragePath.CardImageStoragePath);
+                    }
+
+                    var path = Path.Combine(StoragePath.CardImageStoragePath, $"{inventory.Id.ToString()}.png");
+                    if (File.Exists(path))
+                    {
+                        File.Delete(path);
+                    }
+                    File.WriteAllBytes(path, inventory.Image);
+                }
             }
 
             return result;
@@ -370,7 +389,17 @@ namespace Repository.Repo
                     }
                 }
 
-                Db.SaveChanges(context, result, "Bulk inventory created successfully.");
+                if (failCounter > 0)
+                {
+                    result.Success = false;
+                    result.Message = "Bulk inventory has completed with some error.";
+                }
+                else
+                {
+                    result.Success = true;
+                    result.Message = "Bulk inventory created successfully.";
+                }
+                //Db.SaveChanges(context, result, "Bulk inventory created successfully.");
             }
 
             return result;
@@ -415,6 +444,22 @@ namespace Repository.Repo
 
                 Db.SaveChanges(context, result, "Inventory updated successfully.");
                 result.Data = ToDetails(inventory, context.Users);
+
+                if (result.Success)
+                {
+                    if (!Directory.Exists(StoragePath.CardImageStoragePath))
+                    {
+                        Directory.CreateDirectory(StoragePath.CardImageStoragePath);
+                    }
+
+                    var path = Path.Combine(StoragePath.CardImageStoragePath, $"{inventory.Id.ToString()}.png");
+                    if (File.Exists(path))
+                    {
+                        File.Delete(path);
+                    }
+                    File.WriteAllBytes(path, inventory.Image);
+                }
+
             }
 
             return result;
@@ -513,6 +558,11 @@ namespace Repository.Repo
         {
             using (IMSEntities context = new IMSEntities())
             {
+                if (!Directory.Exists(StoragePath.CardImageStoragePath))
+                {
+                    Directory.CreateDirectory(StoragePath.CardImageStoragePath);
+                }
+
                 int index = 0;
                 var conversionRate = context.Conversions.FirstOrDefault(a => a.IsActive)?.Amount ?? 1;
                 var records = context.Inventories.Where(i => !i.IsDeleted);
@@ -525,6 +575,8 @@ namespace Repository.Repo
 
                 foreach (var record in records)
                 {
+                    var path = Path.Combine(StoragePath.CardImageStoragePath, $"{record.Id.ToString()}.png");
+
                     _attemptCount++;
                     index++;
                     Console.WriteLine($"{index}. {record.Name}");
@@ -551,6 +603,16 @@ namespace Repository.Repo
                                     record.Price = Convert.ToDecimal(details_mtg.Item2.Prices.UsdEtched) * conversionRate;
                                 }
 
+                                if (details_mtg.Item1 != null && details_mtg.Item1.Length > 0)
+                                {
+                                    if (File.Exists(path))
+                                    {
+                                        File.Delete(path);
+                                    }
+
+                                    File.WriteAllBytes(path, details_mtg.Item1);
+                                }
+
                                 Console.WriteLine($"-> Update for {record.Name} has been completed.");
                             }
                             break;
@@ -575,6 +637,16 @@ namespace Repository.Repo
                                 record.Language = !string.IsNullOrEmpty(record.Language) ? record.Language : (details_ga.Item2.editions.FirstOrDefault()?.set.language.ToLower() ?? "");
 
                                 record.Image = details_ga.Item1;
+
+                                if (details_ga.Item1 != null && details_ga.Item1.Length > 0)
+                                {
+                                    if (File.Exists(path))
+                                    {
+                                        File.Delete(path);
+                                    }
+
+                                    File.WriteAllBytes(path, details_ga.Item1);
+                                }
 
                                 Console.WriteLine($"-> Update for {record.Name} has been completed.");
                             }
@@ -692,13 +764,14 @@ namespace Repository.Repo
 
             var existing = context.Inventories.FirstOrDefault(i => i.ScryfallId == dto.ScryfallId && !i.IsDeleted);
 
+            if (!Directory.Exists(StoragePath.CardImageStoragePath))
+            {
+                Directory.CreateDirectory(StoragePath.CardImageStoragePath);
+            }
+
             Tuple<byte[], ScryfallCard> cardDetails = FetchCardDetailsAsync_Scryfall(dto.ScryfallId, dto.SetCode, dto.Collector).Result;
             if (existing != null)
             {
-
-                if (existing.Image == null || existing.Image.Length == 0)
-                    existing.Image = cardDetails.Item1;
-
                 if (string.IsNullOrEmpty(existing.Description))
                     existing.Description = cardDetails.Item2.OracleText ?? "";
 
@@ -753,7 +826,7 @@ namespace Repository.Repo
             {
                 dto.Color = GetColorIdentityString(cardDetails.Item2.ColorIdentity);
 
-                var inventory = new Inventory
+                existing = new Inventory
                 {
                     Image = cardDetails.Item1,
                     Name = dto.Name,
@@ -783,25 +856,44 @@ namespace Repository.Repo
                     Category = dto.Category,
                 };
 
-                var currentPrice = inventory.Price / conversionRate;
-                var isFoiled = inventory.FoilType.ToLower() != "non-foil" & inventory.FoilType.ToLower() != "normal";
+                var currentPrice = existing.Price / conversionRate;
+                var isFoiled = existing.FoilType.ToLower() != "non-foil" & existing.FoilType.ToLower() != "normal";
                 var scryfallPrice = Convert.ToDecimal(isFoiled ? (cardDetails.Item2.Prices?.UsdFoil ?? dto.Price.ToString()) : (cardDetails.Item2.Prices?.Usd ?? dto.Price.ToString()));
                 if (currentPrice != scryfallPrice)
                 {
-                    inventory.Price = scryfallPrice * conversionRate;
-                    inventory.PurchaseCurrency = "USD";
+                    existing.Price = scryfallPrice * conversionRate;
+                    existing.PurchaseCurrency = "USD";
                 }
 
                 if (dto.InventoryCounts.Any())
                 {
                     foreach (var countDto in dto.InventoryCounts)
                     {
-                        new InventoryCountRepo().Create(inventory, countDto);
+                        new InventoryCountRepo().Create(existing, countDto);
                     }
                 }
 
-                context.Inventories.Add(inventory);
+                context.Inventories.Add(existing);
             }
+
+            try
+            {
+                var saveChanges = context.SaveChanges();
+
+                if (saveChanges >= 0)
+                {
+                    if (cardDetails.Item1 != null && cardDetails.Item1.Length > 0)
+                    {
+                        var path = Path.Combine(StoragePath.CardImageStoragePath, $"{existing.ToString()}.png");
+                        if (File.Exists(path))
+                        {
+                            File.Delete(path);
+                        }
+                        File.WriteAllBytes(path, cardDetails.Item1);
+                    }
+                }
+            }
+            catch { failCounter++; }
         }
 
         private void FetchClassDetails_GA(IMSEntities context, InventoryDetailsDto dto, decimal conversionRate)
@@ -863,7 +955,7 @@ namespace Repository.Repo
             }
             else
             {
-                var inventory = new Inventory
+                existing = new Inventory
                 {
                     Name = dto.Name,
                     SetCode = dto.SetCode ?? "",
@@ -887,29 +979,49 @@ namespace Repository.Repo
                     Category = dto.Category,
                 };
 
-                inventory.ScryfallId = slugName;
-                inventory.Image = cardDetails.Item1;
-                inventory.Description = cardDetails.Item2.effect ?? "";
-                inventory.ManaCost = $"{cardDetails.Item2.cost.type}|{cardDetails.Item2.cost.value}";
-                inventory.Color = string.Join(", ", cardDetails.Item2.elements).TrimEnd();
-                inventory.CardType = string.Join(", ", cardDetails.Item2.classes).TrimEnd();
-                inventory.IllustratedBy = cardDetails.Item2.editions.FirstOrDefault()?.illustrator ?? "";
-                inventory.SetCode = !string.IsNullOrEmpty(dto.SetCode) ? dto.SetCode : (cardDetails.Item2.editions.FirstOrDefault()?.set.prefix ?? "");
-                inventory.SetName = !string.IsNullOrEmpty(dto.SetName) ? dto.SetName : (cardDetails.Item2.editions.FirstOrDefault()?.set.name ?? "");
-                inventory.Collector = !string.IsNullOrEmpty(dto.Collector) ? dto.Collector : (cardDetails.Item2.editions.FirstOrDefault()?.collector_number ?? "");
-                inventory.Rarity = !string.IsNullOrEmpty(dto.Rarity) ? dto.Rarity : (cardDetails.Item2.editions.FirstOrDefault()?.rarity.ToString() ?? "");
+                existing.ScryfallId = slugName;
+                existing.Image = cardDetails.Item1;
+                existing.Description = cardDetails.Item2.effect ?? "";
+                existing.ManaCost = $"{cardDetails.Item2.cost.type}|{cardDetails.Item2.cost.value}";
+                existing.Color = string.Join(", ", cardDetails.Item2.elements).TrimEnd();
+                existing.CardType = string.Join(", ", cardDetails.Item2.classes).TrimEnd();
+                existing.IllustratedBy = cardDetails.Item2.editions.FirstOrDefault()?.illustrator ?? "";
+                existing.SetCode = !string.IsNullOrEmpty(dto.SetCode) ? dto.SetCode : (cardDetails.Item2.editions.FirstOrDefault()?.set.prefix ?? "");
+                existing.SetName = !string.IsNullOrEmpty(dto.SetName) ? dto.SetName : (cardDetails.Item2.editions.FirstOrDefault()?.set.name ?? "");
+                existing.Collector = !string.IsNullOrEmpty(dto.Collector) ? dto.Collector : (cardDetails.Item2.editions.FirstOrDefault()?.collector_number ?? "");
+                existing.Rarity = !string.IsNullOrEmpty(dto.Rarity) ? dto.Rarity : (cardDetails.Item2.editions.FirstOrDefault()?.rarity.ToString() ?? "");
 
 
                 if (dto.InventoryCounts.Any())
                 {
                     foreach (var countDto in dto.InventoryCounts)
                     {
-                        new InventoryCountRepo().Create(inventory, countDto);
+                        new InventoryCountRepo().Create(existing, countDto);
                     }
                 }
 
-                context.Inventories.Add(inventory);
+                context.Inventories.Add(existing);               
             }
+
+            try
+            {
+                var saveChanges = context.SaveChanges();
+
+                if (saveChanges >= 0)
+                {
+                    if (cardDetails.Item1 != null && cardDetails.Item1.Length > 0)
+                    {
+                        var path = Path.Combine(StoragePath.CardImageStoragePath, $"{existing.ToString()}.png");
+                        if (File.Exists(path))
+                        {
+                            File.Delete(path);
+                        }
+                        File.WriteAllBytes(path, cardDetails.Item1);
+                    }
+                }
+            }
+            catch { failCounter++; }
+
         }
 
     }

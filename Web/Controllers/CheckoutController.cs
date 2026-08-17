@@ -34,7 +34,7 @@ namespace Web.Controllers
             {
                 UserId = Identity?.Id ?? 0,
                 DateCreated = DateTime.Now,
-                PaymentMethod = PaymentMethodEnum.CoinsPH,
+                PaymentMethod = PaymentMethodEnum.Cash,
                 Status = OrderStatusEnum.Pending,
                 DeliveryStatus = DeliveryStatusEnum.Pending,
                 DeliveryMethod = DeliveryMethodEnum.StorePickup,
@@ -294,6 +294,17 @@ namespace Web.Controllers
                     else
                     {
                         ViewBag.Message = "There was an issue with your order.";
+
+                        if (int.TryParse(res, out int result))
+                        {
+                            var order = new OrderRepo().Get(Convert.ToInt32(res));
+
+                            if (order != null)
+                            {
+                                Session["Total"] = $"{order.Currency.ToUpper()} {order.Total.ToString("n2")}";
+                                Session["OrderNumber"] = order.OrderNumber;
+                            }
+                        }
                     }
                 }
                 catch { }

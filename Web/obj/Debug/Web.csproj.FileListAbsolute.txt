@@ -115,3 +115,13 @@ C:\Projects\_Test Projects\Mon2\IMS\Web\bin\Infrastructure.dll
 C:\Projects\_Test Projects\Mon2\IMS\Web\bin\Infrastructure.pdb
 C:\Projects\_Test Projects\Mon2\IMS\Web\bin\Infrastructure.dll.config
 C:\Projects\_Test Projects\Mon2\IMS\Web\bin\FoolproofValidation.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Web\bin\roslyn\csc.exe
+C:\Projects\_Test Projects\Mon2\Mainphase\Web\bin\roslyn\Microsoft.CodeAnalysis.CSharp.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Web\bin\roslyn\Microsoft.CodeAnalysis.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Web\bin\roslyn\System.Collections.Immutable.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Web\bin\roslyn\System.IO.FileSystem.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Web\bin\roslyn\System.IO.FileSystem.Primitives.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Web\bin\roslyn\System.Reflection.Metadata.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Web\bin\roslyn\System.Security.Cryptography.Primitives.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Web\bin\roslyn\System.Text.Encoding.CodePages.dll
+C:\Projects\_Test Projects\Mon2\Mainphase\Web\bin\roslyn\System.ValueTuple.dll

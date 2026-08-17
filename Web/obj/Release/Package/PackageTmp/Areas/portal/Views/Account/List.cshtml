@@ -1,0 +1,89 @@
+﻿@model IEnumerable<Dto.User.UserDto>
+@{
+    ViewBag.Title = "Users";
+}
+
+
+<style>
+    .dataTables_wrapper {
+        width: 100%;
+    }
+</style>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header pt-4 pb-4">
+                <h3 class="card-title">
+                    Items
+                </h3>
+                <div class="card-tools">
+                    <ul class="nav nav-pills ml-auto">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="@Url.Action("Add", "Account", new {area = "portal"})">
+                                <i class="fa fa-plus"></i> Add User
+                            </a>
+                        </li>
+                        @*<li class="nav-item">
+                                <a class="nav-link" href="#sales-chart" data-toggle="tab">Donut</a>
+                            </li>*@
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body">
+                <table id="data-table" class="table table-sm table-bordered w-100">
+                    <thead>
+                        <tr>
+                            <th>First Name</th>
+                            <th>Middle Name</th>
+                            <th>Last Name</th>
+                            <th>Username</th>
+                            <th>Last Login Date</th>
+                            <th>Account Locked</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Model.Any())
+                        {
+                            foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.Firstname</td>
+                                    <td>@item.Middlename</td>
+                                    <td>@item.LastName</td>
+                                    <td>@item.Username</td>
+                                    <td>@(item.LastLoginDate != DateTime.MinValue ? item.LastLoginDate.ToString("MMM dd, yyyy hh:mm tt") : "")</td>
+                                    <td>@(!item.IsLocked ? "Unlocked" : "Account Locked")</td>
+                                    <td style="text-align: center;">
+                                        <a href="@Url.Action("Details", "Account", new {area = "portal", id = item.Id})" class="btn btn-sm btn-primary" title="Update Details"><i class="fa fa-edit"></i></a>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div><!-- /.card-body -->
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            var accountTable = $('#data-table').DataTable({
+                "processing": true,
+                //"serverSide": true,
+                "stateSave": true,
+                "searching": true,
+                //"bLengthChange": false,
+                "responsive": true,
+                "autoWidth": true,
+                "paging": true,
+                buttons: [],
+                "lengthMenu": [[10, 20, 50, -1], [10, 20, 50, 'All']]
+            });
+
+        });
+    </script>
+}

@@ -1,0 +1,63 @@
+﻿@{
+    ViewBag.Title = "Payment Successful";
+    var user = Web.Controllers.BaseController.Identity;
+
+    // Optional context you can pass from controller or query
+    var checkoutId = ViewBag.CheckoutId as string ?? Request["checkoutId"];
+    var requestId = ViewBag.RequestId as string ?? Request["requestId"];
+    var deeplink = ViewBag.CheckoutDeeplinkUrl as string; // e.g., coins://webpay/fiat?checkoutId=...
+}
+<section class="container py-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <span class="badge bg-success px-3 py-2 fs-6">Payment Succeeded</span>
+                    </div>
+
+                    <h1 class="h3 mb-2 text-success">Thank you! Your payment was successful.</h1>
+                    <p class="text-muted mb-4">
+                        We’ve received your payment and are processing your order.
+                    </p>
+
+                    @if (!string.IsNullOrWhiteSpace(checkoutId) || !string.IsNullOrWhiteSpace(requestId))
+                    {
+                        <div class="alert alert-success text-start">
+                            @if (!string.IsNullOrWhiteSpace(checkoutId))
+                            {<div><strong>Checkout ID:</strong> @checkoutId</div>}
+                            @if (!string.IsNullOrWhiteSpace(requestId))
+                            {<div><strong>Order ID:</strong> @requestId</div>}
+                        </div>
+                    }
+
+                    @if (!string.IsNullOrEmpty(deeplink))
+                    {
+                        <a href="@deeplink" class="btn btn-outline-success mb-3">
+                            Open in Coins App
+                        </a>
+                    }
+
+                    @if (user != null && (user.Id > 0 & user.HasCustomerAccess))
+                    {
+                        <p class="text-muted">
+                            You can review the status anytime in <strong>My Orders</strong>.
+                        </p>
+                        <a href="@Url.Action("Index", "MyOrders", new { area = "customer" })" class="btn btn-primary">
+                            Go to My Orders
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn btn-primary">
+                            Return to Home
+                        </a>
+                    }
+                </div>
+                <div class="card-footer text-muted font-italic">
+                    <span><b>Disclaimer:</b> Once your payment is completed, your order is confirmed and cannot be canceled or refunded. Make sure all information is correct before checking out. If you have any questions, please contact us prior to making payment.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

@@ -1,0 +1,374 @@
+﻿
+@{
+    ViewBag.Title = "Bulk Action";
+    var user = Web.Controllers.BaseController.Identity;
+    var owners = ViewBag.CardOwners as List<System.Web.Mvc.SelectListItem>;
+    var categories = ViewBag.Categories as List<System.Web.Mvc.SelectListItem>;
+    var setCodes = ViewBag.SetCodes as List<System.Web.Mvc.SelectListItem>;
+}
+
+<link href="~/Content/assets/plugins/select2/css/select2.min.css" rel="stylesheet" />
+<link href="~/Content/assets/plugins/select2-bootstrap4-theme/select2-bootstrap4.min.css" rel="stylesheet" />
+<style>
+    .dataTables_wrapper {
+        width: 100%;
+    }
+</style>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header pt-4 pb-4">
+                <h3 class="card-title">
+                    Inventory List
+                </h3>
+                <div class="card-tools">
+                    <ul class="nav nav-pills ml-auto">
+                        <li class="nav-item mr-2 d-none" id="slct-move-to-owner-container">
+                            <select class="form-control select2" id="slct-move-to-owner">
+                                <option value="0">Transfer to this Owner</option>
+                                @foreach (var item in owners)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </li>
+                        <li class="nav-item">
+                            <select id="slct-action" class="form-control select2">
+                                <option value="">Select Action</option>
+                                <option value="price">Update Price</option>
+                                <option value="move">Move Ownership</option>
+                                @if (user.HasProtalAdminAccess)
+                                {
+                                    <option value="delete">Delete</option>
+                                }
+                            </select>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="card-body">
+                <input type="hidden" class="w-100" id="SelectedIds" />
+
+                <div class="row">
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Collection Group</label>
+                        <select class="form-control select2" id="filter-collection">
+                            <option value="">Select Collection Group</option>
+                            <option value="Magic the Gathering">Magic the Gathering</option>
+                            <option value="Grand Archive">Grand Archive</option>
+                        </select>
+                    </div>
+
+                    @if (user.HasProtalAdminAccess)
+                    {
+                        <div class="col-md-3 mb-2">
+                            <label class="form-label">Card Owner</label>
+                            <select class="form-control select2" id="filter-owner">
+                                <option value="0">Select Owner</option>
+                                @foreach (var item in owners)
+                                {
+                                    <option value="@item.Value">@item.Text</option>
+                                }
+                            </select>
+                        </div>
+                    }
+
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Set Code</label>
+                        <select class="form-control select2" id="filter-set">
+                            <option value="">All Set</option>
+                            @foreach (var item in setCodes)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Category</label>
+                        <select class="form-control select2" id="filter-category">
+                            <option value="">All Category</option>
+                            @foreach (var item in categories)
+                            {
+                                <option value="@item.Value">@item.Text</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mb-2">
+                        <label class="form-label">Search by Name</label>
+                        <input type="text" class="form-control" id="filter-name" />
+                    </div>
+
+                    <div class="col-md-12 mb-2 text-right">
+                        <button type="button" class="btn btn-primary" id="btn-apply-filter">
+                            <i class="fa fa-filter"></i> Apply Filter
+                        </button>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="card-body" id="data-container">
+                @Html.Partial("_BulkList", new List<Dto.Dto.InventoryDetailsDto>())
+            </div>
+
+            <div class="card-footer text-right">
+                <button class="btn btn-primary" disabled id="btn-save"><i class="fa fa-save"></i> Confirm and Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Content/assets/plugins/select2/js/select2.min.js"></script>
+    <script>
+
+        @*var dataTable = $('#data-table').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "stateSave": true,
+            "searching": false,
+            //"dom": 'lBrtip',
+            "responsive": true,
+            "autoWidth": true,
+            "paging": true,
+            buttons: [],
+            "lengthMenu": [[20, 50, -1], [20, 50, 'All']],
+            "ajax": {
+                "url": '@Url.Action("LoadBulkList")',
+                "type": "get",
+                "datatype": "JSON",
+                "data": function (d) {
+                    d.collectionGroup = $('#filter-collection').val(),
+                    d.ownerId = $('#filter-owner').val(),
+                    d.setCode = $('#filter-set').val(),
+                    d.category = $('#filter-category').val(),
+                    d.searchParam = $('#filter-name').val()
+                },
+                "beforeSend": function () {
+                    $('.dataTables_length').hide();
+                },
+                "complete": function () { HideLoading(); }
+            },
+            "columns": [
+                {
+                    render: function (data, type, full, meta) {
+                        var icheck = '<div class="icheck-primary">';
+                        icheck += '<input type="checkbox" id="chk-' + full.Id + '" class="chk-select-id" link-id="' + full.Id + '">';
+                        icheck += '<label for="chk-' + full.Id + '"></label>';
+                        icheck += '</div>';
+                        return icheck;
+                    }, name: '', data: null, sortable: false
+                },
+                { "data": "Name", "name": "Name", "autoWidth": true },
+                { "data": "Collector", "name": "Collector", "autoWidth": true },
+                { "data": "SetCode", "name": "SetCode", "autoWidth": true },
+                { "data": "SetName", "name": "SetName", "autoWidth": true },
+                { "data": "FoilType", "name": "FoilType", "autoWidth": true },
+                { "data": "PurchaseCurrency", "name": "PurchaseCurrency", "autoWidth": true, sortable: false },
+                {
+                    render: function (data, type, full, meta) {
+                        var action = $('#slct-action').val();
+                        var input = "";
+                        if (action === "price") {
+                            input = '<input type="text" class="txt-price text-right" id="txt-price-' + full.Id + '" link-id="' + full.Id + '" value="' + data + '">';
+                            input += '<span class="not-price d-none">' + data + '</span>';
+                        } else {
+                            input = '<input type="text" class="txt-price text-right d-none" id="txt-price-' + full.Id + '" link-id="' + full.Id + '" value="' + data + '">';
+                            input += '<span class="not-price">' + data + '</span>';
+                        }
+                        return input;
+                    }, "data": "PriceDisplay", "name": "PriceDisplay", "autoWidth": true
+                },
+                { "data": "Count", "name": "Count", "autoWidth": true, sortable: false },
+                { "data": "OwnerName", "name": "OwnerName", "autoWidth": true, sortable: false }
+            ],
+            columnDefs: [
+                { "className": "text-center", "targets": 0 },
+                { "className": "text-right", "targets": 6 }
+            ],
+        });*@
+
+        function LoadList() {
+            ShowLoading();
+            $.ajax({
+                "url": '@Url.Action("LoadBulkListPartial")',
+                "type": "get",
+                "data": {
+                    collectionGroup: $('#filter-collection').val(),
+                    cardOwnerId: $('#filter-owner').val(),
+                    setCode: $('#filter-set').val(),
+                    category: $('#filter-category').val(),
+                    searchParam: $('#filter-name').val(),
+                    foilType: "",
+                },
+                success: function (result) {
+                    $('#data-container').html(result);
+                    $('#data-table').DataTable({
+                        "processing": true,
+                        "serverSide": false,
+                        "stateSave": false,
+                        "searching": false,
+                        //"dom": 'lBrtip',
+                        "responsive": true,
+                        "autoWidth": true,
+                        "paging": true,
+                        buttons: [],
+                        "lengthMenu": [[20, 50, -1], [20, 50, 'All']]
+                    });
+
+                    switch ($('#slct-action').val()) {
+                        case "move":
+                            $('#slct-move-to-owner-container').removeClass('d-none');
+                            break;
+                        case "price":
+                            $('.txt-price').removeClass('d-none');
+                            $('.not-price').addClass('d-none');
+                        default:
+                            $('#slct-move-to-owner-container').addClass('d-none');
+
+                            if ($('#slct-action').val() === "") {
+                                $('#btn-save').prop('disabled', true);
+                            }
+                            break;
+                    }
+
+                },
+                "complete": function () {
+                    HideLoading();
+                }
+            });
+        }
+
+        $(document).ready(function () {
+
+
+            $('.select2').select2({ "theme": "bootstrap4" });
+
+            $(document).on('click', '.chk-select-id', function (e) {
+                var selectedIDs = $('#SelectedIds').val();
+                var id = $(this).attr('link-id');
+
+                if ($(this).is(':checked')) {
+                    if (selectedIDs === "") {
+                        selectedIDs += "|";
+                    }
+
+                    selectedIDs += id + "|";
+                } else {
+                    selectedIDs = selectedIDs.replace("|" + id + "|", "|");
+                }
+
+                $('#SelectedIds').val(selectedIDs);
+            });
+
+            $(document).on('change', '#slct-action', function (e) {
+                var val = $(this).val();
+                //$('#SelectedIds').val('');
+                //$('.chk-select-id').prop('checked', false);
+
+                $('#btn-save').prop('disabled', false);
+                $('.txt-price').addClass('d-none');
+                $('.not-price').removeClass('d-none');
+
+                switch (val) {
+                    case "move":
+                        $('#slct-move-to-owner-container').removeClass('d-none');
+                        break;
+                    case "price":
+                        $('.txt-price').removeClass('d-none');
+                        $('.not-price').addClass('d-none');
+                    default:
+                        $('#slct-move-to-owner-container').addClass('d-none');
+
+                        if (val === "") {
+                            $('#btn-save').prop('disabled', true);
+                        }
+                        break;
+                }
+            });
+
+            $(document).on('click', '#btn-save', function (e) {
+                $('.select2').select2({ "theme": "bootstrap4" });
+                ShowLoading();
+                e.preventDefault();
+                const isEmptyRows = $('#data-table tbody tr td.dataTables_empty').length;
+                var action = $('#slct-action').val();
+                var ids = $('#SelectedIds').val();
+                var ownerId = $('#slct-move-to-owner').val()
+
+                if (isEmptyRows <= 0 & ids !== "") {
+
+                    if (action === "price") {
+                        var idList = ids.split("|").map(s => s.trim()).filter(s => s !== "");
+                        $.each(idList, function (index, value) {
+                            // use value here
+                            var price = $('#txt-price-' + value).val();
+                            ids = ids.replace("|" + value + "|", "|" + value + ":" + price + "|");
+
+                        });
+                    }
+
+                    ConfirmAndSave(action, ids, ownerId);
+                } else {
+                    HideLoading();
+                    $('#message-modal').modalMessage({
+                        'message': 'There is no items selected to take actions.',
+                        'title': 'Ooops!'
+                    });
+                }
+            });
+
+            $('#btn-apply-filter').on('click', function (e) {
+                LoadList();
+                //ShowLoading();
+                //dataTable.ajax.reload();
+            });
+
+            function ConfirmAndSave(action, ids, ownerId) {
+
+
+
+                $.ajax({
+                    url: '@Url.Action("SaveBulk")',
+                    type: 'post',
+                    data: {
+                        action: action,
+                        ids: ids,
+                        ownerId: ownerId
+                    },
+                    success: function (result) {
+                        if (result.Success) {
+                            HideLoading();
+                            $('#message-modal')
+                                .one('hidden.bs.modal', function () {
+                                    window.location.reload();
+                                })
+                                .modalMessage({
+                                    'message': 'Success',
+                                    'title': result.Message
+                                });
+                        } else {
+                            $('#message-modal').modalMessage({
+                                'message': 'Ooops!',
+                                'title': result.Message
+                            });
+                        }
+                    },
+                    error: function (err) {
+                        $('#message-modal').modalMessage({
+                            'message': err,
+                            'title': 'Something went wrong!'
+                        });
+                    }
+                }).always(function () {
+                    HideLoading();
+                });
+            }
+
+
+        });
+    </script>
+}

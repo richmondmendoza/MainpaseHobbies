@@ -1,0 +1,60 @@
+﻿@{
+    ViewBag.Title = "Payment Failed";
+    var user = Web.Controllers.BaseController.Identity;
+
+    var checkoutId = ViewBag.CheckoutId as string ?? Request["checkoutId"];
+    var requestId = ViewBag.RequestId as string ?? Request["requestId"];
+    var errorCode = ViewBag.ErrorCode as string ?? Request["errorCode"];
+    var errorMsg = ViewBag.ErrorMsg as string ?? Request["errorMsg"];
+}
+<section class="container py-5 text-center">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-body p-4">
+                    <div class="mb-3">
+                        <span class="badge bg-danger px-3 py-2 fs-6">Payment Failed</span>
+                    </div>
+
+                    <h1 class="h3 mb-2 text-danger">We couldn’t process your payment.</h1>
+                    <p class="text-muted mb-4">
+                        Please try again. If the problem persists, contact support.
+                    </p>
+
+                    @if (!string.IsNullOrWhiteSpace(checkoutId) || !string.IsNullOrWhiteSpace(requestId) || !string.IsNullOrWhiteSpace(errorMsg))
+                    {
+                        <div class="alert alert-danger text-start">
+                            @if (!string.IsNullOrWhiteSpace(checkoutId))
+                            {<div><strong>Checkout ID:</strong> @checkoutId</div>}
+                            @if (!string.IsNullOrWhiteSpace(requestId))
+                            {<div><strong>Request ID:</strong> @requestId</div>}
+                            @if (!string.IsNullOrWhiteSpace(errorCode))
+                            {<div><strong>Error Code:</strong> @errorCode</div>}
+                            @if (!string.IsNullOrWhiteSpace(errorMsg))
+                            {<div><strong>Error:</strong> @errorMsg</div>}
+                        </div>
+                    }
+
+                    @if (user != null && (user.Id > 0 & user.HasCustomerAccess))
+                    {
+                        <p class="text-muted">
+                            You can retry from <strong>My Orders</strong>.
+                        </p>
+                        <a href="@Url.Action("Index", "MyOrders", new { area = "customer" })" class="btn btn-primary me-2">
+                            Return to Orders
+                        </a>
+                        <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn btn-outline-secondary">
+                            Return to Home
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("Index", "Home", new { area = "" })" class="btn btn-primary">
+                            Return to Home
+                        </a>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
