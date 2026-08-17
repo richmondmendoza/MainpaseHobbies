@@ -44,7 +44,7 @@
                 </a>
                 <a href="@Url.Action("Cart", "Home", new { area = "" })">
                     <i class="bi bi-cart">
-                        <span class="navbar-badge badge text-bg-danger" id="cart-count">0</span>
+                        <span class="navbar-badge badge text-bg-danger cart-count" id="cart-count">0</span>
                     </i>
                 </a>
             </div>
@@ -65,7 +65,7 @@
                     <li><a href="@Url.Action("Events", "Home", new { area = "" })" class="@Html.RouteIf("", "home", "events", "active")">Events</a></li>
                     <li><a href="@Url.Action("Shop", "Home", new { area = "" })" class="@Html.RouteIf("", "home", "shop|search", "active")">Shop</a></li>
                     <li><a href="@Url.Action("ContactUs", "Home", new { area = "" })" class="@Html.RouteIf("", "home", "contactus", "active")">Contact Us</a></li>
-                    <li class="d-md-none"><a href="@Url.Action("Index", "Login", new { area = "customer" })">Login</a></li>
+                    <li class="d-md-none"><a href="@Url.Action("Login", "MyAccount", new { area = "customer" })">Login</a></li>
                     <li class="d-md-none"><a href="@Url.Action("Cart", "Home", new { area = "" })" class="@Html.RouteIf("", "home", "cart", "active")">Cart</a></li>
                     <li>
                         @using (Html.BeginForm("Search", "Home", FormMethod.Post, new { @class = "d-flex ms-3 header-search", role = "search" }))

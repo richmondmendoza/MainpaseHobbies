@@ -6,7 +6,7 @@
             type: 'get',
             data: {},
             success: function (result) {
-                $('#cart-count').text(result.Count);
+                $('.cart-count').text(result.Count);
             }
         });
     }
@@ -57,3 +57,4 @@
     window.DeleteCartItem = DeleteCartItem;
 
 })(jQuery);
+

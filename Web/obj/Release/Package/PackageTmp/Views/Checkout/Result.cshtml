@@ -2,7 +2,12 @@
 @{
     ViewBag.Title = "Order Result";
     var user = Web.Controllers.BaseController.Identity;
+    var info = Web.Controllers.BaseController.SystemInfo;
+    var total = Session["Total"] ?? "";
+    var orderNumber = Session["OrderNumber"] ?? "";
 
+    Session["Total"] = "";
+    Session["OrderNumber"] = "";
 }
 
 <section class="container" style="text-align:center; padding:60px 20px; font-family:Arial, sans-serif;">
@@ -12,13 +17,82 @@
 
     <h1 style="font-size:32px; margin-bottom:15px;">Thank You for Your Order!</h1>
 
-    <p style="font-size:18px; color:#555; max-width:600px; margin:0 auto 25px;">
-        We truly appreciate your purchase. Your order has been successfully placed and is now being processed.
-    </p>
+    <div class="row" style="font-size:18px; color:#555; max-width:600px; margin:0 auto 25px; text-align: left;">
+        <div class="col-md-12 mb-3 text-center">
+            <strong style="font-size:22px;">Order ID: @orderNumber</strong><br />
+            <strong style="font-size:22px;">Order Total: @total</strong>
 
-    <p style="font-size:16px; color:#777;">
+            <br />
+            <br />
+            <p>
+                Payment required to be completed within 48 hours upon placement of order.
+                Upon payment send a copy of your receipt or screenshot of bank transfer to our Messenger along with your payment
+                <br />
+                <br />
+                Please allow 24-48 hours to confirm your order is ready for shipping.
+            </p>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <strong>GCASH OPTIONS:</strong>
+            <p>
+                Account Name: Michael M <br />
+                GCash: 09175086226 <br />
+                GCash: 09166873725 <br />
+                <br />
+                Account Name: Stephanie D <br />
+                GCash: 09171237503 <br />
+                <br />
+                Account Name: Stephanie M <br />
+                GCash: 09054416117 <br />
+                <br />
+                Account Name: Stephanie Muñoz <br />
+                GCash: 09166873728 <br />
+            </p>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <strong>Other Options:</strong>
+            <p>
+                Account Name: Michael Muñoz <br />
+                BPI: 0466381787 <br />
+                BDO: 010460005812 <br />
+                Maya: 09175086226 <br />
+            </p>
+        </div>
+
+        <div class="col-md-12 mb-3">
+            <strong>Or Scan this QR to pay</strong>
+            <div class="row">
+                <div class="col-sm-4 mb-2"><img class="w-100" src="~/Content/website_img/qr_codes/gcash.jpg" /></div>
+                <div class="col-sm-4 mb-2"><img class="w-100" src="~/Content/website_img/qr_codes/maribank.jpg" /></div>
+                <div class="col-sm-4 mb-2"><img class="w-100" src="~/Content/website_img/qr_codes/maya.jpg" /></div>
+            </div>
+        </div>
+
+
+        <div class="col-md-12 mb-3">
+            <strong>Shipping Options:</strong>
+            <br />
+            <div>
+                Shipping thru LBC or JnT for NCR and provincial locations. Fixed rate.
+                <br />
+                Book your own Grab/Lalamove Rider delivery.
+                <br />
+                Store pick up can be scheduled at @info.Address1 @info.Address2. From 12PM - 10PM daily.
+            </div>
+        </div>
+    </div>
+
+    @*<p style="font-size:18px; color:#555; max-width:600px; margin:0 auto 25px;">
+
+            <strong>Order ID: @orderNumber</strong><br />
+            <strong>Order Total: @total</strong>
+        </p>*@
+
+    @*<p style="font-size:16px; color:#777;">
         You’ll receive a confirmation email shortly with your order details.
-    </p>
+    </p>*@
 
     @if (user != null && (user.Id > 0 & user.HasCustomerAccess))
     {

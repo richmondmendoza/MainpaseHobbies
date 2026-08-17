@@ -47,6 +47,58 @@
                 vertical-align: middle;
             }
 
+        .floating-cart-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 100px; /* offset from go-to-top button so they don't overlap */
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            z-index: 1000;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+            .floating-cart-btn:hover {
+                transform: scale(1.05);
+            }
+
+        .cart-badge {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            background-color: #dc3545;
+            color: white;
+            font-size: 12px;
+            font-weight: bold;
+            min-width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 4px;
+        }
+
+        .floating-cart-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 100px;
+            /* rest stays the same */
+            cursor: grab;
+        }
+
+            .floating-cart-btn:active {
+                cursor: grabbing;
+            }
+
         @@keyframes spin {
             from {
                 transform: rotate(0deg);
@@ -68,6 +120,11 @@
 
     <!-- Scroll Top -->
     <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+    <a href="@Url.Action("Cart", "Home", new {area = ""})" class="floating-cart-btn btn btn-primary" title="View Cart">
+        <i class="fa fa-shopping-cart"></i>
+        <span class="cart-badge cart-count"></span>
+    </a>
 
     <!-- Preloader -->
     <div class="preloader flex-column justify-content-center align-items-center">
@@ -112,9 +169,114 @@
 
             LoadCartCount();
 
+            $('.floating-cart-btn').css({ 'inset': 'auto 100px 30px auto' });
+
 
         });
 
     </script>
+
+    <script>
+        (function () {
+            const btn = document.querySelector('.floating-cart-btn');
+            const header = document.querySelector('header'); // adjust selector to match your header
+            let isDragging = false;
+            let hasMoved = false;
+            let offsetX, offsetY;
+
+            function getMinY() {
+                // header's bottom edge relative to viewport
+                return header ? header.getBoundingClientRect().bottom : 0;
+            }
+
+            function startDrag(clientX, clientY) {
+                isDragging = true;
+                hasMoved = false;
+                const rect = btn.getBoundingClientRect();
+                offsetX = clientX - rect.left;
+                offsetY = clientY - rect.top;
+                btn.style.transition = 'none';
+            }
+
+            function doDrag(clientX, clientY) {
+                if (!isDragging) return;
+                hasMoved = true;
+
+                let x = clientX - offsetX;
+                let y = clientY - offsetY;
+
+                const minY = getMinY();
+                const maxX = window.innerWidth - btn.offsetWidth;
+                const maxY = window.innerHeight - btn.offsetHeight;
+
+                x = Math.max(0, Math.min(x, maxX));
+                y = Math.max(minY, Math.min(y, maxY)); // clamp below header
+
+                btn.style.left = x + 'px';
+                btn.style.top = y + 'px';
+                btn.style.right = 'auto';
+                btn.style.bottom = 'auto';
+            }
+
+            function endDrag() {
+                isDragging = false;
+                btn.style.transition = '';
+                if (hasMoved) {
+                    localStorage.setItem('cartBtnPos', JSON.stringify({
+                        left: btn.style.left,
+                        top: btn.style.top
+                    }));
+                }
+            }
+
+            // Mouse events
+            btn.addEventListener('mousedown', (e) => {
+                startDrag(e.clientX, e.clientY);
+                e.preventDefault();
+            });
+            document.addEventListener('mousemove', (e) => doDrag(e.clientX, e.clientY));
+            document.addEventListener('mouseup', endDrag);
+
+            // Touch events
+            btn.addEventListener('touchstart', (e) => {
+                const touch = e.touches[0];
+                startDrag(touch.clientX, touch.clientY);
+            }, { passive: true });
+            document.addEventListener('touchmove', (e) => {
+                const touch = e.touches[0];
+                doDrag(touch.clientX, touch.clientY);
+            }, { passive: true });
+            document.addEventListener('touchend', endDrag);
+
+            btn.addEventListener('click', (e) => {
+                if (hasMoved) e.preventDefault();
+            });
+
+            // Restore saved position, but re-clamp in case header size changed
+            window.addEventListener('DOMContentLoaded', () => {
+                const saved = localStorage.getItem('cartBtnPos');
+                if (saved) {
+                    const pos = JSON.parse(saved);
+                    let top = parseInt(pos.top, 10);
+                    const minY = getMinY();
+                    if (isNaN(top) || top < minY) top = minY; // fix if it'd land under the header
+                    btn.style.left = pos.left;
+                    btn.style.top = top + 'px';
+                    btn.style.right = 'auto';
+                    btn.style.bottom = 'auto';
+                }
+            });
+
+            // Re-clamp on resize (e.g. header height changes responsively)
+            window.addEventListener('resize', () => {
+                const rect = btn.getBoundingClientRect();
+                const minY = getMinY();
+                if (rect.top < minY) {
+                    btn.style.top = minY + 'px';
+                }
+            });
+        })();
+    </script>
+
 </body>
 </html>

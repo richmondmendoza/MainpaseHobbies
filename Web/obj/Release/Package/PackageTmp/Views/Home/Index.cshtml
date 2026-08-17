@@ -18,6 +18,31 @@
     .header-search {
         display: none !important;
     }
+
+    #carouselExampleIndicators {
+        width: 100%;
+        max-height: calc(100vh - 100px);
+        position: relative;
+        display: flex;
+        /*align-items: center;*/
+        justify-content: center;
+        overflow: hidden;
+        padding: 0;
+        inset: 0;
+    }
+
+        #carouselExampleIndicators:before {
+            border: none;
+            background: none !important;
+            position: absolute;
+            inset: 0;
+            z-index: 2;
+        }
+
+        #carouselExampleIndicators img {
+            object-fit: cover !important;
+            max-height: 70vh;
+        }
 </style>
 
 <!-- Hero Section -->
@@ -39,30 +64,52 @@
             }
         </div>
 
-        <div id="hero-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
+        @*<div id="hero-carousel" class="carousel slide carousel-fade" data-bs-ride="carousel" data-bs-interval="5000">
 
+                @foreach (var item in banners)
+                {
+                    carIndex++;
+                    var imagePath = Url.Content("~/Content/website_img/banner_img/" + item.Id.ToString() + ".png");
+
+                    <div class="carousel-item @(carIndex == 1 ? "active" : "")">
+                        <img src="@imagePath" alt="">
+                    </div>
+                }
+
+                <a class="carousel-control-prev" href="#hero-carousel" role="button" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon bi bi-chevron-left" aria-hidden="true"></span>
+                </a>
+
+                <a class="carousel-control-next" href="#hero-carousel" role="button" data-bs-slide="next">
+                    <span class="carousel-control-next-icon bi bi-chevron-right" aria-hidden="true"></span>
+                </a>
+
+                <ol class="carousel-indicators"></ol>
+
+            </div>*@
+
+    </section>
+
+    <section id="carouselExampleIndicators" class="carousel slide carousel-fade" data-ride="carousel">
+        <div class="carousel-inner">
             @foreach (var item in banners)
             {
-                carIndex++;
                 var imagePath = Url.Content("~/Content/website_img/banner_img/" + item.Id.ToString() + ".png");
-
-                <div class="carousel-item @(carIndex == 1 ? "active" : "")">
-                    <img src="@imagePath" alt="">
+                <div class="carousel-item @(carIndex == 0 ? "active" : "")">
+                    <img src="@imagePath" style="display: block; width: 100%;">
                 </div>
+
+                carIndex++;
             }
-
-            <a class="carousel-control-prev" href="#hero-carousel" role="button" data-bs-slide="prev">
-                <span class="carousel-control-prev-icon bi bi-chevron-left" aria-hidden="true"></span>
-            </a>
-
-            <a class="carousel-control-next" href="#hero-carousel" role="button" data-bs-slide="next">
-                <span class="carousel-control-next-icon bi bi-chevron-right" aria-hidden="true"></span>
-            </a>
-
-            <ol class="carousel-indicators"></ol>
-
         </div>
-
+        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="sr-only">Next</span>
+        </a>
     </section>
 }
 
@@ -192,10 +239,13 @@
 
 @section scripts{
 
+    <script src="~/Content/assets/plugins/carousel/util.js"></script>
+    <script src="~/Content/assets/plugins/carousel/carousel.js"></script>
     <script>
 
         $(document).ready(function () {
 
+            $('.carousel').carousel();
 
 
 
