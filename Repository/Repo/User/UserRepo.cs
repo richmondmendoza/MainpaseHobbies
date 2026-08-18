@@ -276,6 +276,35 @@ namespace Repository.Repo.User
             return result;
         }
 
+        public ReturnValue ChangePassword(int userid, string current, string newpassword)
+        {
+            var result = new ReturnValue();
+
+            using (IMSEntities context = new IMSEntities())
+            {
+                var record = context.Users.Where(a => a.Id == userid).FirstOrDefault();
+
+                if (record == null)
+                    return new ReturnValue("User details not found.");
+
+                var passKey = record.PasswordKey;
+                var encPass = Fletcher.Encrypt(current, passKey);
+
+                if (encPass != record.Password)
+                {
+                    return new ReturnValue("Your previous password does not match our record.");
+                }
+
+                encPass = Fletcher.Encrypt(newpassword, passKey);
+                record.Password = encPass;
+                
+                Db.SaveChanges(context, result, "Password changed successfully. Please re-login with your new password.");
+                result.Data = ToDto(record);
+            }
+
+            return result;
+        }
+
         public ReturnValue ClearSession(int userId)
         {
             var result = new ReturnValue("Session cleared.", true);

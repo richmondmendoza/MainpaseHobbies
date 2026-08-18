@@ -122,8 +122,7 @@ namespace Web.Controllers
                         return View("CardDetails_MTG", scryfallModel);
                     default:
 
-                        ShowErrorMessage("Unable to access details");
-                        return RedirectToAction("Index");
+                        return View("CardDetails", details);
                 }
             }
 

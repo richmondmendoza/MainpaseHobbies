@@ -9,7 +9,8 @@
         width: 100%;
     }
 
-    #add-modal {
+    #add-modal,
+    #edit-modal {
         z-index: 1061;
     }
 </style>
@@ -33,7 +34,8 @@
                 <table id="data-table" class="table table-sm table-bordered w-100">
                     <thead>
                         <tr>
-                            <th>Category</th>
+                            <th>Type</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -43,6 +45,9 @@
                             {
                                 <tr>
                                     <td>@item.Name</td>
+                                    <td style="width: 10%; text-align: center;">
+                                        <a class="btn-edit" href="javascript:;" for="@item.Id.ToString()" val="@item.Name"><i class="fa fa-edit"></i></a>
+                                    </td>
                                 </tr>
                             }
                         }
@@ -78,6 +83,34 @@
     </div>
 </div>
 
+<div class="modal" id="edit-modal">
+    <div class="modal-dialog modal-lg">
+        @using (Html.BeginForm("Update", "FoilType", FormMethod.Post, new { area = "portal", id = "form-edit" }))
+        {
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Edit</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group row">
+                        <label class="col-lg-3 col-md-5 col-sm-12 col-form-label">Type Name</label>
+                        <div class="col-lg-9 col-md-7 col-sm-12">
+                            <input type="hidden" class="form-control" id="edit-id" name="Id" />
+                            <input type="text" class="form-control" id="edit-name" name="name" required />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="display: block">
+                    <a href="javascript:;" type="button" class="btn btn-danger btn-sm" id="btn-delete" data-dismiss="modal"><i class="fa fa-trash"></i>   Delete</a>
+                    
+                    <button type="submit" class="btn btn-primary btn-sm float-right"><i class="fa fa-save"></i>   Save</button>
+                    <a href="javascript:;" type="button" class="btn btn-default btn-sm float-right" data-dismiss="modal"><i class="fa fa-times"></i>   Close</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
 @section scripts{
     <script>
         $(document).ready(function () {
@@ -98,6 +131,21 @@
                 $('#add-modal').modal({ 'backdrop': 'static' }).modal('show');
             });
 
+            $('.btn-edit').on('click', function (e) {
+                $('#edit-id').val($(this).attr('for'));
+                $('#edit-name').val($(this).attr('val'));
+
+                $('#edit-modal').modal({ 'backdrop': 'static' }).modal('show');
+            });
+
+            $('#btn-delete').on('click', function (e) {
+                $('#confirm-modal').modalConfirm({
+                    url: '@Url.Action("Delete", "FoilType", new { area = "portal" })',
+                    header: 'Delete Type',
+                    message: 'Do you want to delete this foil type [' + $('#edit-name').val() + ']?',
+                    param1: $('#edit-id').val()
+                });
+            });
 
         });
     </script>

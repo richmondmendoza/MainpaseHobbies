@@ -2563,6 +2563,8 @@
     <Content Include="Content\assets\plugins\carousel\documentation\Carousel · Bootstrap_files\popper.min.js.download" />
     <Content Include="Content\assets\plugins\carousel\documentation\Carousel · Bootstrap_files\script.js.download" />
     <Content Include="Content\assets\plugins\carousel\util.js.map" />
+    <Content Include="Areas\customer\Views\MyAccount\ChangePassword.cshtml" />
+    <Content Include="Content\Inventory_Upload_Template.csv" />
     <None Include="Scripts\jquery-3.7.0.intellisense.js" />
     <Content Include="Scripts\Cart.js" />
     <Content Include="Scripts\jquery-3.7.0.js" />

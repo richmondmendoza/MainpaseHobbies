@@ -92,6 +92,8 @@ namespace Web.Models
     public class ChangePasswordViewModel
     {
         public int UserId { get; set; }
+
+        [Required(ErrorMessage = "Enter your current password.")]
         public string CurrentPassword { get; set; }
 
         [Required(ErrorMessage = "Enter your new password.")]

@@ -1,4 +1,5 @@
-﻿using Dto;
+﻿using CsvHelper.Configuration;
+using Dto;
 using Dto.Dto;
 using Dto.Enums;
 using Newtonsoft.Json;
@@ -6,6 +7,7 @@ using Repository.Repo;
 using Repository.Repo.User;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Linq.Dynamic;
@@ -280,8 +282,12 @@ namespace Web.Areas.portal.Controllers
                 model = UploadMTG(file, ownerId, collectionGroup).ToList();
             else if (collectionGroup == "Grand Archive")
                 model = UploadGA(file, ownerId, collectionGroup).ToList();
+            else
+            {
+                model = UploadOther(file, ownerId, collectionGroup).ToList();
+            }
 
-            return View(model);
+                return View(model);
         }
 
         [HttpPost]
@@ -319,9 +325,23 @@ namespace Web.Areas.portal.Controllers
             var model = new List<InventoryDetailsDto>();
             var conversionRate = ConversionInfo.Amount;
 
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                DetectDelimiter = true,      // auto-detects comma / semicolon / tab
+                MissingFieldFound = null,    // don't throw if a row has fewer columns than header
+                HeaderValidated = null,      // don't throw if header has extra/missing columns
+                BadDataFound = args =>
+                {
+                    // Log instead of crashing — check your logs/output window for these
+                    System.Diagnostics.Trace.WriteLine(
+                        $"Skipped bad row {args.Context.Parser.Row}: {args.RawRecord}");
+                },
+                TrimOptions = TrimOptions.Trim
+            };
+
             using (var reader = new StreamReader(file.InputStream))
             {
-                using (var csv = new CsvHelper.CsvReader(reader, System.Globalization.CultureInfo.InvariantCulture))
+                using (var csv = new CsvHelper.CsvReader(reader, config))
                 {
                     csv.Context.RegisterClassMap<UploadDataMap>();
                     model = csv.GetRecords<UploadDataViewModel>().ToList().Select(a => new InventoryDetailsDto()
@@ -332,14 +352,14 @@ namespace Web.Areas.portal.Controllers
                         Collector = a.CollectorNumber,
                         FoilType = a.Foil,
                         Rarity = a.Rarity,
-                        ManaboxId = Convert.ToInt32(a.ManaBoxId ?? "0"),
+                        ManaboxId = a.ManaBoxId,
                         ScryfallId = a.ScryfallId,
-                        Price = a.PurchasePrice * conversionRate,
+                        Price = a.Price * conversionRate,
                         Misprint = a.Misprint,
-                        Tampered = a.Altered,
-                        Condition = a.Condition.ToUpper().Replace("_", " "),
+                        Tampered = a.Tampered,
+                        Condition = a.Condition?.ToUpper().Replace("_", " ") ?? "",
                         Language = a.Language.ToLower(),
-                        PurchaseCurrency = a.PurchasePriceCurrency.ToUpper(),
+                        PurchaseCurrency = a.PurchaseCurrency?.ToUpper() ?? "",
                         CreatedBy = $"Uploaded by [{Identity.Username}].",
                         DateCreated = DateTime.Now,
                         InventoryCounts = new List<InventoryCountDto>()
@@ -356,6 +376,14 @@ namespace Web.Areas.portal.Controllers
                             },
                         OwnerId = ownerId,
                         CollectionGroup = collectionGroup,
+                        CardType = a.CardType,
+                        Category = a.Category,
+                        Color = a.Color,
+                        Description = a.Description,
+                        IllustratedBy = a.IllustratedBy,
+                        Image = new byte[0],
+                        IsPhpDisplay = true,
+                        ManaCost = a.ManaCost,
                     }).ToList();
                 }
             }
@@ -368,9 +396,23 @@ namespace Web.Areas.portal.Controllers
             var model = new List<InventoryDetailsDto>();
             var conversionRate = ConversionInfo.Amount;
 
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                DetectDelimiter = true,      // auto-detects comma / semicolon / tab
+                MissingFieldFound = null,    // don't throw if a row has fewer columns than header
+                HeaderValidated = null,      // don't throw if header has extra/missing columns
+                BadDataFound = args =>
+                {
+                    // Log instead of crashing — check your logs/output window for these
+                    System.Diagnostics.Trace.WriteLine(
+                        $"Skipped bad row {args.Context.Parser.Row}: {args.RawRecord}");
+                },
+                TrimOptions = TrimOptions.Trim
+            };
+
             using (var reader = new StreamReader(file.InputStream))
             {
-                using (var csv = new CsvHelper.CsvReader(reader, System.Globalization.CultureInfo.InvariantCulture))
+                using (var csv = new CsvHelper.CsvReader(reader, config))
                 {
                     csv.Context.RegisterClassMap<UploadDataMap>();
                     model = csv.GetRecords<UploadDataViewModel>().ToList().Select(a => new InventoryDetailsDto()
@@ -381,14 +423,14 @@ namespace Web.Areas.portal.Controllers
                         Collector = a.CollectorNumber,
                         FoilType = a.Foil,
                         Rarity = a.Rarity,
-                        ManaboxId = Convert.ToInt32(a.ManaBoxId ?? "0"),
+                        ManaboxId = a.ManaBoxId,
                         ScryfallId = a.ScryfallId,
-                        Price = a.PurchasePrice * conversionRate,
+                        Price = a.Price * conversionRate,
                         Misprint = a.Misprint,
-                        Tampered = a.Altered,
+                        Tampered = a.Tampered,
                         Condition = a.Condition.ToUpper().Replace("_", " "),
                         Language = a.Language.ToLower(),
-                        PurchaseCurrency = a.PurchasePriceCurrency.ToUpper(),
+                        PurchaseCurrency = a.PurchaseCurrency.ToUpper(),
                         CreatedBy = $"Uploaded by [{Identity.Username}].",
                         DateCreated = DateTime.Now,
                         InventoryCounts = new List<InventoryCountDto>()
@@ -405,12 +447,92 @@ namespace Web.Areas.portal.Controllers
                             },
                         OwnerId = ownerId,
                         CollectionGroup = collectionGroup,
+                        CardType = a.CardType,
+                        Category = a.Category,
+                        Color = a.Color,
+                        Description = a.Description,
+                        IllustratedBy = a.IllustratedBy,
+                        Image = new byte[0],
+                        IsPhpDisplay = true,
+                        ManaCost = a.ManaCost,
                     }).ToList();
                 }
             }
 
             return model;
         }
+
+        private IEnumerable<InventoryDetailsDto> UploadOther(HttpPostedFileBase file, int ownerId, string collectionGroup)
+        {
+            var model = new List<InventoryDetailsDto>();
+            var conversionRate = ConversionInfo.Amount;
+
+            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            {
+                DetectDelimiter = true,      // auto-detects comma / semicolon / tab
+                MissingFieldFound = null,    // don't throw if a row has fewer columns than header
+                HeaderValidated = null,      // don't throw if header has extra/missing columns
+                BadDataFound = args =>
+                {
+                    // Log instead of crashing — check your logs/output window for these
+                    System.Diagnostics.Trace.WriteLine(
+                        $"Skipped bad row {args.Context.Parser.Row}: {args.RawRecord}");
+                },
+                TrimOptions = TrimOptions.Trim
+            };
+
+            using (var reader = new StreamReader(file.InputStream))
+            {
+                using (var csv = new CsvHelper.CsvReader(reader, config))
+                {
+                    csv.Context.RegisterClassMap<UploadDataMap>();
+                    model = csv.GetRecords<UploadDataViewModel>().ToList().Select(a => new InventoryDetailsDto()
+                    {
+                        Name = a.Name,
+                        SetCode = a.SetCode,
+                        SetName = a.SetName,
+                        Collector = a.CollectorNumber,
+                        FoilType = a.Foil,
+                        Rarity = a.Rarity,
+                        ManaboxId = a.ManaBoxId,
+                        ScryfallId = a.ScryfallId,
+                        Price = a.Price * conversionRate,
+                        Misprint = a.Misprint,
+                        Tampered = a.Tampered,
+                        Condition = a.Condition.ToUpper().Replace("_", " "),
+                        Language = a.Language.ToLower(),
+                        PurchaseCurrency = a.PurchaseCurrency.ToUpper(),
+                        CreatedBy = $"Uploaded by [{Identity.Username}].",
+                        DateCreated = DateTime.Now,
+                        InventoryCounts = new List<InventoryCountDto>()
+                            {
+                                new InventoryCountDto()
+                                {
+                                    Quantity = a.Quantity,
+                                    CreatedBy = $"Uploaded by .",
+                                    DateCreated = DateTime.Now,
+                                    UOM = "PC",
+                                    Remarks = $"Inventory uploaded by .",
+                                    Type = InventoryCountTypeEnum.Upload,
+                                }
+                            },
+                        OwnerId = ownerId,
+                        CollectionGroup = collectionGroup,
+                        CardType = a.CardType,
+                        Category = a.Category,
+                        Color = a.Color,
+                        Description = a.Description,
+                        IllustratedBy = a.IllustratedBy,
+                        Image = new byte[0],
+                        IsPhpDisplay = true,
+                        ManaCost = a.ManaCost,
+                    }).ToList();
+                }
+            }
+
+            return model;
+        }
+
 
     }
 }

@@ -15,7 +15,7 @@ namespace Dto.Dto
         public string Body { get; set; } = string.Empty;
         public string Title { get; set; } = string.Empty;
         public string SubTitle { get; set; } = string.Empty;
-        public bool IsActive { get; set; } = false;
+        public bool IsActive { get; set; } = true;
         public bool IsFeatured { get; set; } = false;
 
         public string FeaturedImageBase64 { get { return Convert.ToBase64String(FeaturedImage); } }

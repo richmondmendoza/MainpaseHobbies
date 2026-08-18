@@ -1,5 +1,10 @@
 ﻿@* ====== Admin LTE version 4 ====== *@
 
+@{
+    var changePassword = (TempData["ChangePassword"] ?? "").ToString();
+}
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -70,9 +75,20 @@
 
     <script>
 
+        @if (!string.IsNullOrEmpty(changePassword))
+{
+    <text>
         $(document).ready(function () {
-
+            $('#message-modal').modalMessage({
+                header: 'Password Changed',
+                message: '@changePassword'
+            });
         });
+    </text>
+
+            changePassword = "";
+            TempData["ChangePassword"] = "";
+        }
 
     </script>
 

@@ -1,7 +1,8 @@
 ﻿<script>
     @{
         var timeOut = (HttpContext.Current.Session["TimeOutMessage"] ?? "").ToString();
-		var message = Convert.ToString(TempData["ViewMessage"] ?? "");
+        var changePassword = (HttpContext.Current.Session["ChangePassword"] ?? "").ToString();
+        var message = Convert.ToString(TempData["ViewMessage"] ?? "");
         var type = Convert.ToString(TempData["ViewMessageType"] ?? "Error");
     }
 
@@ -35,6 +36,21 @@
             timeOut = "";
             HttpContext.Current.Session.Remove("TimeOutMessage");
         //}
+    }
+
+    @if (!string.IsNullOrEmpty(changePassword))
+    {
+        <text>
+            $(document).ready(function () {
+                $('#message-modal').modalMessage({
+                    header: 'Password Successfully Changed',
+                    message: '@changePassword'
+                });
+            });
+        </text>
+
+        changePassword = "";
+        HttpContext.Current.Session.Remove("ChangePassword");
     }
 
 </script>

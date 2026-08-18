@@ -19,10 +19,10 @@
         var path = Path.Combine(Dto.BaseSettings.StoragePath.CardImageStoragePath, $"{item.Id.ToString()}.png");
         var imagePath = Url.Content("~/Content/website_img/card_img/" + item.Id.ToString() + ".png");
 
-        if (!File.Exists(path))
-        {
-            File.WriteAllBytes(path, item.Image);
-        }
+        //if (!File.Exists(path))
+        //{
+        //    File.WriteAllBytes(path, item.Image);
+        //}
 
         <div class="col-lg-4 col-md-6">
             <div class="card" style="border-radius: 10px;">

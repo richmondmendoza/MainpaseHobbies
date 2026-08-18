@@ -383,8 +383,66 @@ namespace Repository.Repo
                             FetchClassDetails_GA(context, dto, conversionRate);
                             break;
                         case "magicthegathering":
-                        default:
                             FetchClassDetails_MTG(context, dto, conversionRate);
+                            break;
+                        default:
+                            var inventory = new Inventory
+                            {
+                                Image = dto.Image ?? new byte[0],
+                                Name = dto.Name,
+                                SetCode = dto.SetCode,
+                                SetName = dto.SetName,
+                                Collector = dto.Collector,
+                                Language = dto.Language,
+                                FoilType = dto.FoilType,
+                                Rarity = dto.Rarity,
+                                Condition = dto.Condition,
+                                CreatedBy = dto.CreatedBy,
+                                DateCreated = DateTime.Now,
+                                IsDeleted = dto.IsDeleted,
+                                ManaboxId = dto.ManaboxId,
+                                Misprint = dto.Misprint,
+                                PurchaseCurrency = dto.PurchaseCurrency,
+                                Price = dto.Price,
+                                ScryfallId = dto.ScryfallId ?? "",
+                                Tampered = dto.Tampered,
+                                Color = dto.Color,
+                                Description = dto.Description,
+                                CardType = dto.CardType ?? "",
+                                IllustratedBy = dto.IllustratedBy ?? "",
+                                ManaCost = dto.ManaCost ?? "",
+                                CollectionGroup = dto.CollectionGroup ?? "",
+                                OwnerId = dto.OwnerId,
+                                Category = dto.Category,
+                            };
+
+                            context.Inventories.Add(inventory);
+
+                            if (dto.InventoryCounts.Any())
+                            {
+                                foreach (var countDto in dto.InventoryCounts)
+                                {
+                                    var newRecord = new Inventory_Count
+                                    {
+                                        DateCreated = countDto.DateCreated,
+                                        CreatedBy = dto.CreatedBy,
+                                        IsDeleted = countDto.IsDeleted,
+                                        Quantity = countDto.Quantity,
+                                        Remarks = dto.CreatedBy,
+                                        Type = (int)countDto.Type,
+                                        UOM = countDto.UOM
+                                    };
+
+                                    inventory.Inventory_Count.Add(newRecord);
+                                }
+                            }
+
+                            try
+                            {
+                                var saveChanges = context.SaveChanges();
+                            }
+                            catch { failCounter++; }
+
                             break;
                     }
                 }
@@ -768,30 +826,35 @@ namespace Repository.Repo
             {
                 Directory.CreateDirectory(StoragePath.CardImageStoragePath);
             }
+            Tuple<byte[], ScryfallCard> cardDetails = null;
 
-            Tuple<byte[], ScryfallCard> cardDetails = FetchCardDetailsAsync_Scryfall(dto.ScryfallId, dto.SetCode, dto.Collector).Result;
+            try { cardDetails = FetchCardDetailsAsync_Scryfall(dto.ScryfallId, dto.SetCode, dto.Collector)?.Result ?? null; }
+            catch { }
             if (existing != null)
             {
-                if (string.IsNullOrEmpty(existing.Description))
-                    existing.Description = cardDetails.Item2.OracleText ?? "";
+                if (cardDetails != null)
+                {
+                    if (string.IsNullOrEmpty(existing.Description))
+                        existing.Description = cardDetails.Item2.OracleText ?? "";
 
-                if (string.IsNullOrEmpty(existing.Color))
-                    dto.Color = GetColorIdentityString(cardDetails.Item2.ColorIdentity);
+                    if (string.IsNullOrEmpty(existing.Color))
+                        dto.Color = GetColorIdentityString(cardDetails.Item2.ColorIdentity);
 
-                if (string.IsNullOrEmpty(existing.ManaCost))
-                    existing.ManaCost = cardDetails.Item2.ManaCost;
+                    if (string.IsNullOrEmpty(existing.ManaCost))
+                        existing.ManaCost = cardDetails.Item2.ManaCost;
 
-                if (string.IsNullOrEmpty(existing.CardType))
-                    existing.CardType = cardDetails.Item2.TypeLine;
+                    if (string.IsNullOrEmpty(existing.CardType))
+                        existing.CardType = cardDetails.Item2.TypeLine;
 
-                if (string.IsNullOrEmpty(existing.IllustratedBy))
-                    existing.IllustratedBy = cardDetails.Item2.Artist;
+                    if (string.IsNullOrEmpty(existing.IllustratedBy))
+                        existing.IllustratedBy = cardDetails.Item2.Artist;
 
-                var currentPrice = existing.Price / conversionRate;
-                var isFoiled = existing.FoilType.ToLower() != "non-foil" & existing.FoilType.ToLower() != "normal";
-                var scryfallPrice = Convert.ToDecimal(isFoiled ? (cardDetails.Item2.Prices?.UsdFoil ?? dto.Price.ToString()) : (cardDetails.Item2.Prices?.Usd ?? dto.Price.ToString()));
-                if (currentPrice != scryfallPrice)
-                    existing.Price = scryfallPrice * conversionRate;
+                    var currentPrice = existing.Price / conversionRate;
+                    var isFoiled = existing.FoilType.ToLower() != "non-foil" & existing.FoilType.ToLower() != "normal";
+                    var scryfallPrice = Convert.ToDecimal(isFoiled ? (cardDetails.Item2.Prices?.UsdFoil ?? dto.Price.ToString()) : (cardDetails.Item2.Prices?.Usd ?? dto.Price.ToString()));
+                    if (currentPrice != scryfallPrice)
+                        existing.Price = scryfallPrice * conversionRate;
+                }
 
                 existing.Name = dto.Name;
                 existing.SetCode = dto.SetCode;
@@ -824,11 +887,12 @@ namespace Repository.Repo
             }
             else
             {
-                dto.Color = GetColorIdentityString(cardDetails.Item2.ColorIdentity);
+                if (cardDetails != null)
+                    dto.Color = GetColorIdentityString(cardDetails.Item2.ColorIdentity);
 
                 existing = new Inventory
                 {
-                    Image = cardDetails.Item1,
+                    Image = cardDetails?.Item1 ?? new byte[0],
                     Name = dto.Name,
                     SetCode = dto.SetCode,
                     SetName = dto.SetName,
@@ -847,22 +911,25 @@ namespace Repository.Repo
                     CreatedBy = dto.CreatedBy,
                     IsDeleted = dto.IsDeleted,
                     Color = dto.Color,
-                    Description = cardDetails.Item2.OracleText,
-                    CardType = cardDetails.Item2.TypeLine,
-                    IllustratedBy = cardDetails.Item2.Artist,
-                    ManaCost = cardDetails.Item2.ManaCost,
+                    Description = cardDetails?.Item2.OracleText ?? "",
+                    CardType = cardDetails?.Item2.TypeLine ?? "",
+                    IllustratedBy = cardDetails?.Item2.Artist ?? "",
+                    ManaCost = cardDetails?.Item2.ManaCost ?? "",
                     OwnerId = dto.OwnerId,
                     CollectionGroup = dto.CollectionGroup,
                     Category = dto.Category,
                 };
 
-                var currentPrice = existing.Price / conversionRate;
-                var isFoiled = existing.FoilType.ToLower() != "non-foil" & existing.FoilType.ToLower() != "normal";
-                var scryfallPrice = Convert.ToDecimal(isFoiled ? (cardDetails.Item2.Prices?.UsdFoil ?? dto.Price.ToString()) : (cardDetails.Item2.Prices?.Usd ?? dto.Price.ToString()));
-                if (currentPrice != scryfallPrice)
+                if (cardDetails != null)
                 {
-                    existing.Price = scryfallPrice * conversionRate;
-                    existing.PurchaseCurrency = "USD";
+                    var currentPrice = existing.Price / conversionRate;
+                    var isFoiled = existing.FoilType.ToLower() != "non-foil" & existing.FoilType.ToLower() != "normal";
+                    var scryfallPrice = Convert.ToDecimal(isFoiled ? (cardDetails.Item2.Prices?.UsdFoil ?? dto.Price.ToString()) : (cardDetails.Item2.Prices?.Usd ?? dto.Price.ToString()));
+                    if (currentPrice != scryfallPrice)
+                    {
+                        existing.Price = scryfallPrice * conversionRate;
+                        existing.PurchaseCurrency = "USD";
+                    }
                 }
 
                 if (dto.InventoryCounts.Any())
@@ -880,16 +947,19 @@ namespace Repository.Repo
             {
                 var saveChanges = context.SaveChanges();
 
-                if (saveChanges >= 0)
+                if (cardDetails != null)
                 {
-                    if (cardDetails.Item1 != null && cardDetails.Item1.Length > 0)
+                    if (saveChanges >= 0)
                     {
-                        var path = Path.Combine(StoragePath.CardImageStoragePath, $"{existing.ToString()}.png");
-                        if (File.Exists(path))
+                        if (cardDetails.Item1 != null && cardDetails.Item1.Length > 0)
                         {
-                            File.Delete(path);
+                            var path = Path.Combine(StoragePath.CardImageStoragePath, $"{existing.ToString()}.png");
+                            if (File.Exists(path))
+                            {
+                                File.Delete(path);
+                            }
+                            File.WriteAllBytes(path, cardDetails.Item1);
                         }
-                        File.WriteAllBytes(path, cardDetails.Item1);
                     }
                 }
             }
@@ -980,7 +1050,7 @@ namespace Repository.Repo
                 };
 
                 existing.ScryfallId = slugName;
-                existing.Image = cardDetails.Item1;
+                existing.Image = cardDetails?.Item1 ?? new byte[0];
                 existing.Description = cardDetails.Item2.effect ?? "";
                 existing.ManaCost = $"{cardDetails.Item2.cost.type}|{cardDetails.Item2.cost.value}";
                 existing.Color = string.Join(", ", cardDetails.Item2.elements).TrimEnd();
@@ -1000,7 +1070,7 @@ namespace Repository.Repo
                     }
                 }
 
-                context.Inventories.Add(existing);               
+                context.Inventories.Add(existing);
             }
 
             try

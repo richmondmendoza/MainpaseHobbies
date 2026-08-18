@@ -113,6 +113,11 @@ namespace Repository.Repo.User
                     result.Success = true;
                     result.Message = "Session is valid.";
                 }
+                else
+                {
+                    existingToken.IsTerminated = true;
+                    context.SaveChanges();
+                }
             }
 
             return result;

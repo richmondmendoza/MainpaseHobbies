@@ -90,27 +90,29 @@
 
     </section>
 
-    <section id="carouselExampleIndicators" class="carousel slide carousel-fade" data-ride="carousel">
-        <div class="carousel-inner">
-            @foreach (var item in banners)
-            {
-                var imagePath = Url.Content("~/Content/website_img/banner_img/" + item.Id.ToString() + ".png");
-                <div class="carousel-item @(carIndex == 0 ? "active" : "")">
-                    <img src="@imagePath" style="display: block; width: 100%;">
-                </div>
+    <div class="container section-title pt-2 pb-2">
+        <section id="carouselExampleIndicators" class="carousel slide carousel-fade" data-ride="carousel">
+            <div class="carousel-inner">
+                @foreach (var item in banners)
+                {
+                    var imagePath = Url.Content("~/Content/website_img/banner_img/" + item.Id.ToString() + ".png");
+                    <div class="carousel-item @(carIndex == 0 ? "active" : "")">
+                        <img src="@imagePath" style="display: block; width: 100%;">
+                    </div>
 
-                carIndex++;
-            }
-        </div>
-        <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="sr-only">Next</span>
-        </a>
-    </section>
+                    carIndex++;
+                }
+            </div>
+            <a class="carousel-control-prev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#carouselExampleIndicators" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        </section>
+    </div>
 }
 
 <section id="team" class="team section">

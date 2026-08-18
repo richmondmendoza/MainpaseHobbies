@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 using Web.App_Filters;
 using Web.Models;
 
@@ -106,6 +107,36 @@ namespace Web.Areas.customer.Controllers
 
         public ActionResult ChangePassword()
         {
+            return View(new ChangePasswordViewModel());
+        }
+
+        [HttpPost]
+        public ActionResult ChangePassword(ChangePasswordViewModel model)
+        {
+            if (model.ConfirmNewPassword != model.NewPassword)
+            {
+                ShowErrorMessage("The new password and confirmation password do not match.");
+                return View(new ChangePasswordViewModel());
+            }
+
+            if (model.CurrentPassword == model.NewPassword)
+            {
+                ShowErrorMessage("New password should not be the same as your previous password.");
+                return View(new ChangePasswordViewModel());
+            }
+            var result = new UserRepo().ChangePassword(Identity.Id, model.CurrentPassword, model.NewPassword);
+
+
+            if (result.Success)
+            {
+                FormsAuthentication.SignOut();
+                TempData["ChangePassword"] = result.Message;
+                TempData.Keep("ChangePassword");
+                return RedirectToAction("Login");
+                //return RedirectToAction("Index", "MyOrders", new { area = "customer" });
+            }
+
+            ShowMessage(result.Message, result.Success);
             return View(new ChangePasswordViewModel());
         }
 

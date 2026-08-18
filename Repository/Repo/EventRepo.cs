@@ -27,11 +27,11 @@ namespace Repository.Repo
                 DateCreated = item.DateCreated,
                 DateOfEvent = item.DateOfEvent.Value,
                 Body = item.Body,
-                FeaturedImage = item.FeaturedImage,
+                FeaturedImage = item.FeaturedImage ?? new byte[0],
                 IsActive = item.IsActive,
                 SubTitle = item.SubTitle,
                 Title = item.Title,
-                MimeType = item.FeaturedImage.GetImageExtension().Replace(".", ""),
+                MimeType = item.FeaturedImage?.GetImageExtension().Replace(".", "") ?? "png",
                 IsFeatured = item.IsFeatured,
             };
         }
@@ -141,7 +141,7 @@ namespace Repository.Repo
                 if (record == null)
                     return new ReturnValue("Event details not found!");
 
-                if (dto.FeaturedImage.Length > 0)
+                if ((dto.FeaturedImage?.Length ?? 0) > 0)
                     record.FeaturedImage = dto.FeaturedImage;
 
                 record.DateOfEvent = dto.DateOfEvent;

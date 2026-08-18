@@ -70,6 +70,7 @@
                     <li>
                         @using (Html.BeginForm("Search", "Home", FormMethod.Post, new { @class = "d-flex ms-3 header-search", role = "search" }))
                         {
+                            <input type="hidden" name="Collection" value="all" />
                             <input class="form-control input-sm" type="search" name="param" placeholder="Search..." aria-label="Search">
                             <button class="btn btn-primary btn-sm ms-1" type="submit">Search</button>
                         }

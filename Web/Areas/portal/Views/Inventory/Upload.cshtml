@@ -28,18 +28,19 @@
                 <div class="card-body bg-light mb-0">
                     <div class="row">
 
-                        <div class="col-lg-6">
+                        <div class="col-lg-6 mb-3">
                             <div class="form-group row">
                                 <label class="form-label col-lg-5">Collection Group</label>
                                 <div class="col-lg-6">
                                     <select class="select2 form-control" name="collectionGroup" @(!string.IsNullOrEmpty(group) ? "disabled" : "")>
                                         <option value="Magic the Gathering" @(group == "Magic the Gathering" ? "selected" : "")>Magic the Gathering</option>
                                         <option value="Grand Archive" @(group == "Grand Archive" ? "selected" : "")>Grand Archive</option>
+                                        <option value="Other" @(group == "Other" ? "selected" : "")>Other</option>
                                     </select>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6">
+                        <div class="col-lg-6 mb-3">
                             <div class="form-group row">
                                 <label class="form-label col-lg-5">Owner</label>
                                 <div class="col-lg-7">
@@ -52,7 +53,15 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-12 mb-3">
+                            @{
+                                var filePath = Url.Content("~/Content/Inventory_Upload_Template.csv");
+                            }
 
+                            <a href="@filePath" target="_blank" class="form-text">
+                                Download template here...
+                            </a>
+                        </div>
                     </div>
 
                 </div>
@@ -155,6 +164,9 @@
                                                 @Html.HiddenFor(a => a[index].OwnerId)
                                                 @Html.HiddenFor(a => a[index].CollectionGroup)
                                                 @Html.HiddenFor(a => a[index].Category)
+                                                @Html.HiddenFor(a => a[index].CardType)
+                                                @Html.HiddenFor(a => a[index].IllustratedBy)
+                                                @Html.HiddenFor(a => a[index].ManaCost)
 
                                                 @for (int countIndex = 0; countIndex < Model[index].InventoryCounts.Count(); countIndex++)
                                                 {

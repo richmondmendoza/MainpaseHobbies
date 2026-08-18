@@ -136,13 +136,13 @@
                         </div>
                         <div class="form-group">
                             <div class="icheck-primary">
-                                <input type="checkbox" class="chk-ship" id="chk-ship-2" disabled value="@DeliveryMethodEnum.BookYourOwn" @(Model.DeliveryMethod == DeliveryMethodEnum.BookYourOwn ? "checked" : "")>
+                                <input type="checkbox" class="chk-ship" id="chk-ship-2" value="@DeliveryMethodEnum.BookYourOwn" @(Model.DeliveryMethod == DeliveryMethodEnum.BookYourOwn ? "checked" : "")>
                                 <label for="chk-ship-2">Book Your Own Rider</label>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="icheck-primary">
-                                <input type="checkbox" class="chk-ship" id="chk-ship-3" disabled value="@DeliveryMethodEnum.LBC" @(Model.DeliveryMethod == DeliveryMethodEnum.LBC ? "checked" : "")>
+                                <input type="checkbox" class="chk-ship" id="chk-ship-3" value="@DeliveryMethodEnum.LBC" @(Model.DeliveryMethod == DeliveryMethodEnum.LBC ? "checked" : "")>
                                 <label for="chk-ship-3">Ship via LBC</label>
                             </div>
                         </div>

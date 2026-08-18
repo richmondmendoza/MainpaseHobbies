@@ -36,7 +36,7 @@ namespace Web.Controllers
             var text = "";
             try
             {
-                var efConnStr = ConfigurationManager.ConnectionStrings["IMSEntities"].ConnectionString;
+                var efConnStr = ConfigurationManager.ConnectionStrings["FinLiqEntities"].ConnectionString;
                 var builder = new EntityConnectionStringBuilder(efConnStr);
                 using (var conn = new SqlConnection(builder.ProviderConnectionString))
                 {

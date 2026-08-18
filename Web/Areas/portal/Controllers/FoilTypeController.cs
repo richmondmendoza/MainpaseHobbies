@@ -1,4 +1,6 @@
-﻿using Repository.Repo.Settings;
+﻿using Dto;
+using Dto.BaseSettings;
+using Repository.Repo.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +24,21 @@ namespace Web.Areas.portal.Controllers
         public ActionResult Add(string name)
         {
             var result = _repo.Add(name);
+            ShowMessage(result.Message, result.Success);
+            return RedirectToAction("List");
+        }
+
+        [HttpPost]
+        public ActionResult Update(NameDto dto)
+        {
+            var result = _repo.update(dto);
+            ShowMessage(result.Message, result.Success);
+            return RedirectToAction("List");
+        }
+
+        public ActionResult Delete(ConfirmDto dto)
+        {
+            var result = _repo.Delete(Convert.ToInt32(dto.Param1));
             ShowMessage(result.Message, result.Success);
             return RedirectToAction("List");
         }

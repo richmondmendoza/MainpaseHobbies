@@ -43,7 +43,7 @@ namespace Web.Areas.portal.Controllers
             ShowMessage(result.Message, result.Success);
 
             if (result.Success)
-                return RedirectToAction("Update", new { id = eventData.Id });
+                return RedirectToAction("Index");
 
 
             return View(model);
@@ -66,7 +66,7 @@ namespace Web.Areas.portal.Controllers
             }
 
             ShowMessage(result.Message, result.Success);
-            return RedirectToAction("update", new { id = model.Id });
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
@@ -86,7 +86,7 @@ namespace Web.Areas.portal.Controllers
             if (result.Success)
                 return RedirectToAction("index");
 
-            return RedirectToAction("update", new { id = id });
+            return RedirectToAction("Index");
         }
 
     }

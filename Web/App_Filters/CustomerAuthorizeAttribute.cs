@@ -62,6 +62,7 @@ namespace Web.App_Filters
             if (!session.Success)
             {
                 HttpContext.Current.Session["TimeOutMessage"] = session.Message;
+                FormsAuthentication.SignOut();
                 return false;
             }
 
