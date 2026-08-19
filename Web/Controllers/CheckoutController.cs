@@ -114,7 +114,7 @@ namespace Web.Controllers
             switch (model.PaymentMethod)
             {
                 case PaymentMethodEnum.Cash:
-
+                case PaymentMethodEnum.BankTransfer:
                     model.OrderNumber = requestId;
                     order = new OrderRepo().Add(model.ToDto());
 
@@ -133,7 +133,6 @@ namespace Web.Controllers
 
                 case PaymentMethodEnum.CreditCard:
                 case PaymentMethodEnum.PayPal:
-                case PaymentMethodEnum.BankTransfer:
                     return Content("Error creating payment.");
                 case PaymentMethodEnum.CoinsPH:
 

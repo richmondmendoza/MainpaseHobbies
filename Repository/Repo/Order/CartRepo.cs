@@ -121,20 +121,20 @@ namespace Repository.Repo.Order
             {
                 var type = (int)InventoryCountTypeEnum.Sell;
                 var inventory = context.Inventories.Where(a => a.Id == dto.InventoryId).Include(a => a.Inventory_Count).FirstOrDefault();
-                var exists = context.Carts.FirstOrDefault(a => a.InventoryId == dto.InventoryId & a.UserId == dto.UserId);
+                //var exists = context.Carts.FirstOrDefault(a => a.InventoryId == dto.InventoryId & a.UserId == dto.UserId);
                 var limit = inventory?.Inventory_Count.Sum(a => a.Type == type ? -a.Quantity : a.Quantity) ?? 0;
 
-                if (exists != null)
-                {
-                    var quantity = dto.Quantity + exists.Quantity;
+                //if (exists != null)
+                //{
+                //    var quantity = dto.Quantity + exists.Quantity;
 
-                    if (quantity > limit)
-                        return new ReturnValue("The selected quantity exceeds the current inventory stock. Please reload the page and try again.");
+                //    if (quantity > limit)
+                //        return new ReturnValue("The selected quantity exceeds the current inventory stock. Please reload the page and try again.");
 
-                    exists.Quantity = quantity;
-                }
-                else
-                {
+                //    exists.Quantity = quantity;
+                //}
+                //else
+                //{
                     if (dto.Quantity > limit)
                         return new ReturnValue("The selected quantity exceeds the current inventory stock. Please reload the page and try again.");
 
@@ -147,7 +147,7 @@ namespace Repository.Repo.Order
                         UserSessionId = dto.UserSessionId,
                     };
                     context.Carts.Add(item);
-                }
+                //}
 
                 Db.SaveChanges(context, result, "Item added to cart.");
             }

@@ -51,13 +51,13 @@
         </div>
     </div>
 
-    <div class="branding d-flex align-items-cente">
+    <div class="branding d-flex align-items-cente pb-0">
 
         <div class="container position-relative d-flex align-items-center justify-content-between">
-            <a href="@Url.Action("Index", "Home", new {area = ""})" class="logo d-flex align-items-center">
+            <a href="@Url.Action("Index", "Home", new {area = ""})" class="logo d-flex align-items-baseline">
                 <!-- Uncomment the line below if you also wish to use an image logo -->
-                <img src="~/Content/website_img/logo.jpg" class="mr-0" alt="">
-                <h1 class="sitename">@info.Name</h1>
+                <img src="~/Content/website_img/logo.jpg" class="mr-0" style="max-height: 75px;" alt="">
+                <h1 class="sitename ml-3" style="font-size: 20px;">@info.Name</h1>
             </a>
             <nav id="navmenu" class="navmenu">
                 <ul>

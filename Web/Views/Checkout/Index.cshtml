@@ -120,6 +120,12 @@
                         </div>
                         <div class="form-group">
                             <div class="icheck-primary">
+                                <input type="checkbox" class="chk-payment" id="chk-payment-3" value="@PaymentMethodEnum.BankTransfer" @(Model.PaymentMethod == PaymentMethodEnum.BankTransfer ? "checked" : "")>
+                                <label for="chk-payment-3">Pay Online</label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="icheck-primary">
                                 <input type="checkbox" class="chk-payment" id="chk-payment-2" disabled value="@PaymentMethodEnum.CoinsPH" @(Model.PaymentMethod == PaymentMethodEnum.CoinsPH ? "checked" : "")>
                                 <label for="chk-payment-2">Pay via Coins WebPay</label>
                             </div>

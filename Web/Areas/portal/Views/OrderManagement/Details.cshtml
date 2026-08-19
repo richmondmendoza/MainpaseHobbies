@@ -156,6 +156,10 @@
                             <label>Store Payment</label>
                         </div>
                         <div class="icheck-primary">
+                            <input type="checkbox" onclick="return false;" @(Model.PaymentMethod == Dto.Enums.PaymentMethodEnum.BankTransfer ? "checked" : "") />
+                            <label>Pay Online</label>
+                        </div>
+                        <div class="icheck-primary">
                             <input type="checkbox" onclick="return false;" @(Model.PaymentMethod == Dto.Enums.PaymentMethodEnum.PayPal ? "checked" : "") />
                             <label>PayPal</label>
                         </div>
@@ -229,11 +233,13 @@
                     }
 
                     @switch (Model.Status)
-                    {
-                        case Dto.Enums.OrderStatusEnum.Pending:
-
-                            if (Model.PaymentMethod == Dto.Enums.PaymentMethodEnum.Cash && !Model.IsPaid)
                             {
+                                case Dto.Enums.OrderStatusEnum.Pending:
+                                    bool isPaying = Model.PaymentMethod == Dto.Enums.PaymentMethodEnum.Cash |
+                                                    Model.PaymentMethod == Dto.Enums.PaymentMethodEnum.BankTransfer;
+
+                                    if (isPaying && !Model.IsPaid)
+                                    {
                                 <a href="@Url.Action("TaggedAsPaid", "OrderManagement", new {area = "portal", id = Model.Id, orderNumber = Model.OrderNumber })" class="btn btn-success float-right">Receive Payment</a>
                             }
                             break;
